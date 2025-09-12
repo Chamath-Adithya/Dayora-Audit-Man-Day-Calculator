@@ -138,6 +138,21 @@ export function HistoryManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Error Message */}
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-destructive">{error}</div>
+              <Button onClick={loadCalculations} variant="outline" size="sm">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Retry
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -177,8 +192,16 @@ export function HistoryManagement() {
       {/* Filters and Search */}
       <Card>
         <CardHeader>
-          <CardTitle>Search & Filter</CardTitle>
-          <CardDescription>Find specific calculations using the filters below</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Search & Filter</CardTitle>
+              <CardDescription>Find specific calculations using the filters below</CardDescription>
+            </div>
+            <Button onClick={loadCalculations} variant="outline" size="sm" disabled={loading}>
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
