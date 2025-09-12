@@ -261,7 +261,12 @@ export function HistoryManagement() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {filteredCalculations.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <RefreshCw className="mx-auto h-12 w-12 mb-4 animate-spin text-muted-foreground" />
+              <p>Loading calculations...</p>
+            </div>
+          ) : filteredCalculations.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               {calculations.length === 0 ? (
                 <div>
