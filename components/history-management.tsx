@@ -17,11 +17,30 @@ export function HistoryManagement() {
   const [searchTerm, setSearchTerm] = useState("")
   const [standardFilter, setStandardFilter] = useState("all")
   const [auditTypeFilter, setAuditTypeFilter] = useState("all")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const loadCalculations = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await apiClient.getCalculations()
+      setCalculations(data)
+      setFilteredCalculations(data)
+    } catch (err) {
+      console.error("Failed to load calculations:", err)
+      setError("Failed to load calculations. Please try again.")
+      // Fallback to localStorage
+      const savedCalculations = JSON.parse(localStorage.getItem("savedCalculations") || "[]")
+      setCalculations(savedCalculations)
+      setFilteredCalculations(savedCalculations)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const savedCalculations = JSON.parse(localStorage.getItem("savedCalculations") || "[]")
-    setCalculations(savedCalculations)
-    setFilteredCalculations(savedCalculations)
+    loadCalculations()
   }, [])
 
   useEffect(() => {
