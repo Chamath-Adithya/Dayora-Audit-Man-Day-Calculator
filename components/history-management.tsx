@@ -7,22 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Trash2, Eye, Download, Calendar } from "lucide-react"
+import { Search, Trash2, Eye, Download, Calendar, RefreshCw } from "lucide-react"
 import { format } from "date-fns"
-
-interface SavedCalculation {
-  id: string
-  date: string
-  companyName: string
-  scope: string
-  standard: string
-  auditType: string
-  category: string
-  employees: number
-  sites: number
-  riskLevel: string
-  result: number
-}
+import { apiClient, type SavedCalculation } from "@/lib/api-client"
 
 export function HistoryManagement() {
   const [calculations, setCalculations] = useState<SavedCalculation[]>([])
@@ -30,11 +17,30 @@ export function HistoryManagement() {
   const [searchTerm, setSearchTerm] = useState("")
   const [standardFilter, setStandardFilter] = useState("all")
   const [auditTypeFilter, setAuditTypeFilter] = useState("all")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const loadCalculations = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await apiClient.getCalculations()
+      setCalculations(data)
+      setFilteredCalculations(data)
+    } catch (err) {
+      console.error("Failed to load calculations:", err)
+      setError("Failed to load calculations. Please try again.")
+      // Fallback to localStorage
+      const savedCalculations = JSON.parse(localStorage.getItem("savedCalculations") || "[]")
+      setCalculations(savedCalculations)
+      setFilteredCalculations(savedCalculations)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const savedCalculations = JSON.parse(localStorage.getItem("savedCalculations") || "[]")
-    setCalculations(savedCalculations)
-    setFilteredCalculations(savedCalculations)
+    loadCalculations()
   }, [])
 
   useEffect(() => {
@@ -62,11 +68,15 @@ export function HistoryManagement() {
     setFilteredCalculations(filtered)
   }, [calculations, searchTerm, standardFilter, auditTypeFilter])
 
-  const handleDeleteCalculation = (id: string) => {
+  const handleDeleteCalculation = async (id: string) => {
     if (confirm("Are you sure you want to delete this calculation?")) {
-      const updatedCalculations = calculations.filter((calc) => calc.id !== id)
-      setCalculations(updatedCalculations)
-      localStorage.setItem("savedCalculations", JSON.stringify(updatedCalculations))
+      try {
+        await apiClient.deleteCalculation(id)
+        await loadCalculations() // Refresh the list
+      } catch (err) {
+        console.error("Failed to delete calculation:", err)
+        alert("Failed to delete calculation. Please try again.")
+      }
     }
   }
 
@@ -80,61 +90,36 @@ export function HistoryManagement() {
       category: calculation.category,
       employees: calculation.employees,
       sites: calculation.sites,
-      haccpStudies: 0, // Default value
+      haccpStudies: calculation.haccpStudies || 0,
       riskLevel: calculation.riskLevel,
-      integratedStandards: [], // Default value
+      integratedStandards: calculation.integratedStandards || [],
     }
     localStorage.setItem("calculationData", JSON.stringify(calculationData))
     window.open("/results", "_blank")
   }
 
-  const handleExportHistory = () => {
-    // Create CSV content
-    const headers = [
-      "Date",
-      "Company",
-      "Scope",
-      "Standard",
-      "Audit Type",
-      "Category",
-      "Employees",
-      "Sites",
-      "Risk Level",
-      "Result (Man-Days)",
-    ]
-    const csvContent = [
-      headers.join(","),
-      ...filteredCalculations.map((calc) =>
-        [
-          format(new Date(calc.date), "yyyy-MM-dd"),
-          `"${calc.companyName}"`,
-          `"${calc.scope}"`,
-          calc.standard,
-          calc.auditType,
-          calc.category,
-          calc.employees,
-          calc.sites,
-          calc.riskLevel,
-          calc.result,
-        ].join(","),
-      ),
-    ].join("\n")
-
-    // Create and download file
-    const blob = new Blob([csvContent], { type: "text/csv" })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `audit-calculations-${format(new Date(), "yyyy-MM-dd")}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
+  const handleExportHistory = async () => {
+    try {
+      await apiClient.exportCalculations({
+        standard: standardFilter !== "all" ? standardFilter : undefined,
+        auditType: auditTypeFilter !== "all" ? auditTypeFilter : undefined,
+        searchTerm: searchTerm || undefined
+      })
+    } catch (err) {
+      console.error("Failed to export calculations:", err)
+      alert("Failed to export calculations. Please try again.")
+    }
   }
 
-  const clearAllHistory = () => {
+  const clearAllHistory = async () => {
     if (confirm("Are you sure you want to clear all calculation history? This action cannot be undone.")) {
-      setCalculations([])
-      setFilteredCalculations([])
-      localStorage.removeItem("savedCalculations")
+      try {
+        await apiClient.deleteAllCalculations()
+        await loadCalculations() // Refresh the list
+      } catch (err) {
+        console.error("Failed to clear history:", err)
+        alert("Failed to clear history. Please try again.")
+      }
     }
   }
 
@@ -153,6 +138,21 @@ export function HistoryManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Error Message */}
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-destructive">{error}</div>
+              <Button onClick={loadCalculations} variant="outline" size="sm">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Retry
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -192,8 +192,16 @@ export function HistoryManagement() {
       {/* Filters and Search */}
       <Card>
         <CardHeader>
-          <CardTitle>Search & Filter</CardTitle>
-          <CardDescription>Find specific calculations using the filters below</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Search & Filter</CardTitle>
+              <CardDescription>Find specific calculations using the filters below</CardDescription>
+            </div>
+            <Button onClick={loadCalculations} variant="outline" size="sm" disabled={loading}>
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -253,7 +261,12 @@ export function HistoryManagement() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {filteredCalculations.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <RefreshCw className="mx-auto h-12 w-12 mb-4 animate-spin text-muted-foreground" />
+              <p>Loading calculations...</p>
+            </div>
+          ) : filteredCalculations.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               {calculations.length === 0 ? (
                 <div>

@@ -35,18 +35,20 @@ export function ResultsDisplay() {
     }
   }, [])
 
-  const handleSaveCalculation = () => {
+  const handleSaveCalculation = async () => {
     if (calculationData && result) {
-      const savedCalculations = JSON.parse(localStorage.getItem("savedCalculations") || "[]")
-      const newCalculation = {
-        id: Date.now().toString(),
-        date: new Date().toISOString(),
-        ...calculationData,
-        result: result.totalManDays,
+      try {
+        const { apiClient } = await import("@/lib/api-client")
+        await apiClient.saveCalculation({
+          ...calculationData,
+          result: result.totalManDays,
+          breakdown: result.breakdown
+        })
+        alert("Calculation saved to history!")
+      } catch (error) {
+        console.error("Failed to save calculation:", error)
+        alert("Failed to save calculation. Please try again.")
       }
-      savedCalculations.push(newCalculation)
-      localStorage.setItem("savedCalculations", JSON.stringify(savedCalculations))
-      alert("Calculation saved to history!")
     }
   }
 
