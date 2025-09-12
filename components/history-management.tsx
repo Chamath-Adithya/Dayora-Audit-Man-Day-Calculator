@@ -68,11 +68,15 @@ export function HistoryManagement() {
     setFilteredCalculations(filtered)
   }, [calculations, searchTerm, standardFilter, auditTypeFilter])
 
-  const handleDeleteCalculation = (id: string) => {
+  const handleDeleteCalculation = async (id: string) => {
     if (confirm("Are you sure you want to delete this calculation?")) {
-      const updatedCalculations = calculations.filter((calc) => calc.id !== id)
-      setCalculations(updatedCalculations)
-      localStorage.setItem("savedCalculations", JSON.stringify(updatedCalculations))
+      try {
+        await apiClient.deleteCalculation(id)
+        await loadCalculations() // Refresh the list
+      } catch (err) {
+        console.error("Failed to delete calculation:", err)
+        alert("Failed to delete calculation. Please try again.")
+      }
     }
   }
 
@@ -86,61 +90,36 @@ export function HistoryManagement() {
       category: calculation.category,
       employees: calculation.employees,
       sites: calculation.sites,
-      haccpStudies: 0, // Default value
+      haccpStudies: calculation.haccpStudies || 0,
       riskLevel: calculation.riskLevel,
-      integratedStandards: [], // Default value
+      integratedStandards: calculation.integratedStandards || [],
     }
     localStorage.setItem("calculationData", JSON.stringify(calculationData))
     window.open("/results", "_blank")
   }
 
-  const handleExportHistory = () => {
-    // Create CSV content
-    const headers = [
-      "Date",
-      "Company",
-      "Scope",
-      "Standard",
-      "Audit Type",
-      "Category",
-      "Employees",
-      "Sites",
-      "Risk Level",
-      "Result (Man-Days)",
-    ]
-    const csvContent = [
-      headers.join(","),
-      ...filteredCalculations.map((calc) =>
-        [
-          format(new Date(calc.date), "yyyy-MM-dd"),
-          `"${calc.companyName}"`,
-          `"${calc.scope}"`,
-          calc.standard,
-          calc.auditType,
-          calc.category,
-          calc.employees,
-          calc.sites,
-          calc.riskLevel,
-          calc.result,
-        ].join(","),
-      ),
-    ].join("\n")
-
-    // Create and download file
-    const blob = new Blob([csvContent], { type: "text/csv" })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `audit-calculations-${format(new Date(), "yyyy-MM-dd")}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
+  const handleExportHistory = async () => {
+    try {
+      await apiClient.exportCalculations({
+        standard: standardFilter !== "all" ? standardFilter : undefined,
+        auditType: auditTypeFilter !== "all" ? auditTypeFilter : undefined,
+        searchTerm: searchTerm || undefined
+      })
+    } catch (err) {
+      console.error("Failed to export calculations:", err)
+      alert("Failed to export calculations. Please try again.")
+    }
   }
 
-  const clearAllHistory = () => {
+  const clearAllHistory = async () => {
     if (confirm("Are you sure you want to clear all calculation history? This action cannot be undone.")) {
-      setCalculations([])
-      setFilteredCalculations([])
-      localStorage.removeItem("savedCalculations")
+      try {
+        await apiClient.deleteAllCalculations()
+        await loadCalculations() // Refresh the list
+      } catch (err) {
+        console.error("Failed to clear history:", err)
+        alert("Failed to clear history. Please try again.")
+      }
     }
   }
 
