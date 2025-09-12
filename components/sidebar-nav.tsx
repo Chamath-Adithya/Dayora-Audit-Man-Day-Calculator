@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Calculator, Home, History, Settings, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ThemeToggle } from "./theme-toggle"
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
