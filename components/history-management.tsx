@@ -7,22 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Trash2, Eye, Download, Calendar } from "lucide-react"
+import { Search, Trash2, Eye, Download, Calendar, RefreshCw } from "lucide-react"
 import { format } from "date-fns"
-
-interface SavedCalculation {
-  id: string
-  date: string
-  companyName: string
-  scope: string
-  standard: string
-  auditType: string
-  category: string
-  employees: number
-  sites: number
-  riskLevel: string
-  result: number
-}
+import { apiClient, type SavedCalculation } from "@/lib/api-client"
 
 export function HistoryManagement() {
   const [calculations, setCalculations] = useState<SavedCalculation[]>([])
