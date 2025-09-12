@@ -1,0 +1,25 @@
+[
+  {
+    "id": "1757678602866",
+    "date": "2025-09-12T12:03:22.866Z",
+    "companyName": "Tech Solutions Ltd",
+    "scope": "Software Development and IT Services",
+    "standard": "QMS",
+    "auditType": "initial",
+    "category": "BI",
+    "employees": 150,
+    "sites": 2,
+    "haccpStudies": 0,
+    "riskLevel": "medium",
+    "integratedStandards": [],
+    "result": 8,
+    "breakdown": {
+      "baseManDays": 4,
+      "employeeAdjustment": 3,
+      "haccpAdjustment": 0,
+      "riskAdjustment": 0,
+      "multiSiteAdjustment": 0.5,
+      "integratedSystemAdjustment": 0
+    }
+  }
+]
