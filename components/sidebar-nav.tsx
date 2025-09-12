@@ -19,8 +19,9 @@ export function SidebarNav() {
 
   return (
     <div className="flex h-full w-64 flex-col bg-sidebar border-r border-sidebar-border">
-      <div className="flex h-16 items-center px-6 border-b border-sidebar-border">
+      <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border">
         <h1 className="text-lg font-semibold text-sidebar-foreground">Audit Calculator</h1>
+        <ThemeToggle />
       </div>
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
