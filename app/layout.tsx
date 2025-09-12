@@ -20,9 +20,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <Suspense fallback={null}>{children}</Suspense>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <Suspense fallback={null}>{children}</Suspense>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>
