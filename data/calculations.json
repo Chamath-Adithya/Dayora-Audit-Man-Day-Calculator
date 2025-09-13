@@ -21,5 +21,30 @@
       "multiSiteAdjustment": 0.5,
       "integratedSystemAdjustment": 0
     }
+  },
+  {
+    "id": "1757762759278",
+    "date": "2025-09-13T11:25:59.278Z",
+    "companyName": "Solveo",
+    "scope": "Food",
+    "standard": "FSMS",
+    "auditType": "surveillance",
+    "category": "BI",
+    "employees": 5,
+    "sites": 1,
+    "haccpStudies": 0,
+    "riskLevel": "low",
+    "integratedStandards": [
+      "ISO9001"
+    ],
+    "result": 4,
+    "breakdown": {
+      "baseManDays": 5,
+      "employeeAdjustment": 0,
+      "haccpAdjustment": 0,
+      "riskAdjustment": -0.9999999999999998,
+      "multiSiteAdjustment": 0,
+      "integratedSystemAdjustment": -0.5
+    }
   }
 ]
