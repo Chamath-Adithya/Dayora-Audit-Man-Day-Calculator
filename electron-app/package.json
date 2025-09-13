@@ -1,0 +1,37 @@
+{
+  "name": "electron-app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --windows --x64",
+    "dist:linux": "electron-builder --linux AppImage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "repository": "https://github.com/your-username/your-repo",
+  "devDependencies": {
+    "electron": "^38.1.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.yourcompany.auditmandaycalculator",
+    "productName": "Audit Man-Day Calculator",
+    "files": [
+      "main.js",
+      "package.json",
+      "../React-audit-man-day-calculator/out/**"
+    ],
+    "directories": {
+      "output": "build"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  }
+}
+
