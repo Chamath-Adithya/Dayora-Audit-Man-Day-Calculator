@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Trash2, Eye, Download, Calendar, RefreshCw } from "lucide-react"
+import { Search, Trash2, Eye, Download, Calendar, RefreshCw, FileText } from "lucide-react"
 import { format } from "date-fns"
 import { apiClient, type SavedCalculation } from "@/lib/api-client"
 
@@ -129,6 +129,87 @@ export function HistoryManagement() {
     } catch (err) {
       console.error("Failed to export calculations:", err)
       alert("Failed to export calculations. Please try again.")
+    }
+  }
+
+  const handleExportHistoryPDF = async () => {
+    if (filteredCalculations.length === 0) {
+      alert("No calculations to export.")
+      return
+    }
+
+    try {
+      const { jsPDF } = await import('jspdf')
+      
+      // Create a new PDF document
+      const pdf = new jsPDF('l', 'mm', 'a4') // Landscape for better table layout
+      const pageWidth = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+      
+      // Add title
+      pdf.setFontSize(20)
+      pdf.text('Audit Calculation History Report', pageWidth / 2, 20, { align: 'center' })
+      
+      // Add summary stats
+      pdf.setFontSize(12)
+      pdf.text(`Total Calculations: ${filteredCalculations.length}`, 20, 35)
+      pdf.text(`Total Man-Days: ${filteredCalculations.reduce((sum, calc) => sum + calc.result, 0)}`, 20, 45)
+      pdf.text(`Unique Companies: ${new Set(filteredCalculations.map(calc => calc.companyName)).size}`, 20, 55)
+      pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 65)
+      
+      // Add table headers
+      const tableHeaders = ['Date', 'Company', 'Standard', 'Type', 'Category', 'Employees', 'Risk', 'Result']
+      const colWidths = [25, 40, 20, 25, 15, 20, 15, 20]
+      let xPos = 20
+      
+      pdf.setFontSize(10)
+      pdf.setFillColor(240, 240, 240)
+      
+      // Draw header row
+      tableHeaders.forEach((header, index) => {
+        pdf.rect(xPos, 80, colWidths[index], 8, 'F')
+        pdf.text(header, xPos + 2, 85)
+        xPos += colWidths[index]
+      })
+      
+      // Draw data rows
+      let yPos = 88
+      filteredCalculations.forEach((calc, rowIndex) => {
+        if (yPos > pageHeight - 30) {
+          pdf.addPage()
+          yPos = 20
+        }
+        
+        xPos = 20
+        const rowData = [
+          new Date(calc.date).toLocaleDateString(),
+          calc.companyName.length > 25 ? calc.companyName.substring(0, 22) + '...' : calc.companyName,
+          calc.standard,
+          calc.auditType,
+          calc.category,
+          calc.employees.toString(),
+          calc.riskLevel,
+          calc.result.toString()
+        ]
+        
+        rowData.forEach((data, index) => {
+          pdf.rect(xPos, yPos, colWidths[index], 6)
+          pdf.text(data, xPos + 2, yPos + 4)
+          xPos += colWidths[index]
+        })
+        
+        yPos += 6
+      })
+      
+      // Add footer
+      pdf.setFontSize(8)
+      pdf.text('Dayora - Audit Man-Day Calculator', pageWidth - 20, pageHeight - 10, { align: 'right' })
+      
+      // Save the PDF
+      pdf.save(`audit-history-${new Date().toISOString().split('T')[0]}.pdf`)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      alert('Failed to generate PDF. Please try again.')
     }
   }
 
@@ -270,6 +351,10 @@ export function HistoryManagement() {
               <Button onClick={handleExportHistory} variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
                 Export CSV
+              </Button>
+              <Button onClick={handleExportHistoryPDF} variant="outline" size="sm">
+                <FileText className="mr-2 h-4 w-4" />
+                Export PDF
               </Button>
               <Button onClick={clearAllHistory} variant="outline" size="sm">
                 <Trash2 className="mr-2 h-4 w-4" />

@@ -69,19 +69,154 @@ export function ResultsDisplay() {
         alert("Calculation saved to history!")
       } catch (error) {
         console.error("Failed to save calculation:", error)
-        alert(`Failed to save calculation: ${error.message || 'Unknown error'}`)
+        alert(`Failed to save calculation: ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
     }
   }
 
-  const handleExportPDF = () => {
-    // Placeholder for PDF export functionality
-    alert("PDF export functionality would be implemented here")
+  const handleExportPDF = async () => {
+    if (!calculationData || !result) return
+
+    try {
+      const { jsPDF } = await import('jspdf')
+      const { default: html2canvas } = await import('html2canvas')
+      
+      // Create a new PDF document
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const pageWidth = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+      
+      // Add title
+      pdf.setFontSize(20)
+      pdf.text('Audit Man-Day Calculation Report', pageWidth / 2, 20, { align: 'center' })
+      
+      // Add company information
+      pdf.setFontSize(12)
+      pdf.text(`Company: ${calculationData.companyName}`, 20, 40)
+      pdf.text(`Scope: ${calculationData.scope}`, 20, 50)
+      pdf.text(`Standard: ${calculationData.standard}`, 20, 60)
+      pdf.text(`Audit Type: ${calculationData.auditType}`, 20, 70)
+      pdf.text(`Category: ${calculationData.category}`, 20, 80)
+      pdf.text(`Employees: ${calculationData.employees}`, 20, 90)
+      pdf.text(`Sites: ${calculationData.sites}`, 20, 100)
+      pdf.text(`Risk Level: ${calculationData.riskLevel}`, 20, 110)
+      
+      // Add calculation results
+      pdf.setFontSize(16)
+      pdf.text('Calculation Results', 20, 130)
+      
+      pdf.setFontSize(12)
+      pdf.text(`Total Man-Days: ${result.totalManDays}`, 20, 145)
+      
+      // Add breakdown
+      pdf.text('Breakdown:', 20, 160)
+      pdf.text(`• Base Man-Days: ${result.breakdown.baseManDays}`, 30, 170)
+      pdf.text(`• Employee Adjustment: ${result.breakdown.employeeAdjustment}`, 30, 180)
+      pdf.text(`• Risk Adjustment: ${result.breakdown.riskAdjustment}`, 30, 190)
+      pdf.text(`• Multi-Site Adjustment: ${result.breakdown.multiSiteAdjustment}`, 30, 200)
+      pdf.text(`• Integrated System Adjustment: ${result.breakdown.integratedSystemAdjustment}`, 30, 210)
+      
+      // Add stage distribution if available
+      if (result.stageDistribution) {
+        pdf.text('Stage Distribution:', 20, 225)
+        pdf.text(`• Stage 1: ${result.stageDistribution.stage1} days`, 30, 235)
+        pdf.text(`• Stage 2: ${result.stageDistribution.stage2} days`, 30, 245)
+      }
+      
+      // Add surveillance and recertification info
+      if (result.surveillanceManDays) {
+        pdf.text(`Surveillance: ${result.surveillanceManDays} days`, 20, 260)
+      }
+      if (result.recertificationManDays) {
+        pdf.text(`Recertification: ${result.recertificationManDays} days`, 20, 270)
+      }
+      
+      // Add footer
+      pdf.setFontSize(10)
+      pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, pageHeight - 20)
+      pdf.text('Dayora - Audit Man-Day Calculator', pageWidth - 20, pageHeight - 20, { align: 'right' })
+      
+      // Save the PDF
+      pdf.save(`audit-calculation-${calculationData.companyName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      alert('Failed to generate PDF. Please try again.')
+    }
   }
 
-  const handleExportExcel = () => {
-    // Placeholder for Excel export functionality
-    alert("Excel export functionality would be implemented here")
+  const handleExportExcel = async () => {
+    if (!calculationData || !result) return
+
+    try {
+      const { utils, writeFile } = await import('xlsx')
+      
+      // Prepare data for Excel
+      const excelData = [
+        ['Audit Man-Day Calculation Report'],
+        [''],
+        ['Company Information'],
+        ['Company Name', calculationData.companyName],
+        ['Scope', calculationData.scope],
+        ['Standard', calculationData.standard],
+        ['Audit Type', calculationData.auditType],
+        ['Category', calculationData.category],
+        ['Employees', calculationData.employees],
+        ['Sites', calculationData.sites],
+        ['Risk Level', calculationData.riskLevel],
+        ['HACCP Studies', calculationData.haccpStudies || 0],
+        ['Integrated Standards', (calculationData.integratedStandards || []).join(', ')],
+        [''],
+        ['Calculation Results'],
+        ['Total Man-Days', result.totalManDays],
+        [''],
+        ['Breakdown'],
+        ['Base Man-Days', result.breakdown.baseManDays],
+        ['Employee Adjustment', result.breakdown.employeeAdjustment],
+        ['HACCP Adjustment', result.breakdown.haccpAdjustment],
+        ['Risk Adjustment', result.breakdown.riskAdjustment],
+        ['Multi-Site Adjustment', result.breakdown.multiSiteAdjustment],
+        ['Integrated System Adjustment', result.breakdown.integratedSystemAdjustment],
+        [''],
+        ['Additional Information'],
+        ['Employee Range', result.details.employeeRange],
+        ['Category Description', result.details.categoryDescription],
+        ['Risk Multiplier', result.details.riskMultiplier],
+        ['Integrated System Reduction', result.details.integratedSystemReduction]
+      ]
+      
+      // Add stage distribution if available
+      if (result.stageDistribution) {
+        excelData.push([''])
+        excelData.push(['Stage Distribution'])
+        excelData.push(['Stage 1', result.stageDistribution.stage1])
+        excelData.push(['Stage 2', result.stageDistribution.stage2])
+      }
+      
+      // Add surveillance and recertification info
+      if (result.surveillanceManDays) {
+        excelData.push([''])
+        excelData.push(['Surveillance Man-Days', result.surveillanceManDays])
+      }
+      if (result.recertificationManDays) {
+        excelData.push(['Recertification Man-Days', result.recertificationManDays])
+      }
+      
+      // Add metadata
+      excelData.push([''])
+      excelData.push(['Generated on', new Date().toLocaleDateString()])
+      excelData.push(['Generated by', 'Dayora - Audit Man-Day Calculator'])
+      
+      // Create workbook and worksheet
+      const ws = utils.aoa_to_sheet(excelData)
+      const wb = utils.book_new()
+      utils.book_append_sheet(wb, ws, 'Audit Calculation')
+      
+      // Save the Excel file
+      writeFile(wb, `audit-calculation-${calculationData.companyName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.xlsx`)
+    } catch (error) {
+      console.error('Error generating Excel file:', error)
+      alert('Failed to generate Excel file. Please try again.')
+    }
   }
 
   if (!calculationData || !result) {
