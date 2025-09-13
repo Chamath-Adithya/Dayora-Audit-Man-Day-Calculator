@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/electron-app/node_modules
+/electron-app/build
 
 # next.js
 /.next/
