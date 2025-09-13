@@ -406,41 +406,68 @@ export function HistoryManagement() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Company</TableHead>
-                    <TableHead>Scope</TableHead>
-                    <TableHead>Standard</TableHead>
-                    <TableHead>Audit Type</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Employees</TableHead>
-                    <TableHead>Risk</TableHead>
-                    <TableHead>Result</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCalculations.map((calculation) => (
-                    <TableRow key={calculation.id}>
-                      <TableCell className="text-sm">{format(new Date(calculation.date), "MMM dd, yyyy")}</TableCell>
-                      <TableCell className="font-medium">{calculation.companyName}</TableCell>
-                      <TableCell className="max-w-32 truncate" title={calculation.scope}>
-                        {calculation.scope}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{calculation.standard}</Badge>
-                      </TableCell>
-                      <TableCell className="capitalize">{calculation.auditType}</TableCell>
-                      <TableCell>{calculation.category}</TableCell>
-                      <TableCell>{calculation.employees}</TableCell>
-                      <TableCell>
-                        <Badge variant={getRiskBadgeVariant(calculation.riskLevel)}>{calculation.riskLevel}</Badge>
-                      </TableCell>
-                      <TableCell className="font-semibold">{calculation.result} days</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
+              {/* Desktop Table */}
+              <div className="hidden lg:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Company</TableHead>
+                      <TableHead>Scope</TableHead>
+                      <TableHead>Standard</TableHead>
+                      <TableHead>Audit Type</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Employees</TableHead>
+                      <TableHead>Risk</TableHead>
+                      <TableHead>Result</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredCalculations.map((calculation) => (
+                      <TableRow key={calculation.id}>
+                        <TableCell className="text-sm">{format(new Date(calculation.date), "MMM dd, yyyy")}</TableCell>
+                        <TableCell className="font-medium">{calculation.companyName}</TableCell>
+                        <TableCell className="max-w-32 truncate" title={calculation.scope}>
+                          {calculation.scope}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{calculation.standard}</Badge>
+                        </TableCell>
+                        <TableCell className="capitalize">{calculation.auditType}</TableCell>
+                        <TableCell>{calculation.category}</TableCell>
+                        <TableCell>{calculation.employees}</TableCell>
+                        <TableCell>
+                          <Badge variant={getRiskBadgeVariant(calculation.riskLevel)}>{calculation.riskLevel}</Badge>
+                        </TableCell>
+                        <TableCell className="font-semibold">{calculation.result} days</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation)}>
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleDeleteCalculation(calculation.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Cards */}
+              <div className="lg:hidden space-y-4">
+                {filteredCalculations.map((calculation) => (
+                  <Card key={calculation.id} className="p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
+                          <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                        </div>
+                        <div className="flex gap-2 ml-2">
                           <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation)}>
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -448,11 +475,40 @@ export function HistoryManagement() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Date:</span>
+                          <p className="font-medium">{format(new Date(calculation.date), "MMM dd, yyyy")}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Result:</span>
+                          <p className="font-semibold text-primary">{calculation.result} days</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Standard:</span>
+                          <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Risk:</span>
+                          <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
+                            {calculation.riskLevel}
+                          </Badge>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Type:</span>
+                          <p className="capitalize">{calculation.auditType}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Category:</span>
+                          <p>{calculation.category}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>
