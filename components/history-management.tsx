@@ -266,13 +266,13 @@ export function HistoryManagement() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-accent">{calculations.length}</div>
+            <div className="text-2xl font-bold text-primary">{calculations.length}</div>
             <div className="text-sm text-muted-foreground">Total Calculations</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-accent">
+            <div className="text-2xl font-bold text-primary">
               {calculations.reduce((sum, calc) => sum + calc.result, 0)}
             </div>
             <div className="text-sm text-muted-foreground">Total Man-Days</div>
@@ -280,7 +280,7 @@ export function HistoryManagement() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-accent">
+            <div className="text-2xl font-bold text-primary">
               {new Set(calculations.map((calc) => calc.companyName)).size}
             </div>
             <div className="text-sm text-muted-foreground">Unique Companies</div>
@@ -288,7 +288,7 @@ export function HistoryManagement() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-accent">
+            <div className="text-2xl font-bold text-primary">
               {calculations.length > 0
                 ? Math.round(calculations.reduce((sum, calc) => sum + calc.result, 0) / calculations.length)
                 : 0}

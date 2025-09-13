@@ -32,7 +32,7 @@ export default function HomePage() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calculator className="h-5 w-5 text-accent" />
+                <Calculator className="h-5 w-5 text-primary" />
                 Smart Calculations
               </CardTitle>
               <CardDescription>
@@ -45,7 +45,7 @@ export default function HomePage() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-accent" />
+                <FileText className="h-5 w-5 text-primary" />
                 Detailed Reports
               </CardTitle>
               <CardDescription>
@@ -58,7 +58,7 @@ export default function HomePage() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5 text-accent" />
+                <History className="h-5 w-5 text-primary" />
                 History Tracking
               </CardTitle>
               <CardDescription>

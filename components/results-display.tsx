@@ -244,7 +244,7 @@ export function ResultsDisplay() {
               <CardDescription>{calculationData.companyName}</CardDescription>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-accent">{result.totalManDays}</div>
+              <div className="text-3xl font-bold text-primary">{result.totalManDays}</div>
               <div className="text-sm text-muted-foreground">Total Man-Days</div>
             </div>
           </div>
@@ -337,11 +337,11 @@ export function ResultsDisplay() {
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-muted rounded-lg">
-                <div className="text-2xl font-bold text-accent">{result.stageDistribution.stage1}</div>
+                <div className="text-2xl font-bold text-primary">{result.stageDistribution.stage1}</div>
                 <div className="text-sm text-muted-foreground">Stage 1 Audit</div>
               </div>
               <div className="text-center p-4 bg-muted rounded-lg">
-                <div className="text-2xl font-bold text-accent">{result.stageDistribution.stage2}</div>
+                <div className="text-2xl font-bold text-primary">{result.stageDistribution.stage2}</div>
                 <div className="text-sm text-muted-foreground">Stage 2 Audit</div>
               </div>
             </div>
