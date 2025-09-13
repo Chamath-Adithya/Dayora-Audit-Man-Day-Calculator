@@ -313,52 +313,65 @@ export function HistoryManagement() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search company or scope..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+          <div className="space-y-4">
+            {/* Search and Filter Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search company or scope..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={standardFilter} onValueChange={setStandardFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Standards" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Standards</SelectItem>
+                  <SelectItem value="QMS">QMS</SelectItem>
+                  <SelectItem value="EMS">EMS</SelectItem>
+                  <SelectItem value="EnMS">EnMS</SelectItem>
+                  <SelectItem value="FSMS">FSMS</SelectItem>
+                  <SelectItem value="Cosmetics">Cosmetics</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={auditTypeFilter} onValueChange={setAuditTypeFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Audit Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Audit Types</SelectItem>
+                  <SelectItem value="initial">Initial Certification</SelectItem>
+                  <SelectItem value="surveillance">Surveillance</SelectItem>
+                  <SelectItem value="recertification">Recertification</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={standardFilter} onValueChange={setStandardFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Standards" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Standards</SelectItem>
-                <SelectItem value="QMS">QMS</SelectItem>
-                <SelectItem value="EMS">EMS</SelectItem>
-                <SelectItem value="EnMS">EnMS</SelectItem>
-                <SelectItem value="FSMS">FSMS</SelectItem>
-                <SelectItem value="Cosmetics">Cosmetics</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={auditTypeFilter} onValueChange={setAuditTypeFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Audit Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Audit Types</SelectItem>
-                <SelectItem value="initial">Initial Certification</SelectItem>
-                <SelectItem value="surveillance">Surveillance</SelectItem>
-                <SelectItem value="recertification">Recertification</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="flex gap-2">
-              <Button onClick={handleExportHistory} variant="outline" size="sm">
+            
+            {/* Action Buttons Row */}
+            <div className="flex flex-wrap gap-2 justify-start sm:justify-start">
+              <Button onClick={handleExportHistory} variant="outline" size="sm" className="flex-shrink-0">
                 <Download className="mr-2 h-4 w-4" />
-                Export CSV
+                <span className="hidden sm:inline">Export CSV</span>
+                <span className="sm:hidden">CSV</span>
               </Button>
-              <Button onClick={handleExportHistoryPDF} variant="outline" size="sm">
+              <Button onClick={handleExportHistoryPDF} variant="outline" size="sm" className="flex-shrink-0">
                 <FileText className="mr-2 h-4 w-4" />
-                Export PDF
+                <span className="hidden sm:inline">Export PDF</span>
+                <span className="sm:hidden">PDF</span>
               </Button>
-              <Button onClick={clearAllHistory} variant="outline" size="sm">
+              <Button 
+                onClick={clearAllHistory} 
+                variant="outline" 
+                size="sm" 
+                className="text-destructive hover:text-destructive hover:bg-destructive hover:text-destructive-foreground flex-shrink-0"
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Clear All
+                <span className="hidden sm:inline">Clear All</span>
+                <span className="sm:hidden">Clear</span>
               </Button>
             </div>
           </div>
