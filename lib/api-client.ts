@@ -36,13 +36,19 @@ class ApiClient {
     }
 
     try {
+      console.log(`Making API request to: ${url}`, { config, body: options.body })
       const response = await fetch(url, config)
       
+      console.log(`API response status: ${response.status}`)
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text()
+        console.error(`HTTP error response: ${errorText}`)
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
       }
       
       const data = await response.json()
+      console.log(`API response data:`, data)
       
       if (!data.success) {
         throw new Error(data.error || 'API request failed')

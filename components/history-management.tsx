@@ -24,16 +24,28 @@ export function HistoryManagement() {
     try {
       setLoading(true)
       setError(null)
-      const data = await apiClient.getCalculations()
-      setCalculations(data)
-      setFilteredCalculations(data)
+      
+      // Try API first
+      try {
+        const data = await apiClient.getCalculations()
+        setCalculations(data)
+        setFilteredCalculations(data)
+        return
+      } catch (apiError) {
+        console.warn("API failed, trying localStorage:", apiError)
+      }
+      
+      // Fallback to localStorage
+      const savedCalculations = JSON.parse(localStorage.getItem("calculations") || "[]")
+      setCalculations(savedCalculations)
+      setFilteredCalculations(savedCalculations)
+      
+      if (savedCalculations.length === 0) {
+        setError("No calculations found. Try creating a new calculation first.")
+      }
     } catch (err) {
       console.error("Failed to load calculations:", err)
       setError("Failed to load calculations. Please try again.")
-      // Fallback to localStorage
-      const savedCalculations = JSON.parse(localStorage.getItem("savedCalculations") || "[]")
-      setCalculations(savedCalculations)
-      setFilteredCalculations(savedCalculations)
     } finally {
       setLoading(false)
     }
@@ -71,7 +83,16 @@ export function HistoryManagement() {
   const handleDeleteCalculation = async (id: string) => {
     if (confirm("Are you sure you want to delete this calculation?")) {
       try {
-        await apiClient.deleteCalculation(id)
+        // Try API first
+        try {
+          await apiClient.deleteCalculation(id)
+        } catch (apiError) {
+          console.warn("API delete failed, using localStorage:", apiError)
+          // Fallback to localStorage
+          const savedCalculations = JSON.parse(localStorage.getItem("calculations") || "[]")
+          const updatedCalculations = savedCalculations.filter((calc: any) => calc.id !== id)
+          localStorage.setItem("calculations", JSON.stringify(updatedCalculations))
+        }
         await loadCalculations() // Refresh the list
       } catch (err) {
         console.error("Failed to delete calculation:", err)
@@ -114,7 +135,14 @@ export function HistoryManagement() {
   const clearAllHistory = async () => {
     if (confirm("Are you sure you want to clear all calculation history? This action cannot be undone.")) {
       try {
-        await apiClient.deleteAllCalculations()
+        // Try API first
+        try {
+          await apiClient.deleteAllCalculations()
+        } catch (apiError) {
+          console.warn("API clear failed, using localStorage:", apiError)
+          // Fallback to localStorage
+          localStorage.setItem("calculations", "[]")
+        }
         await loadCalculations() // Refresh the list
       } catch (err) {
         console.error("Failed to clear history:", err)

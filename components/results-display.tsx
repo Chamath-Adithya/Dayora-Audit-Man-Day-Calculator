@@ -27,11 +27,31 @@ export function ResultsDisplay() {
   const [result, setResult] = useState<ReturnType<typeof calculateAuditManDays> | null>(null)
 
   useEffect(() => {
+    // Try to get data from URL parameters first, then localStorage as fallback
+    const urlParams = new URLSearchParams(window.location.search)
+    const dataParam = urlParams.get('data')
+    
+    if (dataParam) {
+      try {
+        const data = JSON.parse(decodeURIComponent(dataParam)) as CalculationData
+        setCalculationData(data)
+        setResult(calculateAuditManDays(data))
+        return
+      } catch (error) {
+        console.error('Error parsing URL data:', error)
+      }
+    }
+    
+    // Fallback to localStorage
     const storedData = localStorage.getItem("calculationData")
     if (storedData) {
-      const data = JSON.parse(storedData) as CalculationData
-      setCalculationData(data)
-      setResult(calculateAuditManDays(data))
+      try {
+        const data = JSON.parse(storedData) as CalculationData
+        setCalculationData(data)
+        setResult(calculateAuditManDays(data))
+      } catch (error) {
+        console.error('Error parsing localStorage data:', error)
+      }
     }
   }, [])
 

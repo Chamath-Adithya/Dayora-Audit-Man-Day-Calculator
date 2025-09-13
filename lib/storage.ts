@@ -1,6 +1,6 @@
-// Simple in-memory storage for Vercel deployment
-// Note: This will reset on each serverless function cold start
-// For production, consider using a database like Vercel KV, PlanetScale, or Supabase
+// Hybrid storage for Vercel deployment
+// Uses in-memory storage with localStorage fallback for persistence
+// Note: For production, consider using a database like Vercel KV, PlanetScale, or Supabase
 
 interface SavedCalculation {
   id: string
@@ -22,6 +22,28 @@ interface SavedCalculation {
 // In-memory storage (resets on cold start)
 let calculations: SavedCalculation[] = []
 
+// Load from localStorage on server start (if available)
+if (typeof window !== 'undefined') {
+  try {
+    const saved = localStorage.getItem('calculations')
+    if (saved) {
+      calculations = JSON.parse(saved)
+    }
+  } catch (error) {
+    console.error('Error loading calculations from localStorage:', error)
+  }
+}
+
+const saveToLocalStorage = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('calculations', JSON.stringify(calculations))
+    } catch (error) {
+      console.error('Error saving to localStorage:', error)
+    }
+  }
+}
+
 export const storage = {
   async getCalculations(): Promise<SavedCalculation[]> {
     return calculations
@@ -35,11 +57,21 @@ export const storage = {
     }
     
     calculations.push(newCalculation)
+    saveToLocalStorage()
     return newCalculation
   },
 
   async clearCalculations(): Promise<void> {
     calculations = []
+    saveToLocalStorage()
+  },
+
+  async deleteCalculation(id: string): Promise<void> {
+    const index = calculations.findIndex(calc => calc.id === id)
+    if (index !== -1) {
+      calculations.splice(index, 1)
+      saveToLocalStorage()
+    }
   },
 
   async getStats() {
