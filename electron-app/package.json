@@ -1,5 +1,5 @@
 {
-  "name": "electron-app",
+  "name": "dayora-electron",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
@@ -18,7 +18,7 @@
   },
   "build": {
     "appId": "com.yourcompany.auditmandaycalculator",
-    "productName": "Audit Man-Day Calculator",
+    "productName": "Dayora - Audit Man-Day Calculator",
     "files": [
       "main.js",
       "package.json",

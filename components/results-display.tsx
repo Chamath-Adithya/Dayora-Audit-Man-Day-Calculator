@@ -39,15 +39,17 @@ export function ResultsDisplay() {
     if (calculationData && result) {
       try {
         const { apiClient } = await import("@/lib/api-client")
-        await apiClient.saveCalculation({
+        const calculationToSave = {
           ...calculationData,
           result: result.totalManDays,
           breakdown: result.breakdown
-        })
+        }
+        console.log("Saving calculation:", calculationToSave)
+        await apiClient.saveCalculation(calculationToSave)
         alert("Calculation saved to history!")
       } catch (error) {
         console.error("Failed to save calculation:", error)
-        alert("Failed to save calculation. Please try again.")
+        alert(`Failed to save calculation: ${error.message || 'Unknown error'}`)
       }
     }
   }

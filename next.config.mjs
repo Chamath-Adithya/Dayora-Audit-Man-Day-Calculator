@@ -1,7 +1,7 @@
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
-  output: "export", // Enables static exports for Electron
+  // Removed static export for Vercel deployment
   eslint: {
     ignoreDuringBuilds: true,
   },

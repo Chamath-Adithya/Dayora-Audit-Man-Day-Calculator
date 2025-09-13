@@ -1,4 +1,4 @@
-# 🧮 Audit Man-Day Calculator
+# 🧮 Dayora - Audit Man-Day Calculator
 
 > **Professional audit planning made simple**  
 > Calculate audit man-days instantly based on international standards (IAF MD 5:2019 and ISO/TS 22003:2022)

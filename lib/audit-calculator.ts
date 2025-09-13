@@ -144,24 +144,14 @@ const RISK_MULTIPLIERS = {
 }
 
 export function calculateAuditManDays(data: CalculationData): CalculationResult {
-  // Load admin configuration
-  const savedConfig = localStorage.getItem("adminConfig")
-  let config = {
+  // Use default configuration (localStorage not available on server)
+  const config = {
     employeeRanges: EMPLOYEE_RANGES,
     baseManDays: BASE_MAN_DAYS,
     riskMultipliers: RISK_MULTIPLIERS,
     haccpMultiplier: 0.5,
     multiSiteMultiplier: 0.5,
     integratedSystemReduction: 0.1,
-  }
-
-  if (savedConfig) {
-    try {
-      const parsedConfig = JSON.parse(savedConfig)
-      config = { ...config, ...parsedConfig }
-    } catch (error) {
-      console.error("Error loading admin config:", error)
-    }
   }
 
   // Get base man-days using admin config

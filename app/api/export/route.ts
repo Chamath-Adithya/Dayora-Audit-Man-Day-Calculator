@@ -1,23 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
-
-const DATA_FILE = path.join(process.cwd(), 'data', 'calculations.json')
-
-async function readCalculations() {
-  try {
-    const data = await fs.readFile(DATA_FILE, 'utf8')
-    return JSON.parse(data)
-  } catch (error) {
-    return []
-  }
-}
+import { storage } from '@/lib/storage'
 
 // POST - Export calculations as CSV
 export async function POST(request: NextRequest) {
   try {
     const { filters } = await request.json()
-    let calculations = await readCalculations()
+    let calculations = await storage.getCalculations()
     
     // Apply filters if provided
     if (filters) {

@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Audit Man-Day Calculator",
+  title: "Dayora - Audit Man-Day Calculator",
   description:
     "Professional audit man-day calculator based on international standards (IAF MD 5:2019 and ISO/TS 22003:2022)",
   generator: "v0.app",
