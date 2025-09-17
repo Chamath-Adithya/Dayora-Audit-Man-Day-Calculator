@@ -11,7 +11,7 @@ export default function CalculatePage() {
             Enter the details below to calculate audit man-days based on international standards.
           </p>
         </div>
-        <CalculationForm />
+        <CalculationFormFixed />
       </div>
     </MainLayout>
   )
