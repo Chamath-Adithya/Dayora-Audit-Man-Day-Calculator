@@ -265,14 +265,14 @@ export default function CalculationFormFixed() {
 
             {/* Audit Type and Risk Level */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="auditType">Audit Type *</Label>
                 <Select
                   value={formData.auditType}
                   onValueChange={(value) => handleInputChange('auditType', value)}
                   required
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
                     <SelectValue placeholder="Select audit type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -285,14 +285,14 @@ export default function CalculationFormFixed() {
                 </Select>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="riskLevel">Risk Level *</Label>
                 <Select
                   value={formData.riskLevel}
                   onValueChange={(value) => handleInputChange('riskLevel', value)}
                   required
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
                     <SelectValue placeholder="Select risk level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -309,7 +309,7 @@ export default function CalculationFormFixed() {
 
             {/* Numerical Inputs */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="employees">Number of Employees *</Label>
                 <Input
                   id="employees"
@@ -318,11 +318,12 @@ export default function CalculationFormFixed() {
                   value={formData.employees}
                   onChange={(e) => handleInputChange('employees', parseInt(e.target.value) || 1)}
                   required
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                 />
                 <p className="text-xs text-muted-foreground">Employee bands adjust time stepwise.</p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="sites">Number of Sites *</Label>
                 <Input
                   id="sites"
@@ -331,11 +332,12 @@ export default function CalculationFormFixed() {
                   value={formData.sites}
                   onChange={(e) => handleInputChange('sites', parseInt(e.target.value) || 1)}
                   required
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                 />
                 <p className="text-xs text-muted-foreground">Additional sites add 0.5 days each.</p>
               </div>
 
-              <div className="space-y-2">
+              <div className={`space-y-2 form-field transition-all duration-300 ${formData.standard === 'FSMS' ? 'opacity-100' : 'opacity-50'}`}>
                 <Label htmlFor="haccpStudies">HACCP Studies</Label>
                 <Input
                   id="haccpStudies"
@@ -343,29 +345,35 @@ export default function CalculationFormFixed() {
                   min="0"
                   value={formData.haccpStudies}
                   onChange={(e) => handleInputChange('haccpStudies', parseInt(e.target.value) || 0)}
+                  disabled={formData.standard !== 'FSMS'}
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Only applicable for FSMS
+                  {formData.standard === 'FSMS' 
+                    ? 'Only applicable for FSMS' 
+                    : 'Available only when FSMS is selected'
+                  }
                 </p>
               </div>
             </div>
 
             {/* Integrated Standards */}
-            <div className="space-y-2">
+            <div className="space-y-2 form-field">
               <Label>Integrated Standards</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {integratedStandards.map((standard) => (
-                  <div key={standard} className="flex items-center space-x-2">
+                  <div key={standard} className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted/50 transition-colors duration-200">
                     <Checkbox
                       id={`integrated-${standard}`}
                       checked={formData.integratedStandards.includes(standard)}
                       onCheckedChange={(checked) => 
                         handleIntegratedStandardChange(standard, checked as boolean)
                       }
+                      className="transition-all duration-200"
                     />
                     <Label 
                       htmlFor={`integrated-${standard}`}
-                      className="text-sm font-normal cursor-pointer"
+                      className="text-sm font-normal cursor-pointer transition-colors duration-200 hover:text-primary"
                     >
                       {standard}
                     </Label>
@@ -377,9 +385,33 @@ export default function CalculationFormFixed() {
             {/* Submit & Presets */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex flex-wrap gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={() => setFormData((p) => ({ ...p, employees: 20, sites: 1 }))}>Small (20, 1 site)</Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => setFormData((p) => ({ ...p, employees: 120, sites: 1 }))}>Medium (120, 1 site)</Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => setFormData((p) => ({ ...p, employees: 400, sites: 3 }))}>Large (400, 3 sites)</Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setFormData((p) => ({ ...p, employees: 20, sites: 1 }))}
+                  className="btn-animate"
+                >
+                  Small (20, 1 site)
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setFormData((p) => ({ ...p, employees: 120, sites: 1 }))}
+                  className="btn-animate"
+                >
+                  Medium (120, 1 site)
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setFormData((p) => ({ ...p, employees: 400, sites: 3 }))}
+                  className="btn-animate"
+                >
+                  Large (400, 3 sites)
+                </Button>
               </div>
               <div className="flex items-center gap-3">
                 <Button
@@ -400,13 +432,14 @@ export default function CalculationFormFixed() {
                     })
                     setErrors([])
                   }}
+                  className="btn-animate"
                 >
                   Reset
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="min-w-[200px]"
+                  className="min-w-[200px] btn-animate"
                 >
                   {isSubmitting ? (
                     <>
