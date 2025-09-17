@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { storage } from '@/lib/storage'
+import { storage } from '@/lib/storage-db'
 
 // GET - Get specific calculation
 export async function GET(
@@ -7,8 +7,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const calculations = await storage.getCalculations()
-    const calculation = calculations.find(calc => calc.id === params.id)
+    const calculation = await storage.getCalculation(params.id)
     
     if (!calculation) {
       return NextResponse.json(
@@ -34,10 +33,10 @@ export async function PUT(
 ) {
   try {
     const body = await request.json()
-    const calculations = await storage.getCalculations()
-    const index = calculations.findIndex(calc => calc.id === params.id)
     
-    if (index === -1) {
+    // Check if calculation exists
+    const existingCalculation = await storage.getCalculation(params.id)
+    if (!existingCalculation) {
       return NextResponse.json(
         { success: false, error: 'Calculation not found' },
         { status: 404 }
@@ -45,19 +44,27 @@ export async function PUT(
     }
     
     // Update the calculation
-    calculations[index] = { ...calculations[index], ...body }
+    const updatedCalculation = await storage.updateCalculation(params.id, body)
     
-    // For now, we'll just return the updated calculation
-    // In a real app, you'd save this back to storage
+    // Log audit event
+    await storage.logAuditEvent(
+      'UPDATE',
+      'CALCULATION',
+      params.id,
+      { changes: body },
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
+      request.headers.get('user-agent')
+    )
+    
     return NextResponse.json({ 
       success: true, 
-      data: calculations[index],
+      data: updatedCalculation,
       message: 'Calculation updated successfully' 
     })
   } catch (error) {
     console.error('Error updating calculation:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to update calculation' },
+      { success: false, error: error instanceof Error ? error.message : 'Failed to update calculation' },
       { status: 500 }
     )
   }
@@ -69,7 +76,26 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check if calculation exists
+    const existingCalculation = await storage.getCalculation(params.id)
+    if (!existingCalculation) {
+      return NextResponse.json(
+        { success: false, error: 'Calculation not found' },
+        { status: 404 }
+      )
+    }
+    
     await storage.deleteCalculation(params.id)
+    
+    // Log audit event
+    await storage.logAuditEvent(
+      'DELETE',
+      'CALCULATION',
+      params.id,
+      { companyName: existingCalculation.companyName },
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
+      request.headers.get('user-agent')
+    )
     
     return NextResponse.json({ 
       success: true, 
