@@ -5,13 +5,15 @@ export default function CalculatePage() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div>
+        <div className="slide-in-left">
           <h1 className="text-3xl font-bold text-foreground">New Calculation</h1>
           <p className="text-muted-foreground">
             Enter the details below to calculate audit man-days based on international standards.
           </p>
         </div>
-        <CalculationFormFixed />
+        <div className="slide-in-up">
+          <CalculationFormFixed />
+        </div>
       </div>
     </MainLayout>
   )
