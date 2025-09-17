@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Calculation {
+  id                   String   @id @default(cuid())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  // Basic Information
+  companyName         String
+  scope               String
+  standard            String
+  auditType           String
+  category            String
+  
+  // Numerical Inputs
+  employees           Int
+  sites               Int
+  haccpStudies        Int
+  riskLevel           String
+  
+  // Arrays stored as JSON
+  integratedStandards Json     @default("[]")
+  
+  // Results
+  result              Float
+  breakdown           Json?
+  
+  // Additional calculated fields
+  stage1ManDays       Float?
+  stage2ManDays       Float?
+  surveillanceManDays Float?
+  recertificationManDays Float?
+  
+  // Metadata
+  createdBy           String?  // For future user system
+  isDeleted           Boolean  @default(false)
+  
+  @@map("calculations")
+}
+
+model AdminConfig {
+  id                   String   @id @default(cuid())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  // Configuration name
+  name                String   @unique
+  
+  // Base man-days configuration
+  baseManDays         Json     // Store as JSON for flexibility
+  
+  // Employee ranges configuration
+  employeeRanges      Json     // Store as JSON for flexibility
+  
+  // Risk multipliers
+  riskMultipliers     Json     // Store as JSON for flexibility
+  
+  // Other multipliers
+  haccpMultiplier     Float    @default(0.5)
+  multiSiteMultiplier Float    @default(0.5)
+  integratedSystemReduction Float @default(0.1)
+  
+  // Metadata
+  isActive            Boolean  @default(true)
+  description         String?
+  
+  @@map("admin_configs")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  
+  action      String   // CREATE, UPDATE, DELETE, EXPORT, etc.
+  entityType  String   // CALCULATION, CONFIG, etc.
+  entityId    String?
+  details     Json?
+  ipAddress   String?
+  userAgent   String?
+  
+  @@map("audit_logs")
+}
