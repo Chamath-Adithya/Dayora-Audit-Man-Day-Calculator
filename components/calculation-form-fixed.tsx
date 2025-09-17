@@ -172,6 +172,61 @@ export default function CalculationFormFixed() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6 fade-in">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:hidden">
+          <div className="md:sticky md:top-6">
+            <Card className="card-hover">
+              <CardHeader className="slide-in-right">
+                <CardTitle className="text-base">Live Summary</CardTitle>
+                <CardDescription>Updates as you fill the form</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 slide-in-up">
+                {!preview ? (
+                  <p className="text-sm text-muted-foreground">Select standard, category, audit type, and risk level to see a live preview.</p>
+                ) : (
+                  <div className="space-y-3 fade-in">
+                    <div className="flex items-baseline justify-between">
+                      <span className="text-sm text-muted-foreground">Total Man-Days</span>
+                      <span className="text-2xl font-semibold transition-all duration-300">{preview.totalManDays}</span>
+                    </div>
+                    {preview.stageDistribution && (
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
+                          <div className="text-muted-foreground">Stage 1</div>
+                          <div className="font-medium">{preview.stageDistribution.stage1}</div>
+                        </div>
+                        <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
+                          <div className="text-muted-foreground">Stage 2</div>
+                          <div className="font-medium">{preview.stageDistribution.stage2}</div>
+                        </div>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
+                        <div className="text-muted-foreground">Surveillance</div>
+                        <div className="font-medium">{preview.surveillanceManDays}</div>
+                      </div>
+                      <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
+                        <div className="text-muted-foreground">Recertification</div>
+                        <div className="font-medium">{preview.recertificationManDays}</div>
+                      </div>
+                    </div>
+                    <div className="pt-1">
+                      <div className="text-xs text-muted-foreground mb-1">Breakdown</div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Base</span><span>{preview.breakdown.baseManDays}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Employees</span><span>{preview.breakdown.employeeAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>HACCP</span><span>{preview.breakdown.haccpAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Risk</span><span>{preview.breakdown.riskAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Sites</span><span>{preview.breakdown.multiSiteAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Integrated</span><span>{preview.breakdown.integratedSystemAdjustment}</span></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
         <Card className="md:col-span-2 card-hover">
           <CardHeader className="slide-in-left">
             <CardTitle className="flex items-center gap-2">
@@ -404,13 +459,13 @@ export default function CalculationFormFixed() {
             </div>
 
             {/* Submit & Presets */}
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3">
               <div className="flex flex-wrap gap-2">
                 <Button 
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => setFormData((p) => ({ ...p, employees: 20, sites: 1 }))}
+                  onClick={() => setFormData((p) => ({ ...p, companyName: "", scope: "", standard: "", auditType: "", category: "", employees: 20, sites: 1, haccpStudies: 0, riskLevel: "", integratedStandards: [] }))}
                   className="btn-animate"
                 >
                   Small (20, 1 site)
@@ -419,7 +474,7 @@ export default function CalculationFormFixed() {
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => setFormData((p) => ({ ...p, employees: 120, sites: 1 }))}
+                  onClick={() => setFormData((p) => ({ ...p, companyName: "", scope: "", standard: "", auditType: "", category: "", employees: 120, sites: 1, haccpStudies: 0, riskLevel: "", integratedStandards: [] }))}
                   className="btn-animate"
                 >
                   Medium (120, 1 site)
@@ -428,7 +483,7 @@ export default function CalculationFormFixed() {
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => setFormData((p) => ({ ...p, employees: 400, sites: 3 }))}
+                  onClick={() => setFormData((p) => ({ ...p, companyName: "", scope: "", standard: "", auditType: "", category: "", employees: 400, sites: 3, haccpStudies: 0, riskLevel: "", integratedStandards: [] }))}
                   className="btn-animate"
                 >
                   Large (400, 3 sites)
@@ -481,7 +536,7 @@ export default function CalculationFormFixed() {
         </Card>
 
         {/* Live Summary */}
-        <div>
+        <div className="hidden md:block">
           <div className="md:sticky md:top-6">
             <Card className="card-hover">
               <CardHeader className="slide-in-right">

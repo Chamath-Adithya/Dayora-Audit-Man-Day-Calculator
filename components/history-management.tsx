@@ -149,12 +149,12 @@ export function HistoryManagement() {
         </CardHeader>
         <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData}>
+                <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                     <YAxis />
                     <Tooltip />
-                    <Legend />
+                    <Legend wrapperStyle={{ fontSize: '14px' }} />
                     <Bar dataKey="manDays" fill="#8884d8" />
                 </BarChart>
             </ResponsiveContainer>
@@ -176,40 +176,42 @@ export function HistoryManagement() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="relative">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-grow">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search company or scope..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 w-full"
                 />
               </div>
-              <Select value={standardFilter} onValueChange={setStandardFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Standards" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Standards</SelectItem>
-                  <SelectItem value="QMS">QMS</SelectItem>
-                  <SelectItem value="EMS">EMS</SelectItem>
-                  <SelectItem value="EnMS">EnMS</SelectItem>
-                  <SelectItem value="FSMS">FSMS</SelectItem>
-                  <SelectItem value="Cosmetics">Cosmetics</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={auditTypeFilter} onValueChange={setAuditTypeFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Audit Types" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Audit Types</SelectItem>
-                  <SelectItem value="initial">Initial Certification</SelectItem>
-                  <SelectItem value="surveillance">Surveillance</SelectItem>
-                  <SelectItem value="recertification">Recertification</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex gap-4">
+                <Select value={standardFilter} onValueChange={setStandardFilter}>
+                  <SelectTrigger className="w-full md:w-auto">
+                    <SelectValue placeholder="All Standards" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Standards</SelectItem>
+                    <SelectItem value="QMS">QMS</SelectItem>
+                    <SelectItem value="EMS">EMS</SelectItem>
+                    <SelectItem value="EnMS">EnMS</SelectItem>
+                    <SelectItem value="FSMS">FSMS</SelectItem>
+                    <SelectItem value="Cosmetics">Cosmetics</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={auditTypeFilter} onValueChange={setAuditTypeFilter}>
+                  <SelectTrigger className="w-full md:w-auto">
+                    <SelectValue placeholder="All Audit Types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Audit Types</SelectItem>
+                    <SelectItem value="initial">Initial Certification</SelectItem>
+                    <SelectItem value="surveillance">Surveillance</SelectItem>
+                    <SelectItem value="recertification">Recertification</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
             <div className="flex flex-wrap gap-2 justify-start sm:justify-start">

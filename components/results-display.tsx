@@ -90,13 +90,13 @@ export function ResultsDisplay() {
         <div className="lg:col-span-2 space-y-6">
           <Card className="border-accent">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
-                  <CardTitle className="text-2xl">{calculation.companyName}</CardTitle>
-                  <CardDescription>{calculation.scope}</CardDescription>
+                  <CardTitle className="text-2xl font-bold text-primary">{calculation.companyName}</CardTitle>
+                  <CardDescription className="text-lg">{calculation.scope}</CardDescription>
                 </div>
-                <div className="text-right">
-                  <div className="text-4xl font-bold text-primary">{result.totalManDays}</div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-5xl font-bold text-primary">{result.totalManDays}</div>
                   <div className="text-sm text-muted-foreground">Total Man-Days</div>
                 </div>
               </div>
@@ -105,48 +105,48 @@ export function ResultsDisplay() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Calculation Breakdown</CardTitle>
+              <CardTitle className="flex items-center gap-2"><Calculator className="h-5 w-5"/>Calculation Breakdown</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <span>Base Man-Days ({result.details.categoryDescription})</span>
-                <span className="font-medium">{result.breakdown.baseManDays}</span>
+                <span className="text-muted-foreground">Base Man-Days ({result.details.categoryDescription})</span>
+                <span className="font-medium text-lg">{result.breakdown.baseManDays}</span>
               </div>
               <Separator />
               <div className="flex justify-between items-center">
-                <span>Employee Adjustment ({result.details.employeeRange})</span>
-                <span className="font-medium">+{result.breakdown.employeeAdjustment}</span>
+                <span className="text-muted-foreground">Employee Adjustment ({result.details.employeeRange})</span>
+                <span className="font-medium text-lg">+{result.breakdown.employeeAdjustment}</span>
               </div>
               {calculation.standard === "FSMS" && (
                 <div className="flex justify-between items-center">
-                  <span>HACCP Studies ({calculation.haccpStudies} studies)</span>
-                  <span className="font-medium">+{result.breakdown.haccpAdjustment}</span>
+                  <span className="text-muted-foreground">HACCP Studies ({calculation.haccpStudies} studies)</span>
+                  <span className="font-medium text-lg">+{result.breakdown.haccpAdjustment}</span>
                 </div>
               )}
               <div className="flex justify-between items-center">
-                <span>Risk Adjustment (×{result.details.riskMultiplier})</span>
-                <span className="font-medium">
+                <span className="text-muted-foreground">Risk Adjustment (×{result.details.riskMultiplier})</span>
+                <span className={`font-medium text-lg ${result.breakdown.riskAdjustment >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {result.breakdown.riskAdjustment >= 0 ? "+" : ""}
                   {result.breakdown.riskAdjustment.toFixed(1)}
                 </span>
               </div>
               {calculation.sites > 1 && (
                 <div className="flex justify-between items-center">
-                  <span>Multi-site Adjustment ({calculation.sites} sites)</span>
-                  <span className="font-medium">+{result.breakdown.multiSiteAdjustment}</span>
+                  <span className="text-muted-foreground">Multi-site Adjustment ({calculation.sites} sites)</span>
+                  <span className="font-medium text-lg">+{result.breakdown.multiSiteAdjustment}</span>
                 </div>
               )}
               {calculation.integratedStandards.length > 0 && (
                 <div className="flex justify-between items-center">
-                  <span>
+                  <span className="text-muted-foreground">
                     Integrated Systems ({calculation.integratedStandards.length} standards, -
                     {(result.details.integratedSystemReduction * 100).toFixed(0)}%)
                   </span>
-                  <span className="font-medium">{result.breakdown.integratedSystemAdjustment.toFixed(1)}</span>
+                  <span className="font-medium text-lg text-red-600">{result.breakdown.integratedSystemAdjustment.toFixed(1)}</span>
                 </div>
               )}
               <Separator />
-              <div className="flex justify-between items-center text-lg font-semibold">
+              <div className="flex justify-between items-center text-2xl font-bold">
                 <span>Total Man-Days</span>
                 <span>{result.totalManDays}</span>
               </div>
@@ -163,11 +163,11 @@ export function ResultsDisplay() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold text-primary">{result.stageDistribution.stage1}</div>
+                    <div className="text-3xl font-bold text-primary">{result.stageDistribution.stage1}</div>
                     <div className="text-sm text-muted-foreground">Stage 1 Audit</div>
                   </div>
                   <div className="text-center p-4 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold text-primary">{result.stageDistribution.stage2}</div>
+                    <div className="text-3xl font-bold text-primary">{result.stageDistribution.stage2}</div>
                     <div className="text-sm text-muted-foreground">Stage 2 Audit</div>
                   </div>
                 </div>
@@ -182,11 +182,11 @@ export function ResultsDisplay() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-2xl font-bold text-secondary">{result.surveillanceManDays}</div>
+                  <div className="text-3xl font-bold text-secondary">{result.surveillanceManDays}</div>
                   <div className="text-sm text-muted-foreground">Surveillance</div>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-2xl font-bold text-secondary">{result.recertificationManDays}</div>
+                  <div className="text-3xl font-bold text-secondary">{result.recertificationManDays}</div>
                   <div className="text-sm text-muted-foreground">Recertification</div>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export function ResultsDisplay() {
             <CardHeader>
               <CardTitle>Audit Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Standard</span>
                 <span className="font-medium">{calculation.standard}</span>
@@ -221,14 +221,14 @@ export function ResultsDisplay() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 justify-center">
-        <Button onClick={handleExportPDF} variant="outline">
-          <FileText className="mr-2 h-4 w-4" />
+      <div className="flex flex-wrap gap-4 justify-center pt-6">
+        <Button onClick={handleExportPDF} size="lg">
+          <FileText className="mr-2 h-5 w-5" />
           Export PDF
         </Button>
         <Link href="/calculate">
-          <Button>
-            <Calculator className="mr-2 h-4 w-4" />
+          <Button size="lg" variant="outline">
+            <Calculator className="mr-2 h-5 w-5" />
             New Calculation
           </Button>
         </Link>

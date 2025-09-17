@@ -152,43 +152,43 @@ export async function validateCalculationInput(data: Partial<CalculationData>): 
   const errors: string[] = []
   
   if (!data.companyName?.trim()) {
-    errors.push("Company name is required")
+    errors.push("Please enter a company name.")
   }
   
   if (!data.scope?.trim()) {
-    errors.push("Scope is required")
+    errors.push("Please enter the scope of the audit.")
   }
   
   if (!data.standard || !config.baseManDays[data.standard]) {
-    errors.push("Valid standard is required")
+    errors.push("Please select a valid standard.")
   }
   
   if (!data.auditType || !["initial", "surveillance", "recertification"].includes(data.auditType)) {
-    errors.push("Valid audit type is required")
+    errors.push("Please select a valid audit type.")
   }
   
   if (!data.category || (data.standard && !config.baseManDays[data.standard]?.[data.category])) {
-    errors.push("Valid category is required")
+    errors.push("Please select a valid category for the chosen standard.")
   }
   
   if (!data.employees || data.employees < 1) {
-    errors.push("Number of employees must be at least 1")
+    errors.push("Please enter a valid number of employees (at least 1).")
   }
   
   if (!data.sites || data.sites < 1) {
-    errors.push("Number of sites must be at least 1")
+    errors.push("Please enter a valid number of sites (at least 1).")
   }
   
   if (data.haccpStudies === undefined || data.haccpStudies < 0) {
-    errors.push("HACCP studies must be 0 or greater")
+    errors.push("Please enter a valid number of HACCP studies (0 or more).")
   }
   
   if (!data.riskLevel || !["low", "medium", "high"].includes(data.riskLevel)) {
-    errors.push("Valid risk level is required")
+    errors.push("Please select a valid risk level.")
   }
   
   if (!Array.isArray(data.integratedStandards)) {
-    errors.push("Integrated standards must be an array")
+    errors.push("Integrated standards must be an array.")
   }
   
   return errors
