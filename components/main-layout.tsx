@@ -51,7 +51,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         {/* Main content area */}
         <main className="flex-1 overflow-auto">
-          <div className="container mx-auto p-4 lg:p-6">{children}</div>
+          <div className="container mx-auto p-4 lg:p-6 fade-in">{children}</div>
         </main>
       </div>
     </div>

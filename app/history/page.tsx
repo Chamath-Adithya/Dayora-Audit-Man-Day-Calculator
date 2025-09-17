@@ -5,11 +5,13 @@ export default function HistoryPage() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div>
+        <div className="slide-in-left">
           <h1 className="text-3xl font-bold text-foreground">Calculation History</h1>
           <p className="text-muted-foreground">View and manage your previous audit calculations.</p>
         </div>
-        <HistoryManagement />
+        <div className="slide-in-up">
+          <HistoryManagement />
+        </div>
       </div>
     </MainLayout>
   )
