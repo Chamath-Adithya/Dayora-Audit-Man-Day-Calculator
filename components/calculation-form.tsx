@@ -11,6 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Calculator } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { 
+  getAvailableStandards, 
+  getAvailableCategories, 
+  getAvailableAuditTypes, 
+  getAvailableRiskLevels, 
+  getAvailableIntegratedStandards 
+} from "@/lib/audit-calculator-fixed"
 
 interface CalculationData {
   companyName: string
