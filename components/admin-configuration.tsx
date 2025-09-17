@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Save, RotateCcw, AlertTriangle, Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -74,6 +75,7 @@ export function AdminConfiguration() {
   const [hasChanges, setHasChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedTab, setSelectedTab] = useState("employee-ranges")
 
   useEffect(() => {
     const fetchConfig = async () => {
@@ -195,15 +197,15 @@ export function AdminConfiguration() {
       {/* Header with Save Controls */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <CardTitle>Configuration Management</CardTitle>
               <CardDescription>Modify base values and parameters used in audit man-day calculations</CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-shrink-0">
               <Button onClick={handleResetToDefaults} variant="outline" size="sm" disabled={isSaving}>
                 <RotateCcw className="mr-2 h-4 w-4" />
-                Reset to Defaults
+                Reset
               </Button>
               <Button onClick={handleSaveConfig} disabled={!hasChanges || isSaving}>
                 {isSaving ? (
@@ -211,7 +213,7 @@ export function AdminConfiguration() {
                 ) : (
                   <Save className="mr-2 h-4 w-4" />
                 )}
-                Save Changes
+                Save
               </Button>
             </div>
           </div>
@@ -224,8 +226,21 @@ export function AdminConfiguration() {
         </CardHeader>
       </Card>
 
-      <Tabs defaultValue="employee-ranges" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="employee-ranges" className="space-y-4" onValueChange={(value) => setSelectedTab(value)} value={selectedTab}>
+        <div className="md:hidden">
+          <Select onValueChange={(value) => setSelectedTab(value)} value={selectedTab}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="employee-ranges">Employee Ranges</SelectItem>
+              <SelectItem value="base-days">Base Man-Days</SelectItem>
+              <SelectItem value="multipliers">Risk & Multipliers</SelectItem>
+              <SelectItem value="general">General Settings</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <TabsList className="hidden md:grid grid-cols-4">
           <TabsTrigger value="employee-ranges">Employee Ranges</TabsTrigger>
           <TabsTrigger value="base-days">Base Man-Days</TabsTrigger>
           <TabsTrigger value="multipliers">Risk & Multipliers</TabsTrigger>
@@ -242,7 +257,7 @@ export function AdminConfiguration() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
+              <div className="hidden md:block">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -301,6 +316,59 @@ export function AdminConfiguration() {
                   </TableBody>
                 </Table>
               </div>
+              <div className="md:hidden space-y-4">
+                {config.employeeRanges.map((range, index) => (
+                  <Card key={index} className="p-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label>Min Employees</Label>
+                        <Input
+                          type="number"
+                          value={range.min}
+                          onChange={(e) => updateEmployeeRange(index, "min", Number.parseInt(e.target.value))}
+                          className="w-24"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label>Max Employees</Label>
+                        <Input
+                          type="number"
+                          value={range.max === 999999 ? "" : range.max}
+                          placeholder="∞"
+                          onChange={(e) =>
+                            updateEmployeeRange(
+                              index,
+                              "max",
+                              e.target.value ? Number.parseInt(e.target.value) : 999999,
+                            )
+                          }
+                          className="w-24"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label>Additional Man-Days</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={range.adjustment}
+                          onChange={(e) =>
+                            updateEmployeeRange(index, "adjustment", Number.parseFloat(e.target.value))
+                          }
+                          className="w-24"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label>Description</Label>
+                        <Input
+                          value={range.description}
+                          onChange={(e) => updateEmployeeRange(index, "description", e.target.value)}
+                          className="w-40"
+                        />
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -315,7 +383,7 @@ export function AdminConfiguration() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
+              <div className="hidden md:block">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -348,13 +416,35 @@ export function AdminConfiguration() {
                   </TableBody>
                 </Table>
               </div>
+              <div className="md:hidden space-y-4">
+                {standards.map((standard) => (
+                  <Card key={standard} className="p-4">
+                    <CardTitle className="text-lg mb-2">{standard}</CardTitle>
+                    <div className="space-y-2">
+                      {categories.map((category) => (
+                        <div key={category} className="flex items-center justify-between">
+                          <Label>{category}</Label>
+                          <Input
+                            type="number"
+                            value={config.baseManDays[standard]?.[category] || 0}
+                            onChange={(e) =>
+                              updateBaseManDays(standard, category, Number.parseInt(e.target.value) || 0)
+                            }
+                            className="w-24"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* Risk & Multipliers Tab */}
         <TabsContent value="multipliers">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle>Risk Level Multipliers</CardTitle>
@@ -391,7 +481,7 @@ export function AdminConfiguration() {
                     onChange={(e) => updateRiskMultiplier("high", Number.parseFloat(e.target.value))}
                   />
                 </div>
-              </CardContent>.
+              </CardContent>
             </Card>
 
             <Card>
@@ -417,7 +507,7 @@ export function AdminConfiguration() {
 
         {/* General Settings Tab */}
         <TabsContent value="general">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle>Multi-Site Adjustment</CardTitle>
