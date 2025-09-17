@@ -179,39 +179,41 @@ export default function CalculationFormFixed() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="companyName">Company Name *</Label>
                 <Input
                   id="companyName"
                   value={formData.companyName}
                   onChange={(e) => handleInputChange('companyName', e.target.value)}
-                  placeholder="Enter company name"
+                  placeholder="e.g., Acme Manufacturing Ltd."
                   required
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="scope">Scope *</Label>
                 <Input
                   id="scope"
                   value={formData.scope}
                   onChange={(e) => handleInputChange('scope', e.target.value)}
-                  placeholder="Enter audit scope"
+                  placeholder="e.g., Design and manufacture of plastic components"
                   required
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                 />
               </div>
             </div>
 
             {/* Standard and Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="standard">Standard *</Label>
                 <Select
                   value={formData.standard}
                   onValueChange={(value) => handleInputChange('standard', value)}
                   required
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
                     <SelectValue placeholder="Select standard (e.g., QMS)" />
                   </SelectTrigger>
                   <SelectContent>
@@ -224,14 +226,21 @@ export default function CalculationFormFixed() {
                 </Select>
                 <div className="flex flex-wrap gap-2 pt-2">
                   {['QMS','EMS','FSMS'].map(s => (
-                    <Button key={s} type="button" variant="secondary" size="sm" onClick={() => handleInputChange('standard', s)}>
+                    <Button 
+                      key={s} 
+                      type="button" 
+                      variant="secondary" 
+                      size="sm" 
+                      onClick={() => handleInputChange('standard', s)}
+                      className="btn-animate"
+                    >
                       {s}
                     </Button>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 form-field">
                 <Label htmlFor="category">Category *</Label>
                 <Select
                   value={formData.category}
@@ -239,7 +248,7 @@ export default function CalculationFormFixed() {
                   disabled={!formData.standard}
                   required
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
                     <SelectValue placeholder="Select category (AI - K)" />
                   </SelectTrigger>
                   <SelectContent>
