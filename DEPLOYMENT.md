@@ -28,6 +28,8 @@ This guide covers deploying the Audit Man-Day Calculator to Vercel with a Postgr
 
 ## Local Development Setup
 
+### Option 1: SQLite (Recommended for Local Development)
+
 1. **Clone and install dependencies:**
    ```bash
    git clone <your-repo>
@@ -38,7 +40,7 @@ This guide covers deploying the Audit Man-Day Calculator to Vercel with a Postgr
 2. **Set up environment variables:**
    Create a `.env` file in the root directory:
    ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/audit_calculator?schema=public"
+   DATABASE_URL="file:./dev.db"
    NEXTAUTH_SECRET="your-secret-key-here"
    NEXTAUTH_URL="http://localhost:3000"
    ```
@@ -59,6 +61,23 @@ This guide covers deploying the Audit Man-Day Calculator to Vercel with a Postgr
    ```bash
    npm run dev
    ```
+
+### Option 2: PostgreSQL (For Production-like Environment)
+
+1. **Install PostgreSQL locally** or use Docker:
+   ```bash
+   # Using Docker
+   docker run --name postgres-audit -e POSTGRES_PASSWORD=password -e POSTGRES_DB=audit_calculator -p 5432:5432 -d postgres:15
+   ```
+
+2. **Set up environment variables:**
+   ```env
+   DATABASE_URL="postgresql://postgres:password@localhost:5432/audit_calculator?schema=public"
+   NEXTAUTH_SECRET="your-secret-key-here"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
+
+3. **Follow the same database setup steps as above**
 
 ## Vercel Deployment
 

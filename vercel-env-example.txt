@@ -1,0 +1,12 @@
+# Production Environment Variables for Vercel
+# Copy these to your Vercel project settings
+
+# Database (use PostgreSQL for production)
+DATABASE_URL="postgresql://username:password@host:port/database?sslmode=require"
+
+# Next.js
+NEXTAUTH_SECRET="your-random-secret-key-here"
+NEXTAUTH_URL="https://your-app.vercel.app"
+
+# Optional: Error monitoring
+# SENTRY_DSN="your-sentry-dsn-here"
