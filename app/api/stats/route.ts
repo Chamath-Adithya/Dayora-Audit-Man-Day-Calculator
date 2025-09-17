@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { storage } from '@/lib/storage'
+import { storage } from '@/lib/storage-db'
 
 // GET - Fetch calculation statistics
 export async function GET() {
