@@ -1,5 +1,5 @@
 import { MainLayout } from "@/components/main-layout"
-import { CalculationForm } from "@/components/calculation-form"
+import CalculationFormFixed from "@/components/calculation-form-fixed"
 
 export default function CalculatePage() {
   return (
