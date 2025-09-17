@@ -462,38 +462,38 @@ export default function CalculationFormFixed() {
         {/* Live Summary */}
         <div>
           <div className="md:sticky md:top-6">
-            <Card>
-              <CardHeader>
+            <Card className="card-hover">
+              <CardHeader className="slide-in-right">
                 <CardTitle className="text-base">Live Summary</CardTitle>
                 <CardDescription>Updates as you fill the form</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 slide-in-up">
                 {!preview ? (
                   <p className="text-sm text-muted-foreground">Select standard, category, audit type, and risk level to see a live preview.</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-3 fade-in">
                     <div className="flex items-baseline justify-between">
                       <span className="text-sm text-muted-foreground">Total Man-Days</span>
-                      <span className="text-2xl font-semibold">{preview.totalManDays}</span>
+                      <span className="text-2xl font-semibold transition-all duration-300">{preview.totalManDays}</span>
                     </div>
                     {preview.stageDistribution && (
                       <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="p-3 rounded-md bg-muted/50">
+                        <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
                           <div className="text-muted-foreground">Stage 1</div>
                           <div className="font-medium">{preview.stageDistribution.stage1}</div>
                         </div>
-                        <div className="p-3 rounded-md bg-muted/50">
+                        <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
                           <div className="text-muted-foreground">Stage 2</div>
                           <div className="font-medium">{preview.stageDistribution.stage2}</div>
                         </div>
                       </div>
                     )}
                     <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="p-3 rounded-md bg-muted/50">
+                      <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
                         <div className="text-muted-foreground">Surveillance</div>
                         <div className="font-medium">{preview.surveillanceManDays}</div>
                       </div>
-                      <div className="p-3 rounded-md bg-muted/50">
+                      <div className="p-3 rounded-md bg-muted/50 transition-all duration-300 hover:bg-muted/70">
                         <div className="text-muted-foreground">Recertification</div>
                         <div className="font-medium">{preview.recertificationManDays}</div>
                       </div>
@@ -501,12 +501,12 @@ export default function CalculationFormFixed() {
                     <div className="pt-1">
                       <div className="text-xs text-muted-foreground mb-1">Breakdown</div>
                       <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="flex justify-between"><span>Base</span><span>{preview.breakdown.baseManDays}</span></div>
-                        <div className="flex justify-between"><span>Employees</span><span>{preview.breakdown.employeeAdjustment}</span></div>
-                        <div className="flex justify-between"><span>HACCP</span><span>{preview.breakdown.haccpAdjustment}</span></div>
-                        <div className="flex justify-between"><span>Risk</span><span>{preview.breakdown.riskAdjustment}</span></div>
-                        <div className="flex justify-between"><span>Sites</span><span>{preview.breakdown.multiSiteAdjustment}</span></div>
-                        <div className="flex justify-between"><span>Integrated</span><span>{preview.breakdown.integratedSystemAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Base</span><span>{preview.breakdown.baseManDays}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Employees</span><span>{preview.breakdown.employeeAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>HACCP</span><span>{preview.breakdown.haccpAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Risk</span><span>{preview.breakdown.riskAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Sites</span><span>{preview.breakdown.multiSiteAdjustment}</span></div>
+                        <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Integrated</span><span>{preview.breakdown.integratedSystemAdjustment}</span></div>
                       </div>
                     </div>
                   </div>
