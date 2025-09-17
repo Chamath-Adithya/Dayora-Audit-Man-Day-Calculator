@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     console.log('Received calculation data:', JSON.stringify(body, null, 2))
     
     // Validate input
-    const validationErrors = validateCalculationInput(body)
+    const validationErrors = await validateCalculationInput(body)
     if (validationErrors.length > 0) {
       return NextResponse.json(
         { success: false, error: 'Validation failed', details: validationErrors },
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Calculate audit man-days using the fixed calculator
-    const calculationResult = calculateAuditManDays(body)
+    const calculationResult = await calculateAuditManDays(body)
     
     // Prepare data for storage
     const calculationData = {

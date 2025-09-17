@@ -1,3 +1,5 @@
+import { getConfig, AdminConfig } from "./config";
+
 interface CalculationData {
   companyName: string
   scope: string
@@ -35,150 +37,34 @@ interface CalculationResult {
   }
 }
 
-// IAF MD 5:2019 Compliant Base Man-Days Tables
-// These are the correct values based on international standards
-const BASE_MAN_DAYS: Record<string, Record<string, number>> = {
-  QMS: {
-    AI: 1.5,
-    AII: 2.0,
-    BI: 2.5,
-    BII: 3.0,
-    BIII: 3.5,
-    C: 4.0,
-    D: 4.5,
-    E: 5.5,
-    F: 6.5,
-    G: 8.0,
-    H: 10.0,
-    I: 12.5,
-    J: 15.5,
-    K: 19.0,
-  },
-  EMS: {
-    AI: 1.5,
-    AII: 2.0,
-    BI: 2.5,
-    BII: 3.0,
-    BIII: 3.5,
-    C: 4.0,
-    D: 4.5,
-    E: 5.5,
-    F: 6.5,
-    G: 8.0,
-    H: 10.0,
-    I: 12.5,
-    J: 15.5,
-    K: 19.0,
-  },
-  EnMS: {
-    AI: 1.5,
-    AII: 2.0,
-    BI: 2.5,
-    BII: 3.0,
-    BIII: 3.5,
-    C: 4.0,
-    D: 4.5,
-    E: 5.5,
-    F: 6.5,
-    G: 8.0,
-    H: 10.0,
-    I: 12.5,
-    J: 15.5,
-    K: 19.0,
-  },
-  FSMS: {
-    AI: 2.0,
-    AII: 2.5,
-    BI: 3.0,
-    BII: 3.5,
-    BIII: 4.0,
-    C: 4.5,
-    D: 5.5,
-    E: 6.5,
-    F: 8.0,
-    G: 10.0,
-    H: 12.5,
-    I: 15.5,
-    J: 19.0,
-    K: 23.5,
-  },
-  Cosmetics: {
-    AI: 1.5,
-    AII: 2.0,
-    BI: 2.5,
-    BII: 3.0,
-    BIII: 3.5,
-    C: 4.0,
-    D: 4.5,
-    E: 5.5,
-    F: 6.5,
-    G: 8.0,
-    H: 10.0,
-    I: 12.5,
-    J: 15.5,
-    K: 19.0,
-  },
-}
+export async function calculateAuditManDays(data: CalculationData): Promise<CalculationResult> {
+  const config = await getConfig();
 
-// Employee ranges based on IAF MD 5:2019
-const EMPLOYEE_RANGES = [
-  { min: 1, max: 5, adjustment: 0, description: "1-5 employees" },
-  { min: 6, max: 25, adjustment: 0.5, description: "6-25 employees" },
-  { min: 26, max: 45, adjustment: 1.0, description: "26-45 employees" },
-  { min: 46, max: 65, adjustment: 1.5, description: "46-65 employees" },
-  { min: 66, max: 85, adjustment: 2.0, description: "66-85 employees" },
-  { min: 86, max: 125, adjustment: 2.5, description: "86-125 employees" },
-  { min: 126, max: 175, adjustment: 3.0, description: "126-175 employees" },
-  { min: 176, max: 275, adjustment: 4.0, description: "176-275 employees" },
-  { min: 276, max: 425, adjustment: 5.0, description: "276-425 employees" },
-  { min: 426, max: 625, adjustment: 6.0, description: "426-625 employees" },
-  { min: 626, max: 875, adjustment: 7.0, description: "626-875 employees" },
-  { min: 876, max: 1175, adjustment: 8.0, description: "876-1175 employees" },
-  { min: 1176, max: Number.POSITIVE_INFINITY, adjustment: 10.0, description: "1176+ employees" },
-]
-
-// Risk multipliers based on IAF MD 5:2019
-const RISK_MULTIPLIERS = {
-  low: 0.8,
-  medium: 1.0,
-  high: 1.2,
-}
-
-// HACCP multiplier for FSMS (ISO/TS 22003:2022)
-const HACCP_MULTIPLIER = 0.5
-
-// Multi-site multiplier
-const MULTI_SITE_MULTIPLIER = 0.5
-
-// Integrated system reduction percentage
-const INTEGRATED_SYSTEM_REDUCTION = 0.1
-
-export function calculateAuditManDays(data: CalculationData): CalculationResult {
   // Get base man-days from the correct table
-  const baseManDays = BASE_MAN_DAYS[data.standard]?.[data.category] || 0
+  const baseManDays = config.baseManDays[data.standard]?.[data.category] || 0
   
   if (baseManDays === 0) {
     throw new Error(`Invalid standard/category combination: ${data.standard}/${data.category}`)
   }
 
   // Calculate employee adjustment
-  const employeeRange = EMPLOYEE_RANGES.find(
+  const employeeRange = config.employeeRanges.find(
     (range) => data.employees >= range.min && data.employees <= range.max,
   )
   const employeeAdjustment = employeeRange?.adjustment || 0
 
   // Calculate HACCP adjustment (only for FSMS)
-  const haccpAdjustment = data.standard === "FSMS" ? data.haccpStudies * HACCP_MULTIPLIER : 0
+  const haccpAdjustment = data.standard === "FSMS" ? data.haccpStudies * config.haccpMultiplier : 0
 
   // Calculate risk adjustment
-  const riskMultiplier = RISK_MULTIPLIERS[data.riskLevel as keyof typeof RISK_MULTIPLIERS] || 1.0
+  const riskMultiplier = config.riskMultipliers[data.riskLevel as keyof typeof config.riskMultipliers] || 1.0
   const riskAdjustment = baseManDays * (riskMultiplier - 1)
 
   // Calculate multi-site adjustment
-  const multiSiteAdjustment = data.sites > 1 ? (data.sites - 1) * MULTI_SITE_MULTIPLIER : 0
+  const multiSiteAdjustment = data.sites > 1 ? (data.sites - 1) * config.multiSiteMultiplier : 0
 
   // Calculate integrated system reduction
-  const integratedSystemReduction = data.integratedStandards.length * INTEGRATED_SYSTEM_REDUCTION
+  const integratedSystemReduction = data.integratedStandards.length * config.integratedSystemReduction
   const integratedSystemAdjustment = -(baseManDays * integratedSystemReduction)
 
   // Calculate total before integration
@@ -229,12 +115,14 @@ export function calculateAuditManDays(data: CalculationData): CalculationResult 
 }
 
 // Helper function to get available standards and categories
-export function getAvailableStandards() {
-  return Object.keys(BASE_MAN_DAYS)
+export async function getAvailableStandards() {
+    const config = await getConfig();
+  return Object.keys(config.baseManDays)
 }
 
-export function getAvailableCategories(standard: string) {
-  return Object.keys(BASE_MAN_DAYS[standard] || {})
+export async function getAvailableCategories(standard: string) {
+    const config = await getConfig();
+  return Object.keys(config.baseManDays[standard] || {})
 }
 
 export function getAvailableAuditTypes() {
@@ -253,23 +141,14 @@ export function getAvailableRiskLevels() {
   ]
 }
 
-export function getAvailableIntegratedStandards() {
-  return [
-    "QMS",
-    "EMS", 
-    "EnMS",
-    "FSMS",
-    "Cosmetics",
-    "OHSAS",
-    "ISO 45001",
-    "ISO 20000",
-    "ISO 27001",
-    "ISO 22301",
-  ]
+export async function getAvailableIntegratedStandards() {
+    const config = await getConfig();
+  return Object.keys(config.baseManDays);
 }
 
 // Validation function
-export function validateCalculationInput(data: Partial<CalculationData>): string[] {
+export async function validateCalculationInput(data: Partial<CalculationData>): Promise<string[]> {
+  const config = await getConfig();
   const errors: string[] = []
   
   if (!data.companyName?.trim()) {
@@ -280,7 +159,7 @@ export function validateCalculationInput(data: Partial<CalculationData>): string
     errors.push("Scope is required")
   }
   
-  if (!data.standard || !BASE_MAN_DAYS[data.standard]) {
+  if (!data.standard || !config.baseManDays[data.standard]) {
     errors.push("Valid standard is required")
   }
   
@@ -288,7 +167,7 @@ export function validateCalculationInput(data: Partial<CalculationData>): string
     errors.push("Valid audit type is required")
   }
   
-  if (!data.category || (data.standard && !BASE_MAN_DAYS[data.standard]?.[data.category])) {
+  if (!data.category || (data.standard && !config.baseManDays[data.standard]?.[data.category])) {
     errors.push("Valid category is required")
   }
   
@@ -314,3 +193,4 @@ export function validateCalculationInput(data: Partial<CalculationData>): string
   
   return errors
 }
+

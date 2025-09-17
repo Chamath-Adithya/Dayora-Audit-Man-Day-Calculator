@@ -1,14 +1,14 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Calculator, AlertCircle } from "lucide-react"
+import { Calculator, AlertCircle, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { 
   getAvailableStandards, 
@@ -16,9 +16,10 @@ import {
   getAvailableAuditTypes, 
   getAvailableRiskLevels, 
   getAvailableIntegratedStandards,
-  validateCalculationInput 
+  validateCalculationInput, 
+  calculateAuditManDays
 } from "@/lib/audit-calculator-fixed"
-import { calculateAuditManDays } from "@/lib/audit-calculator-fixed"
+import { getConfig } from "@/lib/config";
 
 interface CalculationData {
   companyName: string
@@ -48,37 +49,59 @@ export default function CalculationFormFixed() {
     integratedStandards: [],
   })
 
+  const [availableStandards, setAvailableStandards] = useState<{ value: string; label: string }[]>([]);
   const [availableCategories, setAvailableCategories] = useState<{ value: string; label: string }[]>([])
+  const [availableIntegratedStandards, setAvailableIntegratedStandards] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([])
+  const [preview, setPreview] = useState<any>(null);
 
-  // Live preview of results (when key fields are present)
-  const preview = useMemo(() => {
-    try {
-      if (!formData.standard || !formData.category || !formData.auditType || !formData.riskLevel) return null
-      return calculateAuditManDays(formData)
-    } catch {
-      return null
+  useEffect(() => {
+    async function loadConfig() {
+      await getConfig();
+      const standards = await getAvailableStandards();
+      const integratedStandards = await getAvailableIntegratedStandards();
+      setAvailableStandards(standards.map(s => ({ value: s, label: s })));
+      setAvailableIntegratedStandards(integratedStandards);
+      setIsLoading(false);
     }
-  }, [formData])
+    loadConfig();
+  }, []);
+
+  useEffect(() => {
+    async function updatePreview() {
+      try {
+        if (!formData.standard || !formData.category || !formData.auditType || !formData.riskLevel) {
+          setPreview(null);
+          return;
+        }
+        const result = await calculateAuditManDays(formData);
+        setPreview(result);
+      } catch {
+        setPreview(null);
+      }
+    }
+    updatePreview();
+  }, [formData]);
 
   // Update available categories when standard changes
   useEffect(() => {
-    if (formData.standard) {
-      const categories = getAvailableCategories(formData.standard).map(cat => ({
-        value: cat,
-        label: cat
-      }))
-      setAvailableCategories(categories)
-      
-      // Reset category if it's not available for the new standard
-      if (formData.category && !categories.find(cat => cat.value === formData.category)) {
+    async function updateCategories() {
+      if (formData.standard) {
+        const categories = await getAvailableCategories(formData.standard);
+        setAvailableCategories(categories.map(cat => ({ value: cat, label: cat })));
+        
+        // Reset category if it's not available for the new standard
+        if (formData.category && !categories.find(cat => cat === formData.category)) {
+          setFormData(prev => ({ ...prev, category: "" }))
+        }
+      } else {
+        setAvailableCategories([])
         setFormData(prev => ({ ...prev, category: "" }))
       }
-    } else {
-      setAvailableCategories([])
-      setFormData(prev => ({ ...prev, category: "" }))
     }
+    updateCategories();
   }, [formData.standard, formData.category])
 
   const handleInputChange = (field: keyof CalculationData, value: any) => {
@@ -102,7 +125,7 @@ export default function CalculationFormFixed() {
 
     try {
       // Validate input
-      const validationErrors = validateCalculationInput(formData)
+      const validationErrors = await validateCalculationInput(formData)
       if (validationErrors.length > 0) {
         setErrors(validationErrors)
         setIsSubmitting(false)
@@ -134,19 +157,17 @@ export default function CalculationFormFixed() {
     }
   }
 
-  const standards = getAvailableStandards().map(standard => ({
-    value: standard,
-    label: standard === "QMS" ? "Quality Management System (QMS)" :
-           standard === "EMS" ? "Environmental Management System (EMS)" :
-           standard === "EnMS" ? "Energy Management System (EnMS)" :
-           standard === "FSMS" ? "Food Safety Management System (FSMS)" :
-           standard === "Cosmetics" ? "Cosmetics Good Manufacturing Practice" :
-           standard
-  }))
-
   const auditTypes = getAvailableAuditTypes()
   const riskLevels = getAvailableRiskLevels()
-  const integratedStandards = getAvailableIntegratedStandards()
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="ml-4 text-muted-foreground">Loading calculation form...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6 fade-in">
@@ -217,7 +238,7 @@ export default function CalculationFormFixed() {
                     <SelectValue placeholder="Select standard (e.g., QMS)" />
                   </SelectTrigger>
                   <SelectContent>
-                    {standards.map((standard) => (
+                    {availableStandards.map((standard) => (
                       <SelectItem key={standard.value} value={standard.value}>
                         {standard.label}
                       </SelectItem>
@@ -361,7 +382,7 @@ export default function CalculationFormFixed() {
             <div className="space-y-2 form-field">
               <Label>Integrated Standards</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {integratedStandards.map((standard) => (
+                {availableIntegratedStandards.map((standard) => (
                   <div key={standard} className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted/50 transition-colors duration-200">
                     <Checkbox
                       id={`integrated-${standard}`}

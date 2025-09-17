@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Save, RotateCcw, AlertTriangle } from "lucide-react"
+import { Save, RotateCcw, AlertTriangle, Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toast } from "sonner"
 
 interface EmployeeRange {
   min: number
@@ -56,135 +57,79 @@ const DEFAULT_CONFIG: AdminConfig = {
     { min: 1176, max: 999999, adjustment: 10, description: "1176+ employees" },
   ],
   baseManDays: {
-    QMS: {
-      AI: 2,
-      AII: 3,
-      BI: 4,
-      BII: 5,
-      BIII: 6,
-      C: 7,
-      D: 8,
-      E: 10,
-      F: 12,
-      G: 15,
-      H: 18,
-      I: 22,
-      J: 27,
-      K: 32,
-    },
-    EMS: {
-      AI: 2,
-      AII: 3,
-      BI: 4,
-      BII: 5,
-      BIII: 6,
-      C: 7,
-      D: 8,
-      E: 10,
-      F: 12,
-      G: 15,
-      H: 18,
-      I: 22,
-      J: 27,
-      K: 32,
-    },
-    EnMS: {
-      AI: 2,
-      AII: 3,
-      BI: 4,
-      BII: 5,
-      BIII: 6,
-      C: 7,
-      D: 8,
-      E: 10,
-      F: 12,
-      G: 15,
-      H: 18,
-      I: 22,
-      J: 27,
-      K: 32,
-    },
-    FSMS: {
-      AI: 3,
-      AII: 4,
-      BI: 5,
-      BII: 6,
-      BIII: 7,
-      C: 8,
-      D: 10,
-      E: 12,
-      F: 15,
-      G: 18,
-      H: 22,
-      I: 27,
-      J: 32,
-      K: 38,
-    },
-    Cosmetics: {
-      AI: 2,
-      AII: 3,
-      BI: 4,
-      BII: 5,
-      BIII: 6,
-      C: 7,
-      D: 8,
-      E: 10,
-      F: 12,
-      G: 15,
-      H: 18,
-      I: 22,
-      J: 27,
-      K: 32,
-    },
+    QMS: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
+    EMS: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
+    EnMS: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
+    FSMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
+    Cosmetics: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
   },
-  riskMultipliers: {
-    low: 0.8,
-    medium: 1.0,
-    high: 1.2,
-  },
+  riskMultipliers: { low: 0.8, medium: 1.0, high: 1.2 },
   haccpMultiplier: 0.5,
   multiSiteMultiplier: 0.5,
   integratedSystemReduction: 0.1,
 }
 
 export function AdminConfiguration() {
-  const [config, setConfig] = useState<AdminConfig>(DEFAULT_CONFIG)
+  const [config, setConfig] = useState<AdminConfig | null>(null)
   const [hasChanges, setHasChanges] = useState(false)
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle")
+  const [isSaving, setIsSaving] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const savedConfig = localStorage.getItem("adminConfig")
-    if (savedConfig) {
+    const fetchConfig = async () => {
+      setIsLoading(true)
       try {
-        setConfig(JSON.parse(savedConfig))
+        const response = await fetch("/api/config")
+        if (response.ok) {
+          const data = await response.json()
+          setConfig(data)
+        } else {
+          throw new Error("Failed to fetch config")
+        }
       } catch (error) {
         console.error("Error loading admin config:", error)
+        toast.error("Failed to load configuration. Using default values.")
+        setConfig(DEFAULT_CONFIG)
+      } finally {
+        setIsLoading(false)
       }
     }
+    fetchConfig()
   }, [])
 
-  const handleSaveConfig = () => {
-    setSaveStatus("saving")
-    try {
-      localStorage.setItem("adminConfig", JSON.stringify(config))
-      setHasChanges(false)
-      setSaveStatus("saved")
-      setTimeout(() => setSaveStatus("idle"), 2000)
-    } catch (error) {
-      console.error("Error saving config:", error)
-      setSaveStatus("error")
-      setTimeout(() => setSaveStatus("idle"), 2000)
-    }
+  const handleSaveConfig = async () => {
+    if (!config) return
+    setIsSaving(true)
+    const promise = fetch("/api/config", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(config),
+    })
+
+    toast.promise(promise, {
+      loading: "Saving configuration...",
+      success: () => {
+        setHasChanges(false)
+        setIsSaving(false)
+        return "Configuration saved successfully!"
+      },
+      error: () => {
+        setIsSaving(false)
+        return "Error saving configuration."
+      },
+    })
   }
 
   const handleResetToDefaults = () => {
     if (confirm("Are you sure you want to reset all configuration to default values? This cannot be undone.")) {
       setConfig(DEFAULT_CONFIG)
       setHasChanges(true)
+      toast.info("Configuration has been reset to defaults. Click 'Save Changes' to apply.")
     }
   }
 
   const updateEmployeeRange = (index: number, field: keyof EmployeeRange, value: number | string) => {
+    if (!config) return
     const newRanges = [...config.employeeRanges]
     newRanges[index] = { ...newRanges[index], [field]: value }
     setConfig({ ...config, employeeRanges: newRanges })
@@ -192,6 +137,7 @@ export function AdminConfiguration() {
   }
 
   const updateBaseManDays = (standard: string, category: string, value: number) => {
+    if (!config) return
     const newBaseManDays = {
       ...config.baseManDays,
       [standard]: {
@@ -204,6 +150,7 @@ export function AdminConfiguration() {
   }
 
   const updateRiskMultiplier = (risk: keyof RiskMultipliers, value: number) => {
+    if (!config) return
     setConfig({
       ...config,
       riskMultipliers: {
@@ -215,12 +162,33 @@ export function AdminConfiguration() {
   }
 
   const updateGeneralSetting = (field: keyof AdminConfig, value: number) => {
+    if (!config) return
     setConfig({ ...config, [field]: value })
     setHasChanges(true)
   }
 
   const categories = ["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
   const standards = ["QMS", "EMS", "EnMS", "FSMS", "Cosmetics"]
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="ml-4 text-muted-foreground">Loading configuration...</p>
+      </div>
+    )
+  }
+  
+  if (!config) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          Could not load admin configuration. Please try again later.
+        </AlertDescription>
+      </Alert>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -233,17 +201,17 @@ export function AdminConfiguration() {
               <CardDescription>Modify base values and parameters used in audit man-day calculations</CardDescription>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleResetToDefaults} variant="outline" size="sm">
+              <Button onClick={handleResetToDefaults} variant="outline" size="sm" disabled={isSaving}>
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Reset to Defaults
               </Button>
-              <Button
-                onClick={handleSaveConfig}
-                disabled={!hasChanges || saveStatus === "saving"}
-                className={saveStatus === "saved" ? "bg-green-600 hover:bg-green-700" : ""}
-              >
-                <Save className="mr-2 h-4 w-4" />
-                {saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "Saved!" : "Save Changes"}
+              <Button onClick={handleSaveConfig} disabled={!hasChanges || isSaving}>
+                {isSaving ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-4 w-4" />
+                )}
+                Save Changes
               </Button>
             </div>
           </div>
@@ -423,7 +391,7 @@ export function AdminConfiguration() {
                     onChange={(e) => updateRiskMultiplier("high", Number.parseFloat(e.target.value))}
                   />
                 </div>
-              </CardContent>
+              </CardContent>.
             </Card>
 
             <Card>
