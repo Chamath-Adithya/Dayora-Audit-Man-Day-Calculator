@@ -182,7 +182,7 @@ export function HistoryManagement() {
         
         xPos = 20
         const rowData = [
-          new Date(calc.date).toLocaleDateString(),
+          new Date(calc.createdAt).toLocaleDateString(),
           calc.companyName.length > 25 ? calc.companyName.substring(0, 22) + '...' : calc.companyName,
           calc.standard,
           calc.auditType,
@@ -426,7 +426,7 @@ export function HistoryManagement() {
                   <TableBody>
                     {filteredCalculations.map((calculation) => (
                       <TableRow key={calculation.id}>
-                        <TableCell className="text-sm">{format(new Date(calculation.date), "MMM dd, yyyy")}</TableCell>
+                        <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
                         <TableCell className="font-medium">{calculation.companyName}</TableCell>
                         <TableCell className="max-w-32 truncate" title={calculation.scope}>
                           {calculation.scope}
@@ -480,7 +480,7 @@ export function HistoryManagement() {
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
                           <span className="text-muted-foreground">Date:</span>
-                          <p className="font-medium">{format(new Date(calculation.date), "MMM dd, yyyy")}</p>
+                          <p className="font-medium">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</p>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Result:</span>

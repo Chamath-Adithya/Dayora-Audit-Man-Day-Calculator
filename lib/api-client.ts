@@ -17,8 +17,15 @@ export interface CalculationData {
 
 export interface SavedCalculation extends CalculationData {
   id: string
-  date: string
+  createdAt: string
+  updatedAt: string
   result: number
+  stage1ManDays?: number
+  stage2ManDays?: number
+  surveillanceManDays?: number
+  recertificationManDays?: number
+  createdBy?: string
+  isDeleted: boolean
 }
 
 class ApiClient {
