@@ -8,10 +8,10 @@
     "lint": "next lint",
     "start": "next start",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push",
+    "db:push": "dotenv -e .env.local prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "dotenv -e .env.local tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -51,6 +51,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "date-fns": "latest",
+    "dotenv-cli": "^10.0.0",
     "embla-carousel-react": "8.5.1",
     "geist": "latest",
     "html2canvas": "^1.4.1",
