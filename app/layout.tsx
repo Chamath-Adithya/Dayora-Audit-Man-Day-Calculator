@@ -22,12 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <SessionProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            <Suspense fallback={null}>{children}</Suspense>
-            <Toaster />
-          </ThemeProvider>
-        </SessionProvider>
+        <Providers>
+          <Suspense fallback={null}>{children}</Suspense>
+        </Providers>
         <Analytics />
       </body>
     </html>
