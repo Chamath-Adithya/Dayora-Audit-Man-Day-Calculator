@@ -1,10 +1,10 @@
 import { prisma } from './database'
+import { z } from 'zod'
 
+// Validate environment
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL environment variable is not set')
 }
-
-import { z } from 'zod'
 
 // Validation schemas
 const CalculationInputSchema = z.object({

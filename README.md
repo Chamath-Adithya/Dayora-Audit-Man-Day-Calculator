@@ -12,62 +12,6 @@
 
 A modern, professional web application designed for certification professionals to streamline audit planning and resource allocation. Calculate audit man-days with precision using internationally recognized standards with proper database backend and accurate calculation methodology.
 
-## ✨ Features
-
-### 🎯 Core Functionality
-- **✅ Accurate Calculations**: Fixed calculation logic based on proper IAF MD 5:2019 standards
-- **🗄️ Database Backend**: PostgreSQL with Prisma ORM for reliable data persistence
-- **📊 Multiple Standards**: Support for QMS, EMS, EnMS, FSMS, and Cosmetics GMP
-- **🔍 Audit Types**: Initial certification, surveillance, and recertification audits
-- **📈 Detailed Reports**: Comprehensive calculation breakdowns with stage distribution
-- **📚 History Tracking**: Searchable calculation history with proper data persistence
-- **⚙️ Admin Configuration**: Customizable calculation parameters with database storage
-- **🔒 Audit Logging**: Complete audit trail of all actions
-- **📤 Export Functionality**: CSV export with filtering options
-- **🌐 Production Ready**: Deployed on Vercel with proper environment configuration
-
-### 🎨 User Experience
-- **🌓 Light/Dark Mode**: Elegant theme switching with persistence
-- **📱 Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-- **⚡ Real-Time Calculations**: Instant results with detailed breakdowns
-- **🔍 Smart Search & Filtering**: Find calculations quickly
-- **📊 Statistics Dashboard**: Overview of calculation history and metrics
-
-### 💾 Data Management
-- **📈 Calculation History**: Save, view, and manage all calculations
-- **📁 Export Functionality**: Download history as CSV files
-- **🔄 Auto-Save**: Persistent storage with backend API
-- **📋 Detailed Reports**: Comprehensive calculation breakdowns
-
-### 🏗️ Technical Features
-- **🔌 REST API**: Complete backend with CRUD operations
-- **🎯 Type Safety**: Full TypeScript implementation
-- **⚡ Performance**: Optimized for speed and reliability
-- **🛡️ Error Handling**: Graceful fallbacks and user feedback
-- **🔒 Data Validation**: Zod schemas for type-safe validation
-
-## 🛠️ Technology Stack
-
-### Frontend
-- **[Next.js 14](https://nextjs.org/)** - React framework with App Router
-- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
-- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[Radix UI](https://www.radix-ui.com/)** - Accessible UI components
-- **[next-themes](https://github.com/pacocoursey/next-themes)** - Theme management
-- **[Lucide React](https://lucide.dev/)** - Beautiful icons
-
-### Backend
-- **Next.js API Routes** - Serverless API endpoints
-- **PostgreSQL** - Reliable database with Prisma ORM
-- **Prisma** - Type-safe database access
-- **Zod** - Schema validation
-- **TypeScript** - End-to-end type safety
-
-### Development
-- **ESLint** - Code linting
-- **PostCSS** - CSS processing
-- **Vercel Analytics** - Performance monitoring
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -89,9 +33,8 @@ A modern, professional web application designed for certification professionals 
 
 3. **Set up environment variables**
    ```bash
-   # Create .env file
    cp .env.example .env
-   # Edit .env with your database URL
+   # Edit .env with your database URL and secrets
    ```
 
 4. **Set up database**
@@ -114,29 +57,68 @@ A modern, professional web application designed for certification professionals 
 6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 📋 What's Fixed
+## ✨ Features
 
-### ✅ Calculation Methodology
-- **Correct Base Man-Days**: Updated to proper IAF MD 5:2019 values
-- **Accurate Employee Adjustments**: Fixed employee range calculations
-- **Proper Risk Assessment**: Correct risk multiplier implementation
-- **Stage Distribution**: Proper Stage 1/Stage 2 calculations for initial audits
-- **HACCP Calculations**: Correct FSMS-specific HACCP study adjustments
-- **Integrated Systems**: Proper reduction calculations for multiple standards
+### 🎯 Core Functionality
+- **✅ Accurate Calculations**: Fixed calculation logic based on proper IAF MD 5:2019 standards
+- **🗄️ Database Backend**: PostgreSQL with Prisma ORM for reliable data persistence
+- **📊 Multiple Standards**: Support for QMS, EMS, EnMS, FSMS, and Cosmetics GMP
+- **🔍 Audit Types**: Initial certification, surveillance, and recertification audits
+- **📈 Detailed Reports**: Comprehensive calculation breakdowns with stage distribution
+- **📚 History Tracking**: Searchable calculation history with proper data persistence
+- **⚙️ Admin Configuration**: Customizable calculation parameters with database storage
+- **🔒 Audit Logging**: Complete audit trail of all actions
+- **📤 Export Functionality**: CSV export with filtering options
+- **🌐 Production Ready**: Deployed on Vercel with proper environment configuration
+- **🔐 Authentication**: Secure user authentication with NextAuth.js
+- **🌓 Theme Support**: Beautiful light/dark mode with system preference detection
 
-### ✅ Backend Infrastructure
-- **Database Persistence**: PostgreSQL with Prisma ORM
-- **Data Validation**: Zod schemas for type-safe validation
-- **Error Handling**: Comprehensive error handling and logging
-- **Audit Trail**: Complete logging of all actions
-- **API Security**: Proper input validation and sanitization
+### 🎨 User Experience
+- **🌓 Light/Dark Mode**: Elegant theme switching with persistence
+- **📱 Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **⚡ Real-Time Calculations**: Instant results with detailed breakdowns
+- **🔍 Smart Search & Filtering**: Find calculations quickly
+- **📊 Statistics Dashboard**: Overview of calculation history and metrics
 
-### ✅ Production Features
-- **Environment Configuration**: Proper environment variable management
-- **Database Migrations**: Prisma migrations for schema changes
-- **Seeding**: Default configuration seeding
-- **Monitoring**: Audit logging for all operations
-- **Deployment**: Vercel-ready with proper build process
+### 💾 Data Management
+- **📈 Calculation History**: Save, view, and manage all calculations
+- **📁 Export Functionality**: Download history as CSV files
+- **🔄 Auto-Save**: Persistent storage with backend API
+- **📋 Detailed Reports**: Comprehensive calculation breakdowns
+- **🗑️ Soft Delete**: Archive calculations without permanent deletion
+- **🔍 Advanced Filtering**: Filter by standard, audit type, date range
+
+### 🏗️ Technical Features
+- **🔌 REST API**: Complete backend with CRUD operations
+- **🎯 Type Safety**: Full TypeScript implementation
+- **⚡ Performance**: Optimized for speed and reliability
+- **🛡️ Error Handling**: Graceful fallbacks and user feedback
+- **🔒 Data Validation**: Zod schemas for type-safe validation
+- **🔐 Middleware Protection**: Route-level authentication
+- **📊 Database Optimization**: Efficient queries with Prisma
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **[Next.js 14](https://nextjs.org/)** - React framework with App Router
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
+- **[Radix UI](https://www.radix-ui.com/)** - Accessible UI components
+- **[next-themes](https://github.com/pacocoursey/next-themes)** - Theme management
+- **[Lucide React](https://lucide.dev/)** - Beautiful icons
+
+### Backend
+- **Next.js API Routes** - Serverless API endpoints
+- **PostgreSQL** - Reliable database with Prisma ORM
+- **Prisma** - Type-safe database access
+- **Zod** - Schema validation
+- **TypeScript** - End-to-end type safety
+
+### Development
+- **ESLint** - Code linting
+- **PostCSS** - CSS processing
+- **Vercel Analytics** - Performance monitoring
+- **Prisma Studio** - Database management UI
 
 ## 📖 Usage Guide
 
@@ -167,6 +149,7 @@ A modern, professional web application designed for certification professionals 
 - **Search & Filter**: Find specific calculations by company, standard, or audit type
 - **Export Data**: Download filtered results as CSV
 - **Detailed View**: Click to see full calculation details
+- **Archive/Restore**: Soft delete calculations for better organization
 
 ## 🗂️ Project Structure
 
@@ -181,27 +164,33 @@ audit-calculator/
 │   ├── history/                 # History management page
 │   ├── results/                 # Results display page
 │   ├── admin/                   # Admin configuration page
+│   ├── auth/                    # Authentication pages
+│   ├── dashboard/               # Analytics dashboard
 │   ├── globals.css              # Global styles
 │   ├── layout.tsx               # Root layout
 │   └── page.tsx                 # Home page
 ├── components/                   # React components
 │   ├── ui/                      # Reusable UI components
+│   ├── dashboard/               # Dashboard-specific components
 │   ├── calculation-form-fixed.tsx # Fixed calculation form
 │   ├── results-display.tsx      # Results presentation
 │   ├── history-management.tsx   # History interface
 │   ├── theme-provider.tsx       # Theme context
 │   ├── theme-toggle.tsx         # Theme switch button
 │   ├── sidebar-nav.tsx          # Navigation sidebar
+│   ├── providers.tsx            # Context providers wrapper
 │   └── main-layout.tsx          # Page layout wrapper
 ├── lib/                         # Utility libraries
 │   ├── api-client.ts            # Backend API client
 │   ├── audit-calculator-fixed.ts # Fixed calculation engine
 │   ├── storage-db.ts            # Database storage layer
 │   ├── database.ts              # Prisma client
+│   ├── config.ts                # Configuration management
 │   └── utils.ts                 # Helper functions
 ├── prisma/                      # Database schema and migrations
 │   ├── schema.prisma            # Database schema
 │   └── seed.ts                  # Database seeding
+├── middleware.ts                # Next.js middleware for auth
 ├── public/                      # Static assets
 └── styles/                      # Additional styles
 ```
@@ -218,6 +207,14 @@ audit-calculator/
 | `PUT` | `/api/calculations/[id]` | Update calculation |
 | `DELETE` | `/api/calculations/[id]` | Delete calculation |
 | `DELETE` | `/api/calculations` | Clear all calculations |
+
+### Authentication
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/signin` | Sign in user |
+| `POST` | `/api/auth/signout` | Sign out user |
+| `GET` | `/api/auth/session` | Get current session |
 
 ### Statistics
 
@@ -264,6 +261,8 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
    - `NEXTAUTH_SECRET`: Random secret key
    - `NEXTAUTH_URL`: Your Vercel app URL
 3. Deploy and run database setup
+4. Run migrations: `npm run db:deploy`
+5. Seed database: `npm run db:seed`
 
 ## 🛠️ Development
 
@@ -274,8 +273,10 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 npm run db:generate    # Generate Prisma client
 npm run db:push        # Push schema to database
 npm run db:migrate     # Create and run migrations
+npm run db:deploy      # Deploy migrations to production
 npm run db:studio      # Open Prisma Studio
 npm run db:seed        # Seed database with default data
+npm run db:reset       # Reset database (development only)
 
 # Development
 npm run dev           # Start development server
@@ -290,9 +291,9 @@ Create a `.env` file:
 
 ```env
 # Database
-DATABASE_URL="postgresql://username:password@localhost:5432/audit_calculator?schema=public"
+DATABASE_URL="postgresql://username:password@localhost:5432/audit_calculator"
 
-# Next.js
+# NextAuth.js
 NEXTAUTH_SECRET="your-secret-key-here"
 NEXTAUTH_URL="http://localhost:3000"
 
@@ -334,8 +335,10 @@ The calculator implements the following international standards:
 
 ### Getting Help
 - Check the [DEPLOYMENT.md](./DEPLOYMENT.md) guide
+5. **Migration Issues**: Run `npm run db:reset` in development
 - Review Vercel function logs
 - Verify database connectivity and schema
+- Use `npm run db:studio` to inspect database
 
 ## 📄 License
 
@@ -354,11 +357,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [x] ✅ Proper data validation
 - [x] ✅ Audit logging
 - [x] ✅ Production deployment
+- [x] ✅ User authentication system
+- [x] ✅ Theme system with persistence
+- [x] ✅ Advanced filtering and search
 - [ ] PDF report generation
-- [ ] User authentication system
 - [ ] Multi-language support
 - [ ] Advanced analytics dashboard
 - [ ] API rate limiting
+- [ ] Email notifications
+- [ ] Bulk import/export
+- [ ] Custom branding options
 
 ---
 

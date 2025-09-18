@@ -7,12 +7,12 @@ import { validateCalculationInput } from '@/lib/audit-calculator-fixed'
 
 // GET - Fetch all calculations for the logged-in user
 export async function GET() {
+  try {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
   }
 
-  try {
     const calculations = await storage.getCalculations(session.user.id)
     return NextResponse.json({ success: true, data: calculations })
   } catch (error) {
@@ -26,12 +26,12 @@ export async function GET() {
 
 // POST - Save a new calculation
 export async function POST(request: NextRequest) {
+  try {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
   }
 
-  try {
     const body = await request.json()
     
     // Validate input
@@ -86,12 +86,12 @@ export async function POST(request: NextRequest) {
 
 // DELETE - Delete all calculations for the logged-in user
 export async function DELETE() {
+  try {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
   }
 
-  try {
     await storage.clearCalculations(session.user.id)
     return NextResponse.json({ 
       success: true, 
