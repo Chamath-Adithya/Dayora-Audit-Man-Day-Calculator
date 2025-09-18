@@ -2,13 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Calculator, Home, History, Settings, FileText, X } from "lucide-react"
+import { Calculator, Home, History, Settings, FileText, X, LayoutDashboard } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "./theme-toggle"
 import { Button } from "@/components/ui/button"
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "New Calculation", href: "/calculate", icon: Calculator },
   { name: "Results", href: "/results", icon: FileText },
   { name: "History", href: "/history", icon: History },
