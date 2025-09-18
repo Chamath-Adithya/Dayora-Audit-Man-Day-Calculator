@@ -89,10 +89,10 @@ export function ResultsDisplay() {
             <RefreshCw className="mr-2 h-4 w-4" />
             Try Again
           </Button>
-          <Link href="/">
+          <Link href="/history">
             <Button variant="outline">
-              <Home className="mr-2 h-4 w-4" />
-              Go Home
+              <History className="mr-2 h-4 w-4" />
+              Go to History
             </Button>
           </Link>
         </div>
