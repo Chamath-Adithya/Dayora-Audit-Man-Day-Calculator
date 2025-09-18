@@ -1,3 +1,5 @@
+"use client"
+
 import { MainLayout } from "@/components/main-layout"
 import { ResultsDisplay } from "@/components/results-display"
 
