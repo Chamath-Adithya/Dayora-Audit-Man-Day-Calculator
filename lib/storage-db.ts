@@ -113,11 +113,13 @@ export const storage = {
         integratedStandards: validatedData.integratedStandards,
         breakdown: validatedData.breakdown,
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving calculation:', error)
       if (error instanceof z.ZodError) {
         throw new Error(`Validation error: ${error.errors.map(e => e.message).join(', ')}`)
       }
+      // Log the full error object for more details
+      console.error('Full error object:', JSON.stringify(error, null, 2))
       throw new Error('Failed to save calculation')
     }
   },
