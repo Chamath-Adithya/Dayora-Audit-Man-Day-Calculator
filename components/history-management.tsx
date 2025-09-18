@@ -62,15 +62,13 @@ export function HistoryManagement() {
   }, [calculations, searchTerm, standardFilter, auditTypeFilter])
 
   const handleToggleCalculation = async (id: string, isDeleted: boolean) => {
-    const action = isDeleted ? "enable" : "disable"
-    if (confirm(`Are you sure you want to ${action} this calculation?`)) {
-      try {
-        await apiClient.updateCalculation(id, { isDeleted: !isDeleted })
-        await loadCalculations()
-      } catch (err) {
-        console.error(`Failed to ${action} calculation:`, err)
-        alert(`Failed to ${action} calculation. Please try again.`)
-      }
+    try {
+      await apiClient.updateCalculation(id, { isDeleted: !isDeleted })
+      await loadCalculations()
+    } catch (err) {
+      const action = isDeleted ? "enable" : "disable"
+      console.error(`Failed to ${action} calculation:`, err)
+      alert(`Failed to ${action} calculation. Please try again.`)
     }
   }
 
@@ -282,7 +280,7 @@ export function HistoryManagement() {
                   </TableHeader>
                   <TableBody>
                     {filteredCalculations.map((calculation) => (
-                      <TableRow key={calculation.id} className={calculation.isDeleted ? "bg-muted/50 text-muted-foreground" : ""}>
+                      <TableRow key={calculation.id} className={calculation.isDeleted ? "bg-red-100 dark:bg-red-900/30 opacity-50" : ""}>
                         <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
                         <TableCell className="font-medium">{calculation.companyName}</TableCell>
                         <TableCell className="max-w-32 truncate" title={calculation.scope}>
@@ -304,7 +302,7 @@ export function HistoryManagement() {
                               <Eye className="h-4 w-4" />
                             </Button>
                             <Button size="sm" variant="outline" onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}>
-                              {calculation.isDeleted ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                              {calculation.isDeleted ? <ToggleRight className="h-4 w-4 text-green-500" /> : <ToggleLeft className="h-4 w-4 text-red-500" />}
                             </Button>
                             <Button size="sm" variant="destructive" onClick={() => handleDeletePermanently(calculation.id)}>
                               <Trash2 className="h-4 w-4" />
@@ -319,7 +317,7 @@ export function HistoryManagement() {
 
               <div className="lg:hidden space-y-4">
                 {filteredCalculations.map((calculation) => (
-                  <Card key={calculation.id} className={`p-4 ${calculation.isDeleted ? "bg-muted/50 text-muted-foreground" : ""}`}>
+                  <Card key={calculation.id} className={`p-4 ${calculation.isDeleted ? "bg-red-100 dark:bg-red-900/30 opacity-50" : ""}`}>
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
@@ -331,7 +329,7 @@ export function HistoryManagement() {
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button size="sm" variant="outline" onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}>
-                            {calculation.isDeleted ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                            {calculation.isDeleted ? <ToggleRight className="h-4 w-4 text-green-500" /> : <ToggleLeft className="h-4 w-4 text-red-500" />}
                           </Button>
                           <Button size="sm" variant="destructive" onClick={() => handleDeletePermanently(calculation.id)}>
                             <Trash2 className="h-4 w-4" />
