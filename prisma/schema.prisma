@@ -57,9 +57,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-
-// Dummy comment to force Vercel rebuild
-
 model Calculation {
   id                   String   @id @default(cuid())
   createdAt           DateTime @default(now())
@@ -79,11 +76,11 @@ model Calculation {
   riskLevel           String
   
   // Arrays stored as JSON
-  integratedStandards Json     @default("[]")
+  integratedStandards String   @default("[]")
   
   // Results
   result              Float
-  breakdown           Json?
+  breakdown           String?
   
   // Additional calculated fields
   stage1ManDays       Float?
@@ -108,13 +105,13 @@ model AdminConfig {
   name                String   @unique
   
   // Base man-days configuration
-  baseManDays         Json     // Store as JSON for flexibility
+  baseManDays         String   // Store as JSON string for SQLite
   
   // Employee ranges configuration
-  employeeRanges      Json     // Store as JSON for flexibility
+  employeeRanges      String   // Store as JSON string for SQLite
   
   // Risk multipliers
-  riskMultipliers     Json     // Store as JSON for flexibility
+  riskMultipliers     String   // Store as JSON string for SQLite
   
   // Other multipliers
   haccpMultiplier     Float    @default(0.5)
@@ -135,7 +132,7 @@ model AuditLog {
   action      String   // CREATE, UPDATE, DELETE, EXPORT, etc.
   entityType  String   // CALCULATION, CONFIG, etc.
   entityId    String?
-  details     Json?
+  details     String?  // Store as JSON string for SQLite
   ipAddress   String?
   userAgent   String?
   

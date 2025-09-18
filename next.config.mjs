@@ -1,7 +1,6 @@
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
-  // Removed static export for Vercel deployment
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -10,6 +9,16 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'bcrypt'],
+  },
+  webpack: (config) => {
+    config.externals.push({
+      'utf-8-validate': 'commonjs utf-8-validate',
+      'bufferutil': 'commonjs bufferutil',
+    })
+    return config
   },
 };
 

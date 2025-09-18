@@ -7,12 +7,14 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
-    "db:push": "dotenv -e .env.local prisma db push",
+    "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
-    "db:seed": "dotenv -e .env.local tsx prisma/seed.ts",
-    "db:reset": "cd prisma && npx prisma db push --force-reset"
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma db push --force-reset"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
