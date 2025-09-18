@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -20,6 +21,7 @@ import {
   calculateAuditManDays
 } from "@/lib/audit-calculator-fixed"
 import { getConfig } from "@/lib/config";
+import { apiClient } from "@/lib/api-client"
 
 interface CalculationData {
   companyName: string
@@ -36,6 +38,7 @@ interface CalculationData {
 
 export default function CalculationFormFixed() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [formData, setFormData] = useState<CalculationData>({
     companyName: "",
     scope: "",
@@ -123,6 +126,12 @@ export default function CalculationFormFixed() {
     setIsSubmitting(true)
     setErrors([])
 
+    if (!session?.user?.id) {
+      setErrors(["You must be signed in to save a calculation."])
+      setIsSubmitting(false)
+      return
+    }
+
     try {
       // Validate input
       const validationErrors = await validateCalculationInput(formData)
@@ -132,23 +141,22 @@ export default function CalculationFormFixed() {
         return
       }
 
+      const calculationResult = await calculateAuditManDays(formData);
+
       // Submit to API
-      const response = await fetch('/api/calculations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      const savedCalculation = await apiClient.saveCalculation({
+        ...formData,
+        userId: session.user.id,
+        result: calculationResult.totalManDays,
+        breakdown: calculationResult.breakdown,
+        stage1ManDays: calculationResult.stageDistribution?.stage1,
+        stage2ManDays: calculationResult.stageDistribution?.stage2,
+        surveillanceManDays: calculationResult.surveillanceManDays,
+        recertificationManDays: calculationResult.recertificationManDays,
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to save calculation')
-      }
-
       // Redirect to results page
-      router.push(`/results?id=${result.data.id}`)
+      router.push(`/results?id=${savedCalculation.id}`)
     } catch (error) {
       console.error('Error submitting calculation:', error)
       setErrors([error instanceof Error ? error.message : 'An unexpected error occurred'])

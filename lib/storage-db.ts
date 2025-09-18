@@ -24,6 +24,7 @@ const CalculationInputSchema = z.object({
   stage2ManDays: z.number().optional(),
   surveillanceManDays: z.number().optional(),
   recertificationManDays: z.number().optional(),
+  userId: z.string(),
 })
 
 const UpdateCalculationSchema = CalculationInputSchema.partial()
@@ -48,15 +49,15 @@ export interface SavedCalculation {
   stage2ManDays?: number
   surveillanceManDays?: number
   recertificationManDays?: number
-  createdBy?: string
+  userId: string
   isDeleted: boolean
 }
 
 export const storage = {
-  async getCalculations(): Promise<SavedCalculation[]> {
+  async getCalculations(userId: string): Promise<SavedCalculation[]> {
     try {
       const calculations = await prisma.calculation.findMany({
-        where: { isDeleted: false },
+        where: { userId, isDeleted: false },
         orderBy: { createdAt: 'desc' },
       })
       
@@ -157,10 +158,7 @@ export const storage = {
 
   async deleteCalculation(id: string): Promise<void> {
     try {
-      await prisma.calculation.update({
-        where: { id },
-        data: { isDeleted: true },
-      })
+      await prisma.calculation.delete({ where: { id } })
     } catch (error) {
       console.error('Error deleting calculation:', error)
       throw new Error('Failed to delete calculation')
@@ -179,16 +177,16 @@ export const storage = {
     }
   },
 
-  async getStats() {
+  async getStats(userId: string) {
     try {
       const [
         totalCalculations,
         calculations,
         uniqueCompanies,
       ] = await Promise.all([
-        prisma.calculation.count({ where: { isDeleted: false } }),
+        prisma.calculation.count({ where: { userId, isDeleted: false } }),
         prisma.calculation.findMany({ 
-          where: { isDeleted: false },
+          where: { userId, isDeleted: false },
           select: {
             result: true,
             companyName: true,
@@ -199,7 +197,7 @@ export const storage = {
           }
         }),
         prisma.calculation.findMany({
-          where: { isDeleted: false },
+          where: { userId, isDeleted: false },
           select: { companyName: true },
           distinct: ['companyName'],
         }),

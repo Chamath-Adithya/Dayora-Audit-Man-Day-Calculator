@@ -13,6 +13,11 @@ export interface CalculationData {
   integratedStandards: string[]
   result?: number
   breakdown?: any
+  userId: string
+  stage1ManDays?: number
+  stage2ManDays?: number
+  surveillanceManDays?: number
+  recertificationManDays?: number
 }
 
 export interface SavedCalculation extends CalculationData {
@@ -24,7 +29,6 @@ export interface SavedCalculation extends CalculationData {
   stage2ManDays?: number
   surveillanceManDays?: number
   recertificationManDays?: number
-  createdBy?: string
   isDeleted: boolean
 }
 

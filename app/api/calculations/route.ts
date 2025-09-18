@@ -1,36 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { storage } from '@/lib/storage-db'
 import { calculateAuditManDays } from '@/lib/audit-calculator-fixed'
 import { validateCalculationInput } from '@/lib/audit-calculator-fixed'
 
-export interface SavedCalculation {
-  id: string
-  createdAt: Date
-  updatedAt: Date
-  companyName: string
-  scope: string
-  standard: string
-  auditType: string
-  category: string
-  employees: number
-  sites: number
-  haccpStudies: number
-  riskLevel: string
-  integratedStandards: string[]
-  result: number
-  breakdown?: any
-  stage1ManDays?: number
-  stage2ManDays?: number
-  surveillanceManDays?: number
-  recertificationManDays?: number
-  createdBy?: string
-  isDeleted: boolean
-}
-
-// GET - Fetch all calculations
+// GET - Fetch all calculations for the logged-in user
 export async function GET() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
-    const calculations = await storage.getCalculations()
+    const calculations = await storage.getCalculations(session.user.id)
     return NextResponse.json({ success: true, data: calculations })
   } catch (error) {
     console.error('Error fetching calculations:', error)
@@ -43,9 +26,13 @@ export async function GET() {
 
 // POST - Save a new calculation
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const body = await request.json()
-    console.log('Received calculation data:', JSON.stringify(body, null, 2))
     
     // Validate input
     const validationErrors = await validateCalculationInput(body)
@@ -62,6 +49,7 @@ export async function POST(request: NextRequest) {
     // Prepare data for storage
     const calculationData = {
       ...body,
+      userId: session.user.id,
       result: calculationResult.totalManDays,
       breakdown: calculationResult.breakdown,
       stage1ManDays: calculationResult.stageDistribution?.stage1,
@@ -71,7 +59,6 @@ export async function POST(request: NextRequest) {
     }
     
     const newCalculation = await storage.saveCalculation(calculationData)
-    console.log('Saved calculation:', JSON.stringify(newCalculation, null, 2))
     
     // Log audit event
     await storage.logAuditEvent(
@@ -97,10 +84,15 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE - Delete all calculations
+// DELETE - Delete all calculations for the logged-in user
 export async function DELETE() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
-    await storage.clearCalculations()
+    await storage.clearCalculations(session.user.id)
     return NextResponse.json({ 
       success: true, 
       message: 'All calculations deleted successfully' 
