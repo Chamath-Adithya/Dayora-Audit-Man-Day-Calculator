@@ -6,21 +6,33 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { id } = params
+  console.log(`[API] Received request for calculation ID: ${id}`)
+
   try {
-    const calculation = await storage.getCalculation(params.id)
-    
+    console.log(`[DB] Attempting to fetch calculation with ID: ${id}`)
+    const calculation = await storage.getCalculation(id)
+
     if (!calculation) {
+      console.warn(`[DB] Calculation with ID: ${id} not found`)
       return NextResponse.json(
         { success: false, error: 'Calculation not found' },
         { status: 404 }
       )
     }
-    
+
+    console.log(`[DB] Successfully fetched calculation with ID: ${id}`)
     return NextResponse.json({ success: true, data: calculation })
   } catch (error) {
-    console.error('Error fetching calculation:', error)
+    console.error(`[API] Critical error fetching calculation with ID: ${id}`, error)
+    
+    let errorMessage = 'Failed to fetch calculation'
+    if (error instanceof Error) {
+      errorMessage = error.message
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch calculation' },
+      { success: false, error: errorMessage },
       { status: 500 }
     )
   }
@@ -31,38 +43,41 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { id } = params
+  console.log(`[API] Received request to update calculation ID: ${id}`)
+
   try {
     const body = await request.json()
     
-    // Check if calculation exists
-    const existingCalculation = await storage.getCalculation(params.id)
+    const existingCalculation = await storage.getCalculation(id)
     if (!existingCalculation) {
+      console.warn(`[DB] Update failed: Calculation with ID: ${id} not found`)
       return NextResponse.json(
         { success: false, error: 'Calculation not found' },
         { status: 404 }
       )
     }
     
-    // Update the calculation
-    const updatedCalculation = await storage.updateCalculation(params.id, body)
+    console.log(`[DB] Updating calculation with ID: ${id}`, { changes: body })
+    const updatedCalculation = await storage.updateCalculation(id, body)
     
-    // Log audit event
     await storage.logAuditEvent(
       'UPDATE',
       'CALCULATION',
-      params.id,
+      id,
       { changes: body },
       request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
       request.headers.get('user-agent')
     )
     
+    console.log(`[DB] Successfully updated calculation with ID: ${id}`)
     return NextResponse.json({ 
       success: true, 
       data: updatedCalculation,
       message: 'Calculation updated successfully' 
     })
   } catch (error) {
-    console.error('Error updating calculation:', error)
+    console.error(`[API] Critical error updating calculation with ID: ${id}`, error)
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : 'Failed to update calculation' },
       { status: 500 }
@@ -75,34 +90,38 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { id } = params
+  console.log(`[API] Received request to delete calculation ID: ${id}`)
+
   try {
-    // Check if calculation exists
-    const existingCalculation = await storage.getCalculation(params.id)
+    const existingCalculation = await storage.getCalculation(id)
     if (!existingCalculation) {
+      console.warn(`[DB] Delete failed: Calculation with ID: ${id} not found`)
       return NextResponse.json(
         { success: false, error: 'Calculation not found' },
         { status: 404 }
       )
     }
     
-    await storage.deleteCalculation(params.id)
+    console.log(`[DB] Deleting calculation with ID: ${id}`)
+    await storage.deleteCalculation(id)
     
-    // Log audit event
     await storage.logAuditEvent(
       'DELETE',
       'CALCULATION',
-      params.id,
+      id,
       { companyName: existingCalculation.companyName },
       request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
       request.headers.get('user-agent')
     )
     
+    console.log(`[DB] Successfully deleted calculation with ID: ${id}`)
     return NextResponse.json({ 
       success: true, 
       message: 'Calculation deleted successfully' 
     })
   } catch (error) {
-    console.error('Error deleting calculation:', error)
+    console.error(`[API] Critical error deleting calculation with ID: ${id}`, error)
     return NextResponse.json(
       { success: false, error: 'Failed to delete calculation' },
       { status: 500 }
