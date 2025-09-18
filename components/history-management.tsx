@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Search, Trash2, Eye, Download, Calendar, RefreshCw, FileText, BarChart2, ToggleLeft, ToggleRight, AlertTriangle, Archive, ArchiveRestore } from "lucide-react"
 import { format } from "date-fns"
 import { apiClient, type SavedCalculation } from "@/lib/api-client"
@@ -16,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 export function HistoryManagement() {
   const [calculations, setCalculations] = useState<SavedCalculation[]>([])
   const [filteredCalculations, setFilteredCalculations] = useState<SavedCalculation[]>([])
+  const [selectedCalculations, setSelectedCalculations] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [standardFilter, setStandardFilter] = useState("all")
   const [auditTypeFilter, setAuditTypeFilter] = useState("all")
@@ -29,6 +31,7 @@ export function HistoryManagement() {
       setError(null)
       const data = await apiClient.getCalculations()
       setCalculations(data)
+      setSelectedCalculations([])
     } catch (err) {
       console.error("Failed to load calculations:", err)
       setError("Failed to load calculations. Please try again.")
@@ -86,6 +89,27 @@ export function HistoryManagement() {
     }
   }
 
+  const handleBulkAction = async (action: "archive" | "restore" | "delete") => {
+    const actionVerb = action === "archive" ? "archive" : action === "restore" ? "restore" : "permanently delete"
+    if (confirm(`Are you sure you want to ${actionVerb} ${selectedCalculations.length} calculations?`)) {
+      try {
+        await Promise.all(selectedCalculations.map(id => {
+          if (action === "archive") {
+            return apiClient.updateCalculation(id, { isDeleted: true })
+          } else if (action === "restore") {
+            return apiClient.updateCalculation(id, { isDeleted: false })
+          } else {
+            return apiClient.deleteCalculation(id)
+          }
+        }))
+        await loadCalculations()
+      } catch (err) {
+        console.error(`Failed to ${action} calculations:`, err)
+        alert(`Failed to ${action} calculations. Please try again.`)
+      }
+    }
+  }
+
   const handleViewCalculation = (id: string) => {
     window.open(`/results?id=${id}`, "_blank")
   }
@@ -137,6 +161,22 @@ export function HistoryManagement() {
   }
 
   const chartData = calculations.filter(c => !c.isDeleted).map(c => ({ name: c.companyName, manDays: c.result }));
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedCalculations(filteredCalculations.map(c => c.id))
+    } else {
+      setSelectedCalculations([])
+    }
+  }
+
+  const handleSelect = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedCalculations(prev => [...prev, id])
+    } else {
+      setSelectedCalculations(prev => prev.filter(calcId => calcId !== id))
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -238,6 +278,12 @@ export function HistoryManagement() {
                     <span className="hidden sm:inline">Export PDF</span>
                     <span className="sm:hidden">PDF</span>
                   </Button>
+                  {selectedCalculations.length > 0 && (
+                    <Button onClick={() => handleBulkAction("archive")} variant="outline" size="sm" className="flex-shrink-0">
+                      <Archive className="mr-2 h-4 w-4" />
+                      Archive ({selectedCalculations.length})
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -274,6 +320,12 @@ export function HistoryManagement() {
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead>
+                            <Checkbox 
+                              checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
+                              onCheckedChange={handleSelectAll}
+                            />
+                          </TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>Company</TableHead>
                           <TableHead>Scope</TableHead>
@@ -289,6 +341,12 @@ export function HistoryManagement() {
                       <TableBody>
                         {filteredCalculations.map((calculation) => (
                           <TableRow key={calculation.id}>
+                            <TableCell>
+                              <Checkbox 
+                                checked={selectedCalculations.includes(calculation.id)}
+                                onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                              />
+                            </TableCell>
                             <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
                             <TableCell className="font-medium">{calculation.companyName}</TableCell>
                             <TableCell className="max-w-32 truncate" title={calculation.scope}>
@@ -383,6 +441,18 @@ export function HistoryManagement() {
               <CardDescription>
                 {filteredCalculations.length} of {calculations.filter(c => c.isDeleted).length} calculations
               </CardDescription>
+              {selectedCalculations.length > 0 && (
+                <div className="flex gap-2 mt-4">
+                  <Button onClick={() => handleBulkAction("restore")} variant="outline" size="sm">
+                    <ArchiveRestore className="mr-2 h-4 w-4" />
+                    Restore ({selectedCalculations.length})
+                  </Button>
+                  <Button onClick={() => handleBulkAction("delete")} variant="destructive" size="sm">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Permanently ({selectedCalculations.length})
+                  </Button>
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -401,6 +471,12 @@ export function HistoryManagement() {
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead>
+                            <Checkbox 
+                              checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
+                              onCheckedChange={handleSelectAll}
+                            />
+                          </TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>Company</TableHead>
                           <TableHead>Scope</TableHead>
@@ -412,6 +488,12 @@ export function HistoryManagement() {
                       <TableBody>
                         {filteredCalculations.map((calculation) => (
                           <TableRow key={calculation.id}>
+                            <TableCell>
+                              <Checkbox 
+                                checked={selectedCalculations.includes(calculation.id)}
+                                onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                              />
+                            </TableCell>
                             <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
                             <TableCell className="font-medium">{calculation.companyName}</TableCell>
                             <TableCell className="max-w-32 truncate" title={calculation.scope}>
