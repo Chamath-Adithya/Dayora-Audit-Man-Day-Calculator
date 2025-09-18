@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Download, FileText, Calculator, Save, Loader2, AlertCircle, RefreshCw, Home } from "lucide-react"
+import { Download, FileText, Calculator, Save, Loader2, AlertCircle, RefreshCw, History } from "lucide-react"
 import { calculateAuditManDays } from "@/lib/audit-calculator-fixed"
 import Link from "next/link"
 import { useSearchParams } from 'next/navigation'
