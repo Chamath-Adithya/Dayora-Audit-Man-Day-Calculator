@@ -16,24 +16,34 @@ export const authOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        if (!credentials) {
+        if (!credentials || !credentials.email || !credentials.password) {
           return null
         }
-        const user = await prisma.user.findUnique({
+
+        let user = await prisma.user.findUnique({
           where: { email: credentials.email },
         })
 
         if (user) {
+          // User exists, compare password
+          if (!user.passwordHash) {
+            // This user was likely created without a passwordHash (e.g., via OAuth before this change)
+            // For now, we'll treat this as an invalid login. In a real app, you might prompt for password setup.
+            return null
+          }
           const isPasswordCorrect = await bcrypt.compare(credentials.password, user.passwordHash)
           if (isPasswordCorrect) {
             return user
           }
         } else {
+          // User does not exist, create a new one
           const hashedPassword = await bcrypt.hash(credentials.password, 10)
           const newUser = await prisma.user.create({
             data: {
               email: credentials.email,
               passwordHash: hashedPassword,
+              name: credentials.email.split('@')[0], // Basic name from email
+              emailVerified: new Date(), // Mark as verified on creation
             },
           })
           return newUser
@@ -45,6 +55,20 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+  },
+  callbacks: {
+    async session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
   },
 }
 
