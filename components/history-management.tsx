@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Trash2, Eye, Download, Calendar, RefreshCw, FileText, BarChart2 } from "lucide-react"
+import { Search, Trash2, Eye, Download, Calendar, RefreshCw, FileText, BarChart2, ToggleLeft, ToggleRight, AlertTriangle } from "lucide-react"
 import { format } from "date-fns"
 import { apiClient, type SavedCalculation } from "@/lib/api-client"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -27,7 +27,6 @@ export function HistoryManagement() {
       setError(null)
       const data = await apiClient.getCalculations()
       setCalculations(data)
-      setFilteredCalculations(data)
     } catch (err) {
       console.error("Failed to load calculations:", err)
       setError("Failed to load calculations. Please try again.")
@@ -62,8 +61,21 @@ export function HistoryManagement() {
     setFilteredCalculations(filtered)
   }, [calculations, searchTerm, standardFilter, auditTypeFilter])
 
-  const handleDeleteCalculation = async (id: string) => {
-    if (confirm("Are you sure you want to delete this calculation?")) {
+  const handleToggleCalculation = async (id: string, isDeleted: boolean) => {
+    const action = isDeleted ? "enable" : "disable"
+    if (confirm(`Are you sure you want to ${action} this calculation?`)) {
+      try {
+        await apiClient.updateCalculation(id, { isDeleted: !isDeleted })
+        await loadCalculations()
+      } catch (err) {
+        console.error(`Failed to ${action} calculation:`, err)
+        alert(`Failed to ${action} calculation. Please try again.`)
+      }
+    }
+  }
+
+  const handleDeletePermanently = async (id: string) => {
+    if (confirm("Are you sure you want to permanently delete this calculation? This action cannot be undone.")) {
       try {
         await apiClient.deleteCalculation(id)
         await loadCalculations()
@@ -124,7 +136,7 @@ export function HistoryManagement() {
     }
   }
 
-  const chartData = filteredCalculations.map(c => ({ name: c.companyName, manDays: c.result }));
+  const chartData = filteredCalculations.filter(c => !c.isDeleted).map(c => ({ name: c.companyName, manDays: c.result }));
 
   return (
     <div className="space-y-6">
@@ -145,7 +157,7 @@ export function HistoryManagement() {
       <Card>
         <CardHeader>
             <CardTitle>History Overview</CardTitle>
-            <CardDescription>A visual summary of your calculation history.</CardDescription>
+            <CardDescription>A visual summary of your active calculation history.</CardDescription>
         </CardHeader>
         <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -270,7 +282,7 @@ export function HistoryManagement() {
                   </TableHeader>
                   <TableBody>
                     {filteredCalculations.map((calculation) => (
-                      <TableRow key={calculation.id}>
+                      <TableRow key={calculation.id} className={calculation.isDeleted ? "bg-muted/50 text-muted-foreground" : ""}>
                         <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
                         <TableCell className="font-medium">{calculation.companyName}</TableCell>
                         <TableCell className="max-w-32 truncate" title={calculation.scope}>
@@ -288,10 +300,13 @@ export function HistoryManagement() {
                         <TableCell className="font-semibold">{calculation.result} days</TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
+                            <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)} disabled={calculation.isDeleted}>
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => handleDeleteCalculation(calculation.id)}>
+                            <Button size="sm" variant="outline" onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}>
+                              {calculation.isDeleted ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDeletePermanently(calculation.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -304,7 +319,7 @@ export function HistoryManagement() {
 
               <div className="lg:hidden space-y-4">
                 {filteredCalculations.map((calculation) => (
-                  <Card key={calculation.id} className="p-4">
+                  <Card key={calculation.id} className={`p-4 ${calculation.isDeleted ? "bg-muted/50 text-muted-foreground" : ""}`}>
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
@@ -312,10 +327,13 @@ export function HistoryManagement() {
                           <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
                         </div>
                         <div className="flex gap-2 ml-2">
-                          <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
+                          <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)} disabled={calculation.isDeleted}>
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button size="sm" variant="outline" onClick={() => handleDeleteCalculation(calculation.id)}>
+                          <Button size="sm" variant="outline" onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}>
+                            {calculation.isDeleted ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => handleDeletePermanently(calculation.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
