@@ -8,10 +8,10 @@ import { validateCalculationInput } from '@/lib/audit-calculator-fixed'
 // GET - Fetch all calculations for the logged-in user
 export async function GET() {
   try {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
-  }
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+    }
 
     const calculations = await storage.getCalculations(session.user.id)
     return NextResponse.json({ success: true, data: calculations })
@@ -27,10 +27,10 @@ export async function GET() {
 // POST - Save a new calculation
 export async function POST(request: NextRequest) {
   try {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
-  }
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+    }
 
     const body = await request.json()
     
@@ -87,10 +87,10 @@ export async function POST(request: NextRequest) {
 // DELETE - Delete all calculations for the logged-in user
 export async function DELETE() {
   try {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
-  }
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+    }
 
     await storage.clearCalculations(session.user.id)
     return NextResponse.json({ 

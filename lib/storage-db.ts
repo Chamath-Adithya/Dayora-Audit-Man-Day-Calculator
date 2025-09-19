@@ -118,8 +118,19 @@ export const storage = {
       if (error instanceof z.ZodError) {
         throw new Error(`Validation error: ${error.errors.map(e => e.message).join(', ')}`)
       }
-      // Log the full error object for more details
-      console.error('Full error object:', JSON.stringify(error, null, 2))
+      // Handle Prisma errors
+      if (error.code === 'P2002') {
+        throw new Error('A calculation with this data already exists')
+      }
+      if (error.code === 'P2025') {
+        throw new Error('Related record not found')
+      }
+      // Log the full error object for debugging
+      console.error('Database error details:', {
+        code: error.code,
+        message: error.message,
+        meta: error.meta
+      })
       throw new Error('Failed to save calculation')
     }
   },
