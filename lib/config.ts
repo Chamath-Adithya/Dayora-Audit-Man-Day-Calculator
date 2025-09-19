@@ -35,7 +35,8 @@ export async function getConfig(): Promise<AdminConfig> {
   }
 
   try {
-    const response = await fetch('/api/config');
+    const baseUrl = process.env.NEXTAUTH_URL || '';
+    const response = await fetch(`${baseUrl}/api/config`);
     if (!response.ok) {
       throw new Error('Failed to fetch config');
     }
