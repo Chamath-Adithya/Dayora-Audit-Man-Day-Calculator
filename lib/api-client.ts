@@ -13,7 +13,6 @@ export interface CalculationData {
   integratedStandards: string[]
   result?: number
   breakdown?: any
-  userId: string
   stage1ManDays?: number
   stage2ManDays?: number
   surveillanceManDays?: number
