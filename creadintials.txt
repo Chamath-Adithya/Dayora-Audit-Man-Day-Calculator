@@ -1,3 +1,7 @@
 Admin: admin@dayora.com / admin123
 User: user@dayora.com / user123
 Demo: demo@dayora.com / demo123
+
+
+   * Email: admin@dayora.com
+   * Password: admin123
