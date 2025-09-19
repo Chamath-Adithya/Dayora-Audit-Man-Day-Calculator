@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
     // Prepare data for storage
     const calculationData = {
       ...body,
-      userId: session.user.id,
       result: calculationResult.totalManDays,
       breakdown: calculationResult.breakdown,
       stage1ManDays: calculationResult.stageDistribution?.stage1,

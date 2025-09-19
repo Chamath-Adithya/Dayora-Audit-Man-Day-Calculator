@@ -46,7 +46,6 @@ model User {
   passwordHash  String?
   accounts      Account[]
   sessions      Session[]
-  calculations  Calculation[]
 }
 
 model VerificationToken {
@@ -90,8 +89,6 @@ model Calculation {
   
   // Metadata
   isDeleted           Boolean  @default(false)
-  userId              String
-  user                User     @relation(fields: [userId], references: [id])
   
   @@map("calculations")
 }

@@ -24,7 +24,6 @@ const CalculationInputSchema = z.object({
   stage2ManDays: z.number().optional(),
   surveillanceManDays: z.number().optional(),
   recertificationManDays: z.number().optional(),
-  userId: z.string(),
 })
 
 const UpdateCalculationSchema = CalculationInputSchema.partial()
@@ -49,15 +48,14 @@ export interface SavedCalculation {
   stage2ManDays?: number
   surveillanceManDays?: number
   recertificationManDays?: number
-  userId: string
   isDeleted: boolean
 }
 
 export const storage = {
-  async getCalculations(userId: string): Promise<SavedCalculation[]> {
+  async getCalculations(): Promise<SavedCalculation[]> {
     try {
       const calculations = await prisma.calculation.findMany({
-        where: { userId, isDeleted: false },
+        where: { isDeleted: false },
         orderBy: { createdAt: 'desc' },
       })
       
@@ -260,16 +258,16 @@ export const storage = {
     }
   },
 
-  async getStats(userId: string) {
+  async getStats() {
     try {
       const [
         totalCalculations,
         calculations,
         uniqueCompanies,
       ] = await Promise.all([
-        prisma.calculation.count({ where: { userId, isDeleted: false } }),
+        prisma.calculation.count({ where: { isDeleted: false } }),
         prisma.calculation.findMany({ 
-          where: { userId, isDeleted: false },
+          where: { isDeleted: false },
           select: {
             result: true,
             companyName: true,
@@ -280,7 +278,7 @@ export const storage = {
           }
         }),
         prisma.calculation.findMany({
-          where: { userId, isDeleted: false },
+          where: { isDeleted: false },
           select: { companyName: true },
           distinct: ['companyName'],
         }),
