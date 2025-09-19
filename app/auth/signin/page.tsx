@@ -31,9 +31,7 @@ export default function SignInPage() {
       if (result?.error) {
         setError("Invalid credentials. Please try again.")
       } else if (result?.ok) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const callbackUrl = urlParams.get('callbackUrl') || '/';
-        window.location.href = callbackUrl;
+        window.location.href = "/"
       }
     } catch (error) {
       setError("An error occurred. Please try again.")
