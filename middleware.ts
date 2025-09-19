@@ -10,7 +10,10 @@ export default withAuth(
         // Allow access to public routes
         if (req.nextUrl.pathname === "/" || 
             req.nextUrl.pathname.startsWith("/auth/") ||
-            req.nextUrl.pathname.startsWith("/api/auth/")) {
+            req.nextUrl.pathname.startsWith("/api/auth/") ||
+            req.nextUrl.pathname.startsWith("/api/config") ||
+            req.nextUrl.pathname.startsWith("/api/calculations") ||
+            req.nextUrl.pathname.startsWith("/api/stats")) {
           return true
         }
         
