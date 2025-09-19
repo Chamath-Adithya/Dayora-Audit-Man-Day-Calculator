@@ -61,13 +61,33 @@ export const storage = {
         orderBy: { createdAt: 'desc' },
       })
       
-      return calculations.map(calc => ({
-        ...calc,
-        integratedStandards: Array.isArray(calc.integratedStandards) 
-          ? calc.integratedStandards 
-          : JSON.parse(calc.integratedStandards as string),
-        breakdown: calc.breakdown ? JSON.parse(calc.breakdown as string) : undefined,
-      }))
+      return calculations.map(calc => {
+        let integratedStandards: string[] = []
+        try {
+          if (typeof calc.integratedStandards === 'string') {
+            integratedStandards = JSON.parse(calc.integratedStandards)
+          } else if (Array.isArray(calc.integratedStandards)) {
+            integratedStandards = calc.integratedStandards
+          }
+        } catch (e) {
+          console.error(`Failed to parse integratedStandards for calculation ${calc.id}:`, e)
+        }
+
+        let breakdown: any | undefined = undefined
+        try {
+          if (calc.breakdown && typeof calc.breakdown === 'string') {
+            breakdown = JSON.parse(calc.breakdown)
+          }
+        } catch (e) {
+          console.error(`Failed to parse breakdown for calculation ${calc.id}:`, e)
+        }
+
+        return {
+          ...calc,
+          integratedStandards,
+          breakdown,
+        }
+      })
     } catch (error) {
       console.error('Error fetching calculations:', error)
       throw new Error('Failed to fetch calculations')
@@ -82,12 +102,30 @@ export const storage = {
       
       if (!calculation) return null
       
+      let integratedStandards: string[] = []
+      try {
+        if (typeof calculation.integratedStandards === 'string') {
+          integratedStandards = JSON.parse(calculation.integratedStandards)
+        } else if (Array.isArray(calculation.integratedStandards)) {
+          integratedStandards = calculation.integratedStandards
+        }
+      } catch (e) {
+        console.error(`Failed to parse integratedStandards for calculation ${calculation.id}:`, e)
+      }
+
+      let breakdown: any | undefined = undefined
+      try {
+        if (calculation.breakdown && typeof calculation.breakdown === 'string') {
+          breakdown = JSON.parse(calculation.breakdown)
+        }
+      } catch (e) {
+        console.error(`Failed to parse breakdown for calculation ${calculation.id}:`, e)
+      }
+
       return {
         ...calculation,
-        integratedStandards: Array.isArray(calculation.integratedStandards) 
-          ? calculation.integratedStandards 
-          : JSON.parse(calculation.integratedStandards as string),
-        breakdown: calculation.breakdown ? JSON.parse(calculation.breakdown as string) : undefined,
+        integratedStandards,
+        breakdown,
       }
     } catch (error) {
       console.error('Error fetching calculation:', error)
@@ -99,12 +137,26 @@ export const storage = {
     try {
       // Validate input
       const validatedData = CalculationInputSchema.parse(calculation)
+
+      // Sanitize breakdown object
+      let sanitizedBreakdown: string | null = null;
+      if (validatedData.breakdown) {
+        const breakdown = validatedData.breakdown as Record<string, any>;
+        const sanitized: Record<string, any> = {};
+        for (const key in breakdown) {
+          if (Object.prototype.hasOwnProperty.call(breakdown, key)) {
+            const value = breakdown[key];
+            sanitized[key] = typeof value === 'number' && !Number.isFinite(value) ? null : value;
+          }
+        }
+        sanitizedBreakdown = JSON.stringify(sanitized);
+      }
       
       const newCalculation = await prisma.calculation.create({
         data: {
           ...validatedData,
           integratedStandards: JSON.stringify(validatedData.integratedStandards),
-          breakdown: validatedData.breakdown ? JSON.stringify(validatedData.breakdown) : null,
+          breakdown: sanitizedBreakdown,
         },
       })
       
@@ -153,12 +205,30 @@ export const storage = {
         },
       })
       
+      let integratedStandards: string[] = []
+      try {
+        if (typeof updatedCalculation.integratedStandards === 'string') {
+          integratedStandards = JSON.parse(updatedCalculation.integratedStandards)
+        } else if (Array.isArray(updatedCalculation.integratedStandards)) {
+          integratedStandards = updatedCalculation.integratedStandards
+        }
+      } catch (e) {
+        console.error(`Failed to parse integratedStandards for calculation ${updatedCalculation.id}:`, e)
+      }
+
+      let breakdown: any | undefined = undefined
+      try {
+        if (updatedCalculation.breakdown && typeof updatedCalculation.breakdown === 'string') {
+          breakdown = JSON.parse(updatedCalculation.breakdown)
+        }
+      } catch (e) {
+        console.error(`Failed to parse breakdown for calculation ${updatedCalculation.id}:`, e)
+      }
+
       return {
         ...updatedCalculation,
-        integratedStandards: Array.isArray(updatedCalculation.integratedStandards) 
-          ? updatedCalculation.integratedStandards 
-          : JSON.parse(updatedCalculation.integratedStandards as string),
-        breakdown: updatedCalculation.breakdown ? JSON.parse(updatedCalculation.breakdown as string) : undefined,
+        integratedStandards,
+        breakdown,
       }
     } catch (error) {
       console.error('Error updating calculation:', error)
