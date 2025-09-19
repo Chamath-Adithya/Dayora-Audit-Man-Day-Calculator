@@ -1,10 +1,8 @@
 import NextAuth from "next-auth"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/database"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 export const authOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -17,21 +15,22 @@ export const authOptions = {
           return null
         }
 
-        // This is a simplified authorization for demonstration.
-        // In a real application, you should hash and compare passwords.
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: { email: credentials.email },
         })
 
-        if (user) {
-          // For now, we'll just check if the user exists.
-          // Replace this with actual password validation.
-          return user
-        } else {
-          // In a real app, you might want to throw an error or return null
-          // depending on your registration strategy.
-          return null
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              email: credentials.email,
+              name: credentials.email.split('@')[0],
+            },
+          })
         }
+
+        // For now, we'll just check if the user exists or was created.
+        // Replace this with actual password validation.
+        return user
       }
     })
   ],
