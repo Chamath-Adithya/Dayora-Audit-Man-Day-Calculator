@@ -37,15 +37,23 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET || "fallback-secret-key-for-development",
   session: {
-    strategy: "database" as const,
+    strategy: "jwt" as const,
   },
   pages: {
     signIn: '/auth/signin',
   },
   callbacks: {
-    async session({ session, user }) {
-      session.user.id = user.id;
+    async session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
       return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
     },
   },
 }
