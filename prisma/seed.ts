@@ -60,9 +60,6 @@ async function main() {
         medium: 1.0,
         high: 1.2
       },
-      haccpMultiplier: 0.5,
-      multiSiteMultiplier: 0.5,
-      integratedSystemReduction: 0.1,
       isActive: true,
       description: 'Default IAF MD 5:2019 compliant configuration'
     }
@@ -76,22 +73,57 @@ async function main() {
   }
 
   // Check if admin user already exists
-  const existingUser = await prisma.user.findUnique({
+  const existingAdminUser = await prisma.user.findUnique({
     where: { email: 'admin@dayora.com' }
   })
 
-  if (!existingUser) {
+  if (!existingAdminUser) {
     await prisma.user.create({
       data: {
         name: 'Admin User',
         email: 'admin@dayora.com',
-        // In a real app, you would hash the password
         passwordHash: 'admin123',
       },
     })
     console.log('✅ Admin user created.')
   } else {
     console.log('✅ Admin user already exists.')
+  }
+
+  // Check if user@dayora.com already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email: 'user@dayora.com' }
+  })
+
+  if (!existingUser) {
+    await prisma.user.create({
+      data: {
+        name: 'Regular User',
+        email: 'user@dayora.com',
+        passwordHash: 'user123',
+      },
+    })
+    console.log('✅ Regular user (user@dayora.com) created.')
+  } else {
+    console.log('✅ Regular user (user@dayora.com) already exists.')
+  }
+
+  // Check if demo@dayora.com already exists
+  const existingDemoUser = await prisma.user.findUnique({
+    where: { email: 'demo@dayora.com' }
+  })
+
+  if (!existingDemoUser) {
+    await prisma.user.create({
+      data: {
+        name: 'Demo User',
+        email: 'demo@dayora.com',
+        passwordHash: 'demo123',
+      },
+    })
+    console.log('✅ Demo user (demo@dayora.com) created.')
+  } else {
+    console.log('✅ Demo user (demo@dayora.com) already exists.')
   }
 
   console.log('✅ Database seeded successfully!')
