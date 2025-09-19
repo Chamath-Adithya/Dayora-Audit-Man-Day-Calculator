@@ -1,15 +1,7 @@
 import NextAuth from "next-auth"
 import { prisma } from "@/lib/database"
 import CredentialsProvider from "next-auth/providers/credentials"
-
-const HARDCODED_USERS = [
-  {
-    id: "clxvxkx4p0000u8z5d4f6e8k9",
-    email: "admin@dayora.com",
-    password: "admin123",
-    name: "Admin User"
-  },
-]
+import bcrypt from "bcrypt"
 
 export const authOptions = {
   providers: [
@@ -22,15 +14,22 @@ export const authOptions = {
       async authorize(credentials, req) {
         if (!credentials) return null;
 
-        const user = HARDCODED_USERS.find(
-          (user) => user.email === credentials.email && user.password === credentials.password
-        );
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
 
-        if (user) {
-          return { id: user.id, name: user.name, email: user.email };
-        } else {
-          return null;
+        if (user && user.passwordHash) {
+          console.log("Attempting to log in user:", credentials.email);
+          console.log("Provided password:", credentials.password);
+          console.log("Stored hash:", user.passwordHash);
+          const isValidPassword = await bcrypt.compare(credentials.password, user.passwordHash);
+          console.log("Password comparison result:", isValidPassword);
+          if (isValidPassword) {
+            return { id: user.id, name: user.name, email: user.email };
+          }
         }
+        console.log("Authentication failed for user:", credentials.email);
+        return null;
       }
     })
   ],

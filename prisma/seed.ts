@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
@@ -13,7 +14,7 @@ async function main() {
     // Create default admin configuration
     const defaultConfig = {
       name: 'default',
-      baseManDays: {
+      baseManDays: JSON.stringify({
         QMS: {
           AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6,
           C: 7, D: 8, E: 10, F: 12, G: 15,
@@ -39,8 +40,8 @@ async function main() {
           C: 7, D: 8, E: 10, F: 12, G: 15,
           H: 18, I: 22, J: 27, K: 32
         }
-      },
-      employeeRanges: [
+      }),
+      employeeRanges: JSON.stringify([
         { min: 1, max: 5, adjustment: 0, description: "1-5 employees" },
         { min: 6, max: 25, adjustment: 0.5, description: "6-25 employees" },
         { min: 26, max: 45, adjustment: 1, description: "26-45 employees" },
@@ -54,15 +55,12 @@ async function main() {
         { min: 626, max: 875, adjustment: 7, description: "626-875 employees" },
         { min: 876, max: 1175, adjustment: 8, description: "876-1175 employees" },
         { min: 1176, max: 999999, adjustment: 10, description: "1176+ employees" }
-      ],
-      riskMultipliers: {
+      ]),
+      riskMultipliers: JSON.stringify({
         low: 0.8,
         medium: 1.0,
         high: 1.2
-      },
-      haccpMultiplier: 0.5,
-      multiSiteMultiplier: 0.5,
-      integratedSystemReduction: 0.1,
+      }),
       isActive: true,
       description: 'Default IAF MD 5:2019 compliant configuration'
     }
@@ -76,22 +74,60 @@ async function main() {
   }
 
   // Check if admin user already exists
-  const existingUser = await prisma.user.findUnique({
+  const existingAdminUser = await prisma.user.findUnique({
     where: { email: 'admin@dayora.com' }
   })
 
-  if (!existingUser) {
+  if (!existingAdminUser) {
+    const hashedPassword = await bcrypt.hash('admin123', 10);
     await prisma.user.create({
       data: {
         name: 'Admin User',
         email: 'admin@dayora.com',
-        // In a real app, you would hash the password
-        passwordHash: 'admin123',
+        passwordHash: hashedPassword,
       },
     })
     console.log('✅ Admin user created.')
   } else {
     console.log('✅ Admin user already exists.')
+  }
+
+  // Check if user@dayora.com already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email: 'user@dayora.com' }
+  })
+
+  if (!existingUser) {
+    const hashedPassword = await bcrypt.hash('user123', 10);
+    await prisma.user.create({
+      data: {
+        name: 'Regular User',
+        email: 'user@dayora.com',
+        passwordHash: hashedPassword,
+      },
+    })
+    console.log('✅ Regular user (user@dayora.com) created.')
+  } else {
+    console.log('✅ Regular user (user@dayora.com) already exists.')
+  }
+
+  // Check if demo@dayora.com already exists
+  const existingDemoUser = await prisma.user.findUnique({
+    where: { email: 'demo@dayora.com' }
+  })
+
+  if (!existingDemoUser) {
+    const hashedPassword = await bcrypt.hash('demo123', 10);
+    await prisma.user.create({
+      data: {
+        name: 'Demo User',
+        email: 'demo@dayora.com',
+        passwordHash: hashedPassword,
+      },
+    })
+    console.log('✅ Demo user (demo@dayora.com) created.')
+  } else {
+    console.log('✅ Demo user (demo@dayora.com) already exists.')
   }
 
   console.log('✅ Database seeded successfully!')
