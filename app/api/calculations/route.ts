@@ -16,11 +16,12 @@ export async function GET() {
     const calculations = await storage.getCalculations(session.user.id)
     return NextResponse.json({ success: true, data: calculations })
   } catch (error) {
-    console.error('Error fetching calculations:', error)
+    console.error('Error fetching calculations:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch calculations' },
+      { success: false, error: 'Failed to fetch calculations', details: errorMessage },
       { status: 500 }
-    )
+    );
   }
 }
 
