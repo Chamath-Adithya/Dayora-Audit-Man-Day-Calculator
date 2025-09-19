@@ -2,11 +2,11 @@
 # Copy these to your Vercel project settings
 
 # Database (use PostgreSQL for production)
-DATABASE_URL="postgresql://username:password@host:port/database?sslmode=require"
+DATABASE_URL="prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfaWQiOjEsInNlY3VyZV9rZXkiOiJza19FWm1fQzVzQlg0YUlvRkYxMEJrOV8iLCJhcGlfa2V5IjoiMDFLNUdZNjdBNDZWUE5YMzVLWEZZMlNYQVYiLCJ0ZW5hbnRfaWQiOiJjNDQyZTVkMDBiOWQ0ZmEyN2E1YjcwNjNjOWFlNjYyZWRiYjVhMGVmZjg1ZDdhYjdkMzRhY2EyOWE4YzA0MjBhIiwiaW50ZXJuYWxfc2VjcmV0IjoiMTYyMjcyN2EtNjU1Yy00MTJiLWJiNWItNmVlNmRhZTc3MjY2In0.3oATnZcI4IhKzuMK62hHJB3h1R5VqxNeVWCOaGgrd-Y"
 
 # Next.js
-NEXTAUTH_SECRET="your-random-secret-key-here"
-NEXTAUTH_URL="https://your-app.vercel.app"
+NEXTAUTH_SECRET="PKjCPB4QKfrfKOsCPUYhY1mjAlLTVzKo3HIKte/ye1U="
+NEXTAUTH_URL="https://dayora.vercel.app"
 
 # Optional: Error monitoring
 # SENTRY_DSN="your-sentry-dsn-here"
