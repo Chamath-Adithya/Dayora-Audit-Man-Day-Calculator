@@ -240,7 +240,12 @@ export const storage = {
   async deleteCalculation(id: string): Promise<void> {
     try {
       await prisma.calculation.delete({ where: { id } })
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        // Record not found, perhaps already deleted or invalid ID
+        console.warn(`Attempted to delete non-existent calculation with ID: ${id}`)
+        return // Or throw a more specific error if needed
+      }
       console.error('Error deleting calculation:', error)
       throw new Error('Failed to delete calculation')
     }

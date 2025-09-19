@@ -84,8 +84,8 @@ export function HistoryManagement() {
         await loadCalculations()
       } catch (err) {
         console.error("Failed to delete calculation:", err)
-        alert("Failed to delete calculation. Please try again.")
-      }
+      alert(`Failed to delete calculation: ${err instanceof Error ? err.message : String(err)}`)
+    }
     }
   }
 

@@ -122,8 +122,12 @@ export async function DELETE(
     })
   } catch (error) {
     console.error(`[API] Critical error deleting calculation with ID: ${id}`, error)
+    let errorMessage = 'Failed to delete calculation'
+    if (error instanceof Error) {
+      errorMessage = error.message
+    }
     return NextResponse.json(
-      { success: false, error: 'Failed to delete calculation' },
+      { success: false, error: errorMessage },
       { status: 500 }
     )
   }
