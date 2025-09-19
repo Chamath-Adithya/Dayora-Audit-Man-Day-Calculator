@@ -11,6 +11,7 @@ export const authOptions = {
         password: { label: "Password", type: "password", placeholder: "admin123" }
       },
       async authorize(credentials, req) {
+        console.log("Authorize function called");
         if (!credentials || !credentials.email || !credentials.password) {
           return null
         }
@@ -20,6 +21,7 @@ export const authOptions = {
         })
 
         if (!user) {
+          console.log("User not found, creating new user");
           user = await prisma.user.create({
             data: {
               email: credentials.email,
@@ -27,9 +29,7 @@ export const authOptions = {
             },
           })
         }
-
-        // For now, we'll just check if the user exists or was created.
-        // Replace this with actual password validation.
+        console.log("Authorize function returning user:", user);
         return user
       }
     })
@@ -43,15 +43,19 @@ export const authOptions = {
   },
   callbacks: {
     async session({ session, token }) {
+      console.log("Session callback called, token:", token);
       if (token.sub) {
         session.user.id = token.sub;
       }
+      console.log("Session callback returning session:", session);
       return session;
     },
     async jwt({ token, user }) {
+      console.log("JWT callback called, user:", user);
       if (user) {
         token.sub = user.id;
       }
+      console.log("JWT callback returning token:", token);
       return token;
     },
   },
