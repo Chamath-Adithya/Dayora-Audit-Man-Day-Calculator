@@ -19,12 +19,13 @@ interface RiskMultipliers {
 }
 
 export interface AdminConfig {
-  employeeRanges: EmployeeRange[];
-  baseManDays: BaseManDays;
-  riskMultipliers: RiskMultipliers;
-  haccpMultiplier: number;
-  multiSiteMultiplier: number;
-  integratedSystemReduction: number;
+  employeeRanges: { min: number; max: number; adjustment: number, description: string }[]
+  baseManDays: { [standard: string]: { [category: string]: number } }
+  riskMultipliers: { low: number; medium: number; high: number }
+  haccpMultiplier: number
+  multiSiteMultiplier: number
+  integratedSystemReduction: number
+  integratedStandards: { id: string; name: string; reduction: number }[]
 }
 
 let configCache: AdminConfig | null = null;
@@ -73,6 +74,7 @@ export async function getConfig(): Promise<AdminConfig> {
       haccpMultiplier: 0.5,
       multiSiteMultiplier: 0.5,
       integratedSystemReduction: 0.1,
+      integratedStandards: [],
     };
   }
 }

@@ -20,6 +20,12 @@ interface EmployeeRange {
   description: string
 }
 
+interface IntegratedStandard {
+  id: string
+  name: string
+  reduction: number
+}
+
 interface BaseManDays {
   [standard: string]: {
     [category: string]: number
@@ -39,6 +45,7 @@ interface AdminConfig {
   haccpMultiplier: number
   multiSiteMultiplier: number
   integratedSystemReduction: number
+  integratedStandards: IntegratedStandard[]
 }
 
 const DEFAULT_CONFIG: AdminConfig = {
@@ -68,6 +75,11 @@ const DEFAULT_CONFIG: AdminConfig = {
   haccpMultiplier: 0.5,
   multiSiteMultiplier: 0.5,
   integratedSystemReduction: 0.1,
+  integratedStandards: [
+    { id: "ISO_14001", name: "ISO 14001", reduction: 0.1 },
+    { id: "ISO_45001", name: "ISO 45001", reduction: 0.1 },
+    { id: "ISO_22000", name: "ISO 22000", reduction: 0.15 },
+  ],
 }
 
 export function AdminConfiguration() {
@@ -77,7 +89,7 @@ export function AdminConfiguration() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedTab, setSelectedTab] = useState("employee-ranges")
 
-  useEffect(() => {
+  useEffect(() => {   
     const fetchConfig = async () => {
       setIsLoading(true)
       try {
@@ -179,15 +191,14 @@ export function AdminConfiguration() {
 
   const addIntegratedStandard = () => {
     if (!config) return
-    const newStandards = [...config.integratedStandards, { id: "", name: "", reduction: 0.1 }]
+    const newStandards = [...config.integratedStandards, { id: `NEW_${Date.now()}`, name: "New Standard", reduction: 0.1 }]
     setConfig({ ...config, integratedStandards: newStandards })
     setHasChanges(true)
   }
 
   const removeIntegratedStandard = (index: number) => {
     if (!config) return
-    const newStandards = [...config.integratedStandards]
-    newStandards.splice(index, 1)
+    const newStandards = config.integratedStandards.filter((_, i) => i !== index)
     setConfig({ ...config, integratedStandards: newStandards })
     setHasChanges(true)
   }
@@ -530,46 +541,105 @@ export function AdminConfiguration() {
 
         {/* General Settings Tab */}
         <TabsContent value="general">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Multi-Site Adjustment</CardTitle>
-                <CardDescription>Additional man-days per additional site</CardDescription>
+                <CardTitle>Integrated Standards Management</CardTitle>
+                <CardDescription>
+                  Manage the list of standards that can be integrated and their man-day reduction percentages.
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <Label htmlFor="multisite-multiplier">Man-Days per Additional Site</Label>
-                  <Input
-                    id="multisite-multiplier"
-                    type="number"
-                    step="0.1"
-                    value={config.multiSiteMultiplier}
-                    onChange={(e) => updateGeneralSetting("multiSiteMultiplier", Number.parseFloat(e.target.value))}
-                  />
+                <div className="space-y-4">
+                  {config.integratedStandards.map((standard, index) => (
+                    <div key={standard.id} className="flex items-center gap-4 p-2 border rounded-md">
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <Label htmlFor={`standard-id-${index}`}>Standard ID</Label>
+                          <Input
+                            id={`standard-id-${index}`}
+                            value={standard.id}
+                            onChange={(e) => updateIntegratedStandard(index, "id", e.target.value)}
+                            placeholder="e.g., ISO_14001"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`standard-name-${index}`}>Standard Name</Label>
+                          <Input
+                            id={`standard-name-${index}`}
+                            value={standard.name}
+                            onChange={(e) => updateIntegratedStandard(index, "name", e.target.value)}
+                            placeholder="e.g., ISO 14001"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`standard-reduction-${index}`}>Reduction (0.1 = 10%)</Label>
+                          <Input
+                            id={`standard-reduction-${index}`}
+                            type="number"
+                            step="0.01"
+                            value={standard.reduction}
+                            onChange={(e) =>
+                              updateIntegratedStandard(index, "reduction", Number.parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      </div>
+                      <Button variant="destructive" size="sm" onClick={() => removeIntegratedStandard(index)}>
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
                 </div>
+                <Button onClick={addIntegratedStandard} className="mt-4">
+                  Add Standard
+                </Button>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Integrated System Reduction</CardTitle>
-                <CardDescription>Percentage reduction per integrated standard</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Label htmlFor="integrated-reduction">Reduction per Standard (0.1 = 10%)</Label>
-                  <Input
-                    id="integrated-reduction"
-                    type="number"
-                    step="0.01"
-                    value={config.integratedSystemReduction}
-                    onChange={(e) =>
-                      updateGeneralSetting("integratedSystemReduction", Number.parseFloat(e.target.value))
-                    }
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Multi-Site Adjustment</CardTitle>
+                  <CardDescription>Additional man-days per additional site</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Label htmlFor="multisite-multiplier">Man-Days per Additional Site</Label>
+                    <Input
+                      id="multisite-multiplier"
+                      type="number"
+                      step="0.1"
+                      value={config.multiSiteMultiplier}
+                      onChange={(e) => updateGeneralSetting("multiSiteMultiplier", Number.parseFloat(e.target.value))}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Default Integrated System Reduction</CardTitle>
+                  <CardDescription>
+                    Fallback percentage reduction if a specific standard reduction is not defined.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Label htmlFor="integrated-reduction">Default Reduction (0.1 = 10%)</Label>
+                    <Input
+                      id="integrated-reduction"
+                      type="number"
+                      step="0.01"
+                      value={config.integratedSystemReduction}
+                      onChange={(e) =>
+                        updateGeneralSetting("integratedSystemReduction", Number.parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </TabsContent>
       </Tabs>

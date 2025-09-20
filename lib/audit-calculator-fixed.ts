@@ -64,7 +64,10 @@ export async function calculateAuditManDays(data: CalculationData): Promise<Calc
   const multiSiteAdjustment = data.sites > 1 ? (data.sites - 1) * config.multiSiteMultiplier : 0
 
   // Calculate integrated system reduction
-  const integratedSystemReduction = data.integratedStandards.length * config.integratedSystemReduction
+  const integratedSystemReduction = data.integratedStandards.reduce((total, currentStandardName) => {
+    const standardDetails = config.integratedStandards.find(s => s.name === currentStandardName);
+    return total + (standardDetails ? standardDetails.reduction : 0);
+  }, 0);
   const integratedSystemAdjustment = -(baseManDays * integratedSystemReduction)
 
   // Calculate total before integration
@@ -143,7 +146,8 @@ export function getAvailableRiskLevels() {
 
 export async function getAvailableIntegratedStandards() {
     const config = await getConfig();
-  return Object.keys(config.baseManDays);
+  // Return the names of the configured integrated standards
+  return config.integratedStandards.map(standard => standard.name);
 }
 
 // Validation function
@@ -193,4 +197,3 @@ export async function validateCalculationInput(data: Partial<CalculationData>): 
   
   return errors
 }
-
