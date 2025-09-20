@@ -32,6 +32,12 @@ interface RiskMultipliers {
   high: number
 }
 
+interface IntegratedStandard {
+  id: string
+  name: string
+  reduction: number
+}
+
 interface AdminConfig {
   employeeRanges: EmployeeRange[]
   baseManDays: BaseManDays
@@ -39,6 +45,7 @@ interface AdminConfig {
   haccpMultiplier: number
   multiSiteMultiplier: number
   integratedSystemReduction: number
+  integratedStandards: IntegratedStandard[]
 }
 
 const DEFAULT_CONFIG: AdminConfig = {
@@ -68,6 +75,12 @@ const DEFAULT_CONFIG: AdminConfig = {
   haccpMultiplier: 0.5,
   multiSiteMultiplier: 0.5,
   integratedSystemReduction: 0.1,
+  integratedStandards: [
+    { id: "EMS", name: "EMS", reduction: 0.1 },
+    { id: "EnMS", name: "EnMS", reduction: 0.1 },
+    { id: "FSMS", name: "FSMS", reduction: 0.1 },
+    { id: "Cosmetics", name: "Cosmetics", reduction: 0.1 },
+  ],
 }
 
 export function AdminConfiguration() {
@@ -545,6 +558,59 @@ export function AdminConfiguration() {
                     }
                   />
                 </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Integrated Standards Management</CardTitle>
+                <CardDescription>Add, remove, or update integrated standards and their reduction values.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ID</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Reduction</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {config.integratedStandards.map((standard, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Input
+                            value={standard.id}
+                            onChange={(e) => updateIntegratedStandard(index, "id", e.target.value)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            value={standard.name}
+                            onChange={(e) => updateIntegratedStandard(index, "name", e.target.value)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={standard.reduction}
+                            onChange={(e) => updateIntegratedStandard(index, "reduction", Number.parseFloat(e.target.value))}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="destructive" size="sm" onClick={() => removeIntegratedStandard(index)}>
+                            Remove
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <Button onClick={addIntegratedStandard} className="mt-4">
+                  Add Standard
+                </Button>
               </CardContent>
             </Card>
           </div>
