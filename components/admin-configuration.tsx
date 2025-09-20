@@ -182,6 +182,29 @@ export function AdminConfiguration() {
     setHasChanges(true)
   }
 
+  const updateIntegratedStandard = (index: number, field: keyof IntegratedStandard, value: string | number) => {
+    if (!config) return
+    const newStandards = [...config.integratedStandards]
+    newStandards[index] = { ...newStandards[index], [field]: value }
+    setConfig({ ...config, integratedStandards: newStandards })
+    setHasChanges(true)
+  }
+
+  const addIntegratedStandard = () => {
+    if (!config) return
+    const newStandards = [...config.integratedStandards, { id: "", name: "", reduction: 0.1 }]
+    setConfig({ ...config, integratedStandards: newStandards })
+    setHasChanges(true)
+  }
+
+  const removeIntegratedStandard = (index: number) => {
+    if (!config) return
+    const newStandards = [...config.integratedStandards]
+    newStandards.splice(index, 1)
+    setConfig({ ...config, integratedStandards: newStandards })
+    setHasChanges(true)
+  }
+
   const categories = ["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
   const standards = ["QMS", "EMS", "EnMS", "FSMS", "Cosmetics"]
 
