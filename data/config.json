@@ -1,4 +1,3 @@
-
 {
   "employeeRanges": [
     { "min": 1, "max": 5, "adjustment": 0, "description": "1-5 employees" },
@@ -29,5 +28,6 @@
   },
   "haccpMultiplier": 0.5,
   "multiSiteMultiplier": 0.5,
-  "integratedSystemReduction": 0.1
+  "integratedSystemReduction": 0.1,
+  "integratedStandards": []
 }

@@ -8,9 +8,17 @@ const configPath = path.resolve(process.cwd(), 'data/config.json');
 export async function GET() {
   try {
     const fileContent = await fs.readFile(configPath, 'utf-8');
-    const config = JSON.parse(fileContent);
+    let config = JSON.parse(fileContent);
+
+    // Ensure integratedStandards exists to prevent client-side errors
+    if (!config.integratedStandards) {
+      config.integratedStandards = [];
+    }
+
     return NextResponse.json(config);
   } catch (error) {
+    // If the file doesn't exist or is invalid, we could return a default config
+    // For now, we'll return an error, but a more robust solution might send defaults.
     return NextResponse.json({ message: 'Error reading config file' }, { status: 500 });
   }
 }
