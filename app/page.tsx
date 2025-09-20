@@ -3,7 +3,7 @@
 import { MainLayout } from "@/components/main-layout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calculator, FileText, History, Settings, Shield, CheckCircle, ArrowRight } from "lucide-react"
+import { Calculator, FileText, History, Settings, Sparkles, Shield, Zap } from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
@@ -13,13 +13,13 @@ export default function HomePage() {
         {/* Header Section */}
         <div className="text-center space-y-4 sm:space-y-6 animate-in fade-in-0 slide-in-from-top-4 duration-700">
           <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4">
-            <div className="p-2 sm:p-3 rounded-full bg-primary/10">
+            <div className="p-2 sm:p-3 rounded-full bg-primary/10 animate-pulse">
               <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Dayora
             </h1>
-            <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
+            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-accent animate-bounce" />
           </div>
           <h2 className="text-xl sm:text-2xl font-semibold text-muted-foreground">
             Audit Man-Day Calculator
@@ -37,7 +37,7 @@ export default function HomePage() {
               <Calculator className="mr-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:rotate-12 transition-transform duration-300" />
               <span className="hidden sm:inline">Start New Calculation</span>
               <span className="sm:hidden">New Calculation</span>
-              <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform duration-300" />
+              <Zap className="ml-2 h-3 w-3 sm:h-4 sm:w-4 group-hover:animate-pulse" />
             </Button>
           </Link>
         </div>
