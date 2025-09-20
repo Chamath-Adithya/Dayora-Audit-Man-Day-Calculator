@@ -92,6 +92,12 @@ export function HistoryManagement() {
   const handleBulkAction = async (action: "archive" | "restore" | "delete") => {
     const actionVerb = action === "archive" ? "archive" : action === "restore" ? "restore" : "permanently delete"
     if (confirm(`Are you sure you want to ${actionVerb} ${selectedCalculations.length} calculations?`)) {
+      if (action === "archive") {
+        if (confirm("Do you want to export a PDF of the selected calculations before archiving?")) {
+          const calculationsToExport = calculations.filter(calc => selectedCalculations.includes(calc.id))
+          await handleExportHistoryPDF(calculationsToExport)
+        }
+      }
       try {
         await Promise.all(selectedCalculations.map(id => {
           if (action === "archive") {
@@ -114,8 +120,8 @@ export function HistoryManagement() {
     window.open(`/results?id=${id}`, "_blank")
   }
 
-  const handleExportHistoryPDF = async () => {
-    if (filteredCalculations.length === 0) {
+  const handleExportHistoryPDF = async (calculationsToExport: SavedCalculation[] = filteredCalculations) => {
+    if (calculationsToExport.length === 0) {
       alert("No calculations to export.")
       return
     }
@@ -126,7 +132,7 @@ export function HistoryManagement() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ calculations: filteredCalculations }),
+        body: JSON.stringify({ calculations: calculationsToExport }),
       });
 
       if (!response.ok) {
@@ -273,7 +279,7 @@ export function HistoryManagement() {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 justify-start sm:justify-start">
-                  <Button onClick={handleExportHistoryPDF} variant="outline" size="sm" className="flex-shrink-0">
+                  <Button onClick={() => handleExportHistoryPDF()} variant="outline" size="sm" className="flex-shrink-0">
                     <FileText className="mr-2 h-4 w-4" />
                     <span className="hidden sm:inline">Export PDF</span>
                     <span className="sm:hidden">PDF</span>
