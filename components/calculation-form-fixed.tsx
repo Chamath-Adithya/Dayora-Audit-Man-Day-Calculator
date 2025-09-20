@@ -473,7 +473,7 @@ export default function CalculationFormFixed() {
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => setFormData((p) => ({ ...p, companyName: "", scope: "", standard: "", auditType: "", category: "", employees: 20, sites: 1, haccpStudies: 0, riskLevel: "", integratedStandards: [] }))}
+                  onClick={() => setFormData((p) => ({ ...p, employees: 20, sites: 1 }))}
                   className="btn-animate"
                 >
                   Small (20, 1 site)
@@ -482,7 +482,7 @@ export default function CalculationFormFixed() {
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => setFormData((p) => ({ ...p, companyName: "", scope: "", standard: "", auditType: "", category: "", employees: 120, sites: 1, haccpStudies: 0, riskLevel: "", integratedStandards: [] }))}
+                  onClick={() => setFormData((p) => ({ ...p, employees: 120, sites: 1 }))}
                   className="btn-animate"
                 >
                   Medium (120, 1 site)
@@ -491,7 +491,7 @@ export default function CalculationFormFixed() {
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => setFormData((p) => ({ ...p, companyName: "", scope: "", standard: "", auditType: "", category: "", employees: 400, sites: 3, haccpStudies: 0, riskLevel: "", integratedStandards: [] }))}
+                  onClick={() => setFormData((p) => ({ ...p, employees: 400, sites: 3 }))}
                   className="btn-animate"
                 >
                   Large (400, 3 sites)
