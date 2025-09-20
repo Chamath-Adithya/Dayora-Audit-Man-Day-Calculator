@@ -34,3 +34,7 @@ next-env.d.ts-e
 
 /lib/generated/prisma
 .env*.local
+-e 
+# Environment files
+*.env
+*.env.*
