@@ -6,14 +6,20 @@ import { calculateAuditManDays } from '@/lib/audit-calculator-fixed'
 import { validateCalculationInput } from '@/lib/audit-calculator-fixed'
 
 // GET - Fetch all calculations for the logged-in user
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
     }
 
-    const calculations = await storage.getCalculations(session.user.id)
+    const { searchParams } = new URL(request.url)
+    const includeDeleted = searchParams.get('includeDeleted') === 'true'
+    
+    const calculations = includeDeleted 
+      ? await storage.getAllCalculations()
+      : await storage.getCalculations()
+      
     return NextResponse.json({ success: true, data: calculations })
   } catch (error) {
     console.error('Error fetching calculations:', error);

@@ -92,6 +92,45 @@ export const storage = {
     }
   },
 
+  async getAllCalculations(): Promise<SavedCalculation[]> {
+    try {
+      const calculations = await prisma.calculation.findMany({
+        orderBy: { createdAt: 'desc' },
+      })
+      
+      return calculations.map(calc => {
+        let integratedStandards: string[] = []
+        try {
+          if (typeof calc.integratedStandards === 'string') {
+            integratedStandards = JSON.parse(calc.integratedStandards)
+          } else if (Array.isArray(calc.integratedStandards)) {
+            integratedStandards = calc.integratedStandards
+          }
+        } catch (e) {
+          console.error(`Failed to parse integratedStandards for calculation ${calc.id}:`, e)
+        }
+
+        let breakdown: any | undefined = undefined
+        try {
+          if (calc.breakdown && typeof calc.breakdown === 'string') {
+            breakdown = JSON.parse(calc.breakdown)
+          }
+        } catch (e) {
+          console.error(`Failed to parse breakdown for calculation ${calc.id}:`, e)
+        }
+
+        return {
+          ...calc,
+          integratedStandards,
+          breakdown,
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching all calculations:', error)
+      throw new Error('Failed to fetch all calculations')
+    }
+  },
+
   async getCalculation(id: string): Promise<SavedCalculation | null> {
     try {
       const calculation = await prisma.calculation.findFirst({

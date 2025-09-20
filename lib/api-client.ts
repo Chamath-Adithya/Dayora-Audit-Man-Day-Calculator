@@ -70,6 +70,10 @@ class ApiClient {
     return this.request<SavedCalculation[]>('/calculations')
   }
 
+  async getAllCalculations(): Promise<SavedCalculation[]> {
+    return this.request<SavedCalculation[]>('/calculations?includeDeleted=true')
+  }
+
   async getCalculation(id: string): Promise<SavedCalculation> {
     return this.request<SavedCalculation>(`/calculations/${id}`)
   }
