@@ -295,6 +295,14 @@ export function HistoryManagement() {
               <CardDescription>
                 {filteredCalculations.length} of {calculations.filter(c => !c.isDeleted).length} calculations
               </CardDescription>
+              <div className="lg:hidden flex items-center space-x-2 mt-2">
+                <Checkbox 
+                  id="selectAllMobile"
+                  checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
+                  onCheckedChange={handleSelectAll}
+                />
+                <label htmlFor="selectAllMobile" className="text-sm font-medium">Select All</label>
+              </div>
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -388,9 +396,15 @@ export function HistoryManagement() {
                       <Card key={calculation.id} className="p-4">
                         <div className="space-y-3">
                           <div className="flex items-start justify-between">
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
-                              <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                            <div className="flex items-center gap-4">
+                              <Checkbox 
+                                checked={selectedCalculations.includes(calculation.id)}
+                                onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
+                                <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                              </div>
                             </div>
                             <div className="flex gap-2 ml-2">
                               <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
@@ -451,6 +465,14 @@ export function HistoryManagement() {
               <CardDescription>
                 {filteredCalculations.length} of {calculations.filter(c => c.isDeleted).length} calculations
               </CardDescription>
+              <div className="lg:hidden flex items-center space-x-2 mt-2">
+                <Checkbox 
+                  id="selectAllTrashMobile"
+                  checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
+                  onCheckedChange={handleSelectAll}
+                />
+                <label htmlFor="selectAllTrashMobile" className="text-sm font-medium">Select All</label>
+              </div>
               {selectedCalculations.length > 0 && (
                 <div className="flex gap-2 mt-4">
                   <Button onClick={() => handleBulkAction("restore")} variant="outline" size="sm">
@@ -539,9 +561,15 @@ export function HistoryManagement() {
                       <Card key={calculation.id} className="p-4">
                         <div className="space-y-3">
                           <div className="flex items-start justify-between">
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
-                              <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                            <div className="flex items-center gap-4">
+                              <Checkbox 
+                                checked={selectedCalculations.includes(calculation.id)}
+                                onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
+                                <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                              </div>
                             </div>
                             <div className="flex gap-2 ml-2">
                               <Button 
