@@ -85,43 +85,88 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete specific calculation
+// DELETE - Trash specific calculation
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params
-  console.log(`[API] Received request to delete calculation ID: ${id}`)
+  console.log(`[API] Received request to trash calculation ID: ${id}`)
 
   try {
-    // Get calculation regardless of deleted status for permanent delete
     const existingCalculation = await storage.getCalculation(id)
-    
-    console.log(`[DB] Permanently deleting calculation with ID: ${id}`)
-    await storage.deleteCalculation(id)
-    
+    if (!existingCalculation) {
+      return NextResponse.json(
+        { success: false, error: 'Calculation not found' },
+        { status: 404 }
+      )
+    }
+
+    console.log(`[DB] Trashing calculation with ID: ${id}`)
+    await storage.deleteCalculation(id) // This now soft deletes
+
     await storage.logAuditEvent(
-      'PERMANENT_DELETE',
+      'TRASH',
       'CALCULATION',
       id,
-      { companyName: existingCalculation?.companyName || 'Unknown' },
+      { companyName: existingCalculation.companyName },
       request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
       request.headers.get('user-agent') || undefined
     )
-    
-    console.log(`[DB] Successfully permanently deleted calculation with ID: ${id}`)
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Calculation permanently deleted successfully' 
+
+    console.log(`[DB] Successfully trashed calculation with ID: ${id}`)
+    return NextResponse.json({
+      success: true,
+      message: 'Calculation moved to trash successfully',
     })
   } catch (error) {
-    console.error(`[API] Critical error deleting calculation with ID: ${id}`, error)
-    let errorMessage = 'Failed to delete calculation'
-    if (error instanceof Error) {
-      errorMessage = error.message
-    }
+    console.error(`[API] Critical error trashing calculation with ID: ${id}`, error)
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { success: false, error: 'Failed to move calculation to trash' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH - Restore specific calculation
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params
+  console.log(`[API] Received request to restore calculation ID: ${id}`)
+
+  try {
+    const existingCalculation = await storage.getCalculation(id)
+    if (!existingCalculation) {
+      return NextResponse.json(
+        { success: false, error: 'Calculation not found' },
+        { status: 404 }
+      )
+    }
+
+    console.log(`[DB] Restoring calculation with ID: ${id}`)
+    // Assuming you add a restoreCalculation method or adapt updateCalculation
+    await storage.updateCalculation(id, { isDeleted: false })
+
+    await storage.logAuditEvent(
+      'RESTORE',
+      'CALCULATION',
+      id,
+      { companyName: existingCalculation.companyName },
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+      request.headers.get('user-agent') || undefined
+    )
+
+    console.log(`[DB] Successfully restored calculation with ID: ${id}`)
+    return NextResponse.json({
+      success: true,
+      message: 'Calculation restored successfully',
+    })
+  } catch (error) {
+    console.error(`[API] Critical error restoring calculation with ID: ${id}`, error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to restore calculation' },
       { status: 500 }
     )
   }
