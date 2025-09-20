@@ -17,6 +17,7 @@ export interface CalculationData {
   stage2ManDays?: number
   surveillanceManDays?: number
   recertificationManDays?: number
+  isDeleted?: boolean
 }
 
 export interface SavedCalculation extends CalculationData {
@@ -94,6 +95,12 @@ class ApiClient {
 
   async deleteCalculation(id: string): Promise<void> {
     await this.request(`/calculations/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async deleteCalculationPermanently(id: string): Promise<void> {
+    await this.request(`/calculations/trash?id=${id}`, {
       method: 'DELETE',
     })
   }

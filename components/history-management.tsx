@@ -80,7 +80,7 @@ export function HistoryManagement() {
   const handleDeletePermanently = async (id: string) => {
     if (confirm("Are you sure you want to permanently delete this calculation? This action cannot be undone.")) {
       try {
-        await apiClient.deleteCalculation(id)
+        await apiClient.deleteCalculationPermanently(id)
         await loadCalculations()
       } catch (err) {
         console.error("Failed to delete calculation:", err)
