@@ -29,5 +29,9 @@
   "haccpMultiplier": 0.5,
   "multiSiteMultiplier": 0.5,
   "integratedSystemReduction": 0.1,
-  "integratedStandards": []
+  "integratedStandards": [
+    { "id": "ISO_14001", "name": "ISO 14001", "reduction": 0.1 },
+    { "id": "ISO_45001", "name": "ISO 45001", "reduction": 0.1 },
+    { "id": "ISO_22000", "name": "ISO 22000", "reduction": 0.15 }
+  ]
 }
