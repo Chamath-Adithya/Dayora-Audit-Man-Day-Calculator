@@ -84,6 +84,10 @@ export const storage = {
           ...calc,
           integratedStandards,
           breakdown,
+          stage1ManDays: calc.stage1ManDays ?? undefined,
+          stage2ManDays: calc.stage2ManDays ?? undefined,
+          surveillanceManDays: calc.surveillanceManDays ?? undefined,
+          recertificationManDays: calc.recertificationManDays ?? undefined,
         }
       })
     } catch (error) {
@@ -123,6 +127,10 @@ export const storage = {
           ...calc,
           integratedStandards,
           breakdown,
+          stage1ManDays: calc.stage1ManDays ?? undefined,
+          stage2ManDays: calc.stage2ManDays ?? undefined,
+          surveillanceManDays: calc.surveillanceManDays ?? undefined,
+          recertificationManDays: calc.recertificationManDays ?? undefined,
         }
       })
     } catch (error) {
@@ -134,7 +142,7 @@ export const storage = {
   async getCalculation(id: string): Promise<SavedCalculation | null> {
     try {
       const calculation = await prisma.calculation.findFirst({
-        where: { id, isDeleted: false },
+        where: { id },
       })
       
       if (!calculation) return null
@@ -163,6 +171,10 @@ export const storage = {
         ...calculation,
         integratedStandards,
         breakdown,
+        stage1ManDays: calculation.stage1ManDays ?? undefined,
+        stage2ManDays: calculation.stage2ManDays ?? undefined,
+        surveillanceManDays: calculation.surveillanceManDays ?? undefined,
+        recertificationManDays: calculation.recertificationManDays ?? undefined,
       }
     } catch (error) {
       console.error('Error fetching calculation:', error)
@@ -172,8 +184,11 @@ export const storage = {
 
   async saveCalculation(calculation: Omit<SavedCalculation, 'id' | 'createdAt' | 'updatedAt' | 'isDeleted'>): Promise<SavedCalculation> {
     try {
+      // Remove userId if it exists (it's not part of our schema)
+      const { userId, ...calculationData } = calculation as any
+      
       // Validate input
-      const validatedData = CalculationInputSchema.parse(calculation)
+      const validatedData = CalculationInputSchema.parse(calculationData)
 
       // Sanitize breakdown object
       let sanitizedBreakdown: string | null = null;
@@ -194,6 +209,7 @@ export const storage = {
           ...validatedData,
           integratedStandards: JSON.stringify(validatedData.integratedStandards),
           breakdown: sanitizedBreakdown,
+          isDeleted: false,
         },
       })
       
@@ -201,6 +217,10 @@ export const storage = {
         ...newCalculation,
         integratedStandards: validatedData.integratedStandards,
         breakdown: validatedData.breakdown,
+        stage1ManDays: newCalculation.stage1ManDays ?? undefined,
+        stage2ManDays: newCalculation.stage2ManDays ?? undefined,
+        surveillanceManDays: newCalculation.surveillanceManDays ?? undefined,
+        recertificationManDays: newCalculation.recertificationManDays ?? undefined,
       }
     } catch (error: any) {
       console.error('Error saving calculation:', error)
@@ -266,6 +286,10 @@ export const storage = {
         ...updatedCalculation,
         integratedStandards,
         breakdown,
+        stage1ManDays: updatedCalculation.stage1ManDays ?? undefined,
+        stage2ManDays: updatedCalculation.stage2ManDays ?? undefined,
+        surveillanceManDays: updatedCalculation.surveillanceManDays ?? undefined,
+        recertificationManDays: updatedCalculation.recertificationManDays ?? undefined,
       }
     } catch (error) {
       console.error('Error updating calculation:', error)

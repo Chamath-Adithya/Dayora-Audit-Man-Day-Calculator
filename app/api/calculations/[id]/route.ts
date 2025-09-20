@@ -66,8 +66,8 @@ export async function PUT(
       'CALCULATION',
       id,
       { changes: body },
-      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
-      request.headers.get('user-agent')
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+      request.headers.get('user-agent') || undefined
     )
     
     console.log(`[DB] Successfully updated calculation with ID: ${id}`)
@@ -94,31 +94,25 @@ export async function DELETE(
   console.log(`[API] Received request to delete calculation ID: ${id}`)
 
   try {
+    // Get calculation regardless of deleted status for permanent delete
     const existingCalculation = await storage.getCalculation(id)
-    if (!existingCalculation) {
-      console.warn(`[DB] Delete failed: Calculation with ID: ${id} not found`)
-      return NextResponse.json(
-        { success: false, error: 'Calculation not found' },
-        { status: 404 }
-      )
-    }
     
-    console.log(`[DB] Deleting calculation with ID: ${id}`)
+    console.log(`[DB] Permanently deleting calculation with ID: ${id}`)
     await storage.deleteCalculation(id)
     
     await storage.logAuditEvent(
-      'DELETE',
+      'PERMANENT_DELETE',
       'CALCULATION',
       id,
-      { companyName: existingCalculation.companyName },
-      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
-      request.headers.get('user-agent')
+      { companyName: existingCalculation?.companyName || 'Unknown' },
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+      request.headers.get('user-agent') || undefined
     )
     
-    console.log(`[DB] Successfully deleted calculation with ID: ${id}`)
+    console.log(`[DB] Successfully permanently deleted calculation with ID: ${id}`)
     return NextResponse.json({ 
       success: true, 
-      message: 'Calculation deleted successfully' 
+      message: 'Calculation permanently deleted successfully' 
     })
   } catch (error) {
     console.error(`[API] Critical error deleting calculation with ID: ${id}`, error)
