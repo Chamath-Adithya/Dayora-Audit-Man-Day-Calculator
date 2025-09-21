@@ -525,6 +525,7 @@ export function HistoryManagement() {
                           fontSize: '14px'
                         }}
                         labelStyle={{ color: 'hsl(var(--card-foreground))', fontWeight: 'bold' }}
+                        itemStyle={{ color: 'hsl(var(--card-foreground))' }}
                       />
                       <Area type="monotone" dataKey="calculations" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
                     </AreaChart>
