@@ -367,7 +367,7 @@ export function HistoryManagement() {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')}
-                      variant="outline"
+                      variant={viewMode === 'grid' ? 'default' : 'outline'}
                       size="sm"
                       className="flex-shrink-0"
                     >
@@ -461,127 +461,334 @@ export function HistoryManagement() {
                     <p>No calculations match your current filters.</p>
                   )}
                 </div>
-              ) : groupBy === 'none' ? (
-                // Flat view (no grouping)
+              ) : viewMode === 'table' ? (
+                // Table view
                 <div className="overflow-x-auto">
-                  <div className="hidden lg:block">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>
-                            <Checkbox
-                              checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
-                              onCheckedChange={handleSelectAll}
-                            />
-                          </TableHead>
-                          <TableHead>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 font-semibold hover:bg-transparent"
-                              onClick={() => handleSort('createdAt')}
-                            >
-                              Date
-                              {getSortIcon('createdAt')}
-                            </Button>
-                          </TableHead>
-                          <TableHead>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 font-semibold hover:bg-transparent"
-                              onClick={() => handleSort('companyName')}
-                            >
-                              Company
-                              {getSortIcon('companyName')}
-                            </Button>
-                          </TableHead>
-                          <TableHead>Scope</TableHead>
-                          <TableHead>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 font-semibold hover:bg-transparent"
-                              onClick={() => handleSort('standard')}
-                            >
-                              Standard
-                              {getSortIcon('standard')}
-                            </Button>
-                          </TableHead>
-                          <TableHead>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 font-semibold hover:bg-transparent"
-                              onClick={() => handleSort('auditType')}
-                            >
-                              Audit Type
-                              {getSortIcon('auditType')}
-                            </Button>
-                          </TableHead>
-                          <TableHead>Category</TableHead>
-                          <TableHead>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 font-semibold hover:bg-transparent"
-                              onClick={() => handleSort('employees')}
-                            >
-                              Employees
-                              {getSortIcon('employees')}
-                            </Button>
-                          </TableHead>
-                          <TableHead>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 font-semibold hover:bg-transparent"
-                              onClick={() => handleSort('riskLevel')}
-                            >
-                              Risk
-                              {getSortIcon('riskLevel')}
-                            </Button>
-                          </TableHead>
-                          <TableHead>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 font-semibold hover:bg-transparent"
-                              onClick={() => handleSort('result')}
-                            >
-                              Result
-                              {getSortIcon('result')}
-                            </Button>
-                          </TableHead>
-                          <TableHead>Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredCalculations.map((calculation) => (
-                          <TableRow key={calculation.id}>
-                            <TableCell>
+                  {groupBy === 'none' ? (
+                    // Flat table view (no grouping)
+                    <div className="hidden lg:block">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>
                               <Checkbox
-                                checked={selectedCalculations.includes(calculation.id)}
-                                onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
+                                onCheckedChange={handleSelectAll}
                               />
-                            </TableCell>
-                            <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
-                            <TableCell className="font-medium">{calculation.companyName}</TableCell>
-                            <TableCell className="max-w-32 truncate" title={calculation.scope}>
-                              {calculation.scope}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline">{calculation.standard}</Badge>
-                            </TableCell>
-                            <TableCell className="capitalize">{calculation.auditType}</TableCell>
-                            <TableCell>{calculation.category}</TableCell>
-                            <TableCell>{calculation.employees}</TableCell>
-                            <TableCell>
-                              <Badge variant={getRiskBadgeVariant(calculation.riskLevel)}>{calculation.riskLevel}</Badge>
-                            </TableCell>
-                            <TableCell className="font-semibold">{calculation.result} days</TableCell>
-                            <TableCell>
-                              <div className="flex gap-2">
+                            </TableHead>
+                            <TableHead>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                onClick={() => handleSort('createdAt')}
+                              >
+                                Date
+                                {getSortIcon('createdAt')}
+                              </Button>
+                            </TableHead>
+                            <TableHead>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                onClick={() => handleSort('companyName')}
+                              >
+                                Company
+                                {getSortIcon('companyName')}
+                              </Button>
+                            </TableHead>
+                            <TableHead>Scope</TableHead>
+                            <TableHead>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                onClick={() => handleSort('standard')}
+                              >
+                                Standard
+                                {getSortIcon('standard')}
+                              </Button>
+                            </TableHead>
+                            <TableHead>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                onClick={() => handleSort('auditType')}
+                              >
+                                Audit Type
+                                {getSortIcon('auditType')}
+                              </Button>
+                            </TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                onClick={() => handleSort('employees')}
+                              >
+                                Employees
+                                {getSortIcon('employees')}
+                              </Button>
+                            </TableHead>
+                            <TableHead>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                onClick={() => handleSort('riskLevel')}
+                              >
+                                Risk
+                                {getSortIcon('riskLevel')}
+                              </Button>
+                            </TableHead>
+                            <TableHead>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                onClick={() => handleSort('result')}
+                              >
+                                Result
+                                {getSortIcon('result')}
+                              </Button>
+                            </TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredCalculations.map((calculation) => (
+                            <TableRow key={calculation.id}>
+                              <TableCell>
+                                <Checkbox
+                                  checked={selectedCalculations.includes(calculation.id)}
+                                  onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                />
+                              </TableCell>
+                              <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
+                              <TableCell className="font-medium">{calculation.companyName}</TableCell>
+                              <TableCell className="max-w-32 truncate" title={calculation.scope}>
+                                {calculation.scope}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline">{calculation.standard}</Badge>
+                              </TableCell>
+                              <TableCell className="capitalize">{calculation.auditType}</TableCell>
+                              <TableCell>{calculation.category}</TableCell>
+                              <TableCell>{calculation.employees}</TableCell>
+                              <TableCell>
+                                <Badge variant={getRiskBadgeVariant(calculation.riskLevel)}>{calculation.riskLevel}</Badge>
+                              </TableCell>
+                              <TableCell className="font-semibold">{calculation.result} days</TableCell>
+                              <TableCell>
+                                <div className="flex gap-2">
+                                  <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
+                                    title="Move to trash"
+                                  >
+                                    <Archive className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    // Grouped table view
+                    <div className="space-y-6">
+                      {Object.entries(groupedData).map(([groupName, groupItems]) => (
+                        <Card key={groupName} className="overflow-hidden">
+                          <CardHeader className="bg-muted/50 pb-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className="h-3 w-3 rounded-full bg-primary"></div>
+                                <div>
+                                  <CardTitle className="text-lg">
+                                    {groupName}
+                                  </CardTitle>
+                                  <CardDescription>
+                                    {groupItems.length} calculation{groupItems.length !== 1 ? 's' : ''}
+                                  </CardDescription>
+                                </div>
+                              </div>
+                              <Checkbox
+                                checked={groupItems.every(item => selectedCalculations.includes(item.id))}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setSelectedCalculations(prev => [...prev, ...groupItems.map(item => item.id)])
+                                  } else {
+                                    setSelectedCalculations(prev => prev.filter(id => !groupItems.some(item => item.id === id)))
+                                  }
+                                }}
+                              />
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="overflow-x-auto">
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead className="w-12"></TableHead>
+                                    <TableHead>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                                        onClick={() => handleSort('createdAt')}
+                                      >
+                                        Date
+                                        {getSortIcon('createdAt')}
+                                      </Button>
+                                    </TableHead>
+                                    <TableHead>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                                        onClick={() => handleSort('companyName')}
+                                      >
+                                        Company
+                                        {getSortIcon('companyName')}
+                                      </Button>
+                                    </TableHead>
+                                    <TableHead>Scope</TableHead>
+                                    <TableHead>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                                        onClick={() => handleSort('standard')}
+                                      >
+                                        Standard
+                                        {getSortIcon('standard')}
+                                      </Button>
+                                    </TableHead>
+                                    <TableHead>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                                        onClick={() => handleSort('auditType')}
+                                      >
+                                        Audit Type
+                                        {getSortIcon('auditType')}
+                                      </Button>
+                                    </TableHead>
+                                    <TableHead>Category</TableHead>
+                                    <TableHead>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                                        onClick={() => handleSort('employees')}
+                                      >
+                                        Employees
+                                        {getSortIcon('employees')}
+                                      </Button>
+                                    </TableHead>
+                                    <TableHead>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                                        onClick={() => handleSort('riskLevel')}
+                                      >
+                                        Risk
+                                        {getSortIcon('riskLevel')}
+                                      </Button>
+                                    </TableHead>
+                                    <TableHead>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                                        onClick={() => handleSort('result')}
+                                      >
+                                        Result
+                                        {getSortIcon('result')}
+                                      </Button>
+                                    </TableHead>
+                                    <TableHead>Actions</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {groupItems.map((calculation) => (
+                                    <TableRow key={calculation.id}>
+                                      <TableCell>
+                                        <Checkbox
+                                          checked={selectedCalculations.includes(calculation.id)}
+                                          onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                        />
+                                      </TableCell>
+                                      <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
+                                      <TableCell className="font-medium">{calculation.companyName}</TableCell>
+                                      <TableCell className="max-w-32 truncate" title={calculation.scope}>
+                                        {calculation.scope}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline">{calculation.standard}</Badge>
+                                      </TableCell>
+                                      <TableCell className="capitalize">{calculation.auditType}</TableCell>
+                                      <TableCell>{calculation.category}</TableCell>
+                                      <TableCell>{calculation.employees}</TableCell>
+                                      <TableCell>
+                                        <Badge variant={getRiskBadgeVariant(calculation.riskLevel)}>{calculation.riskLevel}</Badge>
+                                      </TableCell>
+                                      <TableCell className="font-semibold">{calculation.result} days</TableCell>
+                                      <TableCell>
+                                        <div className="flex gap-2">
+                                          <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
+                                            <Eye className="h-4 w-4" />
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
+                                            title="Move to trash"
+                                          >
+                                            <Archive className="h-4 w-4" />
+                                          </Button>
+                                        </div>
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Mobile table view */}
+                  <div className="lg:hidden space-y-4">
+                    {groupBy === 'none' ? (
+                      // Flat mobile view
+                      filteredCalculations.map((calculation) => (
+                        <Card key={calculation.id} className="p-4">
+                          <div className="space-y-3">
+                            <div className="flex items-start justify-between">
+                              <div className="flex items-center gap-4">
+                                <Checkbox
+                                  checked={selectedCalculations.includes(calculation.id)}
+                                  onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
+                                  <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 ml-2">
                                 <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
                                   <Eye className="h-4 w-4" />
                                 </Button>
@@ -594,221 +801,85 @@ export function HistoryManagement() {
                                   <Archive className="h-4 w-4" />
                                 </Button>
                               </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                            </div>
 
-                  <div className="lg:hidden space-y-4">
-                    {filteredCalculations.map((calculation) => (
-                      <Card key={calculation.id} className="p-4">
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-4">
-                              <Checkbox
-                                checked={selectedCalculations.includes(calculation.id)}
-                                onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
-                              />
-                              <div className="flex-1 min-w-0">
-                                <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
-                                <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <span className="text-muted-foreground">Date:</span>
+                                <p className="font-medium">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Result:</span>
+                                <p className="font-semibold text-primary">{calculation.result} days</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Standard:</span>
+                                <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Risk:</span>
+                                <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
+                                  {calculation.riskLevel}
+                                </Badge>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Type:</span>
+                                <p className="capitalize">{calculation.auditType}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Category:</span>
+                                <p>{calculation.category}</p>
                               </div>
                             </div>
-                            <div className="flex gap-2 ml-2">
-                              <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
-                                title="Move to trash"
-                              >
-                                <Archive className="h-4 w-4" />
-                              </Button>
-                            </div>
                           </div>
-
-                          <div className="grid grid-cols-2 gap-2 text-xs">
-                            <div>
-                              <span className="text-muted-foreground">Date:</span>
-                              <p className="font-medium">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</p>
+                        </Card>
+                      ))
+                    ) : (
+                      // Grouped mobile view
+                      Object.entries(groupedData).map(([groupName, groupItems]) => (
+                        <Card key={groupName} className="overflow-hidden">
+                          <CardHeader className="bg-muted/50 pb-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className="h-3 w-3 rounded-full bg-primary"></div>
+                                <div>
+                                  <CardTitle className="text-lg">
+                                    {groupName}
+                                  </CardTitle>
+                                  <CardDescription>
+                                    {groupItems.length} calculation{groupItems.length !== 1 ? 's' : ''}
+                                  </CardDescription>
+                                </div>
+                              </div>
+                              <Checkbox
+                                checked={groupItems.every(item => selectedCalculations.includes(item.id))}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setSelectedCalculations(prev => [...prev, ...groupItems.map(item => item.id)])
+                                  } else {
+                                    setSelectedCalculations(prev => prev.filter(id => !groupItems.some(item => item.id === id)))
+                                  }
+                                }}
+                              />
                             </div>
-                            <div>
-                              <span className="text-muted-foreground">Result:</span>
-                              <p className="font-semibold text-primary">{calculation.result} days</p>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Standard:</span>
-                              <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Risk:</span>
-                              <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
-                                {calculation.riskLevel}
-                              </Badge>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Type:</span>
-                              <p className="capitalize">{calculation.auditType}</p>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Category:</span>
-                              <p>{calculation.category}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                // Grouped view
-                <div className="space-y-6">
-                  {Object.entries(groupedData).map(([groupName, groupItems]) => (
-                    <Card key={groupName} className="overflow-hidden">
-                      <CardHeader className="bg-muted/50 pb-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="h-3 w-3 rounded-full bg-primary"></div>
-                            <div>
-                              <CardTitle className="text-lg">
-                                {groupName}
-                              </CardTitle>
-                              <CardDescription>
-                                {groupItems.length} calculation{groupItems.length !== 1 ? 's' : ''}
-                              </CardDescription>
-                            </div>
-                          </div>
-                          <Checkbox
-                            checked={groupItems.every(item => selectedCalculations.includes(item.id))}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setSelectedCalculations(prev => [...prev, ...groupItems.map(item => item.id)])
-                              } else {
-                                setSelectedCalculations(prev => prev.filter(id => !groupItems.some(item => item.id === id)))
-                              }
-                            }}
-                          />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="overflow-x-auto">
-                          <div className="hidden lg:block">
-                            <Table>
-                              <TableHeader>
-                                <TableRow>
-                                  <TableHead className="w-12"></TableHead>
-                                  <TableHead>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                                      onClick={() => handleSort('createdAt')}
-                                    >
-                                      Date
-                                      {getSortIcon('createdAt')}
-                                    </Button>
-                                  </TableHead>
-                                  <TableHead>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                                      onClick={() => handleSort('companyName')}
-                                    >
-                                      Company
-                                      {getSortIcon('companyName')}
-                                    </Button>
-                                  </TableHead>
-                                  <TableHead>Scope</TableHead>
-                                  <TableHead>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                                      onClick={() => handleSort('standard')}
-                                    >
-                                      Standard
-                                      {getSortIcon('standard')}
-                                    </Button>
-                                  </TableHead>
-                                  <TableHead>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                                      onClick={() => handleSort('auditType')}
-                                    >
-                                      Audit Type
-                                      {getSortIcon('auditType')}
-                                    </Button>
-                                  </TableHead>
-                                  <TableHead>Category</TableHead>
-                                  <TableHead>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                                      onClick={() => handleSort('employees')}
-                                    >
-                                      Employees
-                                      {getSortIcon('employees')}
-                                    </Button>
-                                  </TableHead>
-                                  <TableHead>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                                      onClick={() => handleSort('riskLevel')}
-                                    >
-                                      Risk
-                                      {getSortIcon('riskLevel')}
-                                    </Button>
-                                  </TableHead>
-                                  <TableHead>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                                      onClick={() => handleSort('result')}
-                                    >
-                                      Result
-                                      {getSortIcon('result')}
-                                    </Button>
-                                  </TableHead>
-                                  <TableHead>Actions</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {groupItems.map((calculation) => (
-                                  <TableRow key={calculation.id}>
-                                    <TableCell>
-                                      <Checkbox
-                                        checked={selectedCalculations.includes(calculation.id)}
-                                        onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
-                                      />
-                                    </TableCell>
-                                    <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
-                                    <TableCell className="font-medium">{calculation.companyName}</TableCell>
-                                    <TableCell className="max-w-32 truncate" title={calculation.scope}>
-                                      {calculation.scope}
-                                    </TableCell>
-                                    <TableCell>
-                                      <Badge variant="outline">{calculation.standard}</Badge>
-                                    </TableCell>
-                                    <TableCell className="capitalize">{calculation.auditType}</TableCell>
-                                    <TableCell>{calculation.category}</TableCell>
-                                    <TableCell>{calculation.employees}</TableCell>
-                                    <TableCell>
-                                      <Badge variant={getRiskBadgeVariant(calculation.riskLevel)}>{calculation.riskLevel}</Badge>
-                                    </TableCell>
-                                    <TableCell className="font-semibold">{calculation.result} days</TableCell>
-                                    <TableCell>
-                                      <div className="flex gap-2">
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="space-y-3">
+                              {groupItems.map((calculation) => (
+                                <Card key={calculation.id} className="p-3 border-l-4 border-l-primary">
+                                  <div className="space-y-3">
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex items-center gap-3">
+                                        <Checkbox
+                                          checked={selectedCalculations.includes(calculation.id)}
+                                          onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                          <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
+                                          <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                                        </div>
+                                      </div>
+                                      <div className="flex gap-2 ml-2">
                                         <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
                                           <Eye className="h-4 w-4" />
                                         </Button>
@@ -821,79 +892,192 @@ export function HistoryManagement() {
                                           <Archive className="h-4 w-4" />
                                         </Button>
                                       </div>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </div>
+                                    </div>
 
-                          <div className="lg:hidden space-y-3">
-                            {groupItems.map((calculation) => (
-                              <Card key={calculation.id} className="p-3 border-l-4 border-l-primary">
-                                <div className="space-y-3">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex items-center gap-3">
-                                      <Checkbox
-                                        checked={selectedCalculations.includes(calculation.id)}
-                                        onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
-                                      />
-                                      <div className="flex-1 min-w-0">
-                                        <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
-                                        <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                      <div>
+                                        <span className="text-muted-foreground">Date:</span>
+                                        <p className="font-medium">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Result:</span>
+                                        <p className="font-semibold text-primary">{calculation.result} days</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Standard:</span>
+                                        <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Risk:</span>
+                                        <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
+                                          {calculation.riskLevel}
+                                        </Badge>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Type:</span>
+                                        <p className="capitalize">{calculation.auditType}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Category:</span>
+                                        <p>{calculation.category}</p>
                                       </div>
                                     </div>
-                                    <div className="flex gap-2 ml-2">
-                                      <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
-                                        <Eye className="h-4 w-4" />
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
-                                        title="Move to trash"
-                                      >
-                                        <Archive className="h-4 w-4" />
-                                      </Button>
-                                    </div>
                                   </div>
+                                </Card>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // Grid view
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {groupBy === 'none' ? (
+                    // Flat grid view
+                    filteredCalculations.map((calculation) => (
+                      <Card key={calculation.id} className="p-4 hover:shadow-md transition-shadow">
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                checked={selectedCalculations.includes(calculation.id)}
+                                onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                className="mt-1"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-sm truncate">{calculation.companyName}</h3>
+                                <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                              </div>
+                            </div>
+                            <div className="flex gap-1 ml-2">
+                              <Button size="sm" variant="ghost" onClick={() => handleViewCalculation(calculation.id)}>
+                                <Eye className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
+                                title="Move to trash"
+                              >
+                                <Archive className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
 
-                                  <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div>
-                                      <span className="text-muted-foreground">Date:</span>
-                                      <p className="font-medium">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</p>
-                                    </div>
-                                    <div>
-                                      <span className="text-muted-foreground">Result:</span>
-                                      <p className="font-semibold text-primary">{calculation.result} days</p>
-                                    </div>
-                                    <div>
-                                      <span className="text-muted-foreground">Standard:</span>
-                                      <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
-                                    </div>
-                                    <div>
-                                      <span className="text-muted-foreground">Risk:</span>
-                                      <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
-                                        {calculation.riskLevel}
-                                      </Badge>
-                                    </div>
-                                    <div>
-                                      <span className="text-muted-foreground">Type:</span>
-                                      <p className="capitalize">{calculation.auditType}</p>
-                                    </div>
-                                    <div>
-                                      <span className="text-muted-foreground">Category:</span>
-                                      <p>{calculation.category}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </Card>
-                            ))}
+                          <div className="space-y-2 text-xs">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Date:</span>
+                              <span className="font-medium">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Result:</span>
+                              <span className="font-semibold text-primary">{calculation.result} days</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Standard:</span>
+                              <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Risk:</span>
+                              <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
+                                {calculation.riskLevel}
+                              </Badge>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Type:</span>
+                              <span className="capitalize text-xs">{calculation.auditType}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Category:</span>
+                              <span className="text-xs">{calculation.category}</span>
+                            </div>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                      </Card>
+                    ))
+                  ) : (
+                    // Grouped grid view
+                    Object.entries(groupedData).map(([groupName, groupItems]) => (
+                      <div key={groupName} className="space-y-3">
+                        <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
+                          <div className="h-2 w-2 rounded-full bg-primary"></div>
+                          <h4 className="font-semibold text-sm">{groupName}</h4>
+                          <Badge variant="secondary" className="text-xs">
+                            {groupItems.length}
+                          </Badge>
+                          <Checkbox
+                            checked={groupItems.every(item => selectedCalculations.includes(item.id))}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedCalculations(prev => [...prev, ...groupItems.map(item => item.id)])
+                              } else {
+                                setSelectedCalculations(prev => prev.filter(id => !groupItems.some(item => item.id === id)))
+                              }
+                            }}
+                            className="ml-auto"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
+                          {groupItems.map((calculation) => (
+                            <Card key={calculation.id} className="p-3 border-l-4 border-l-primary">
+                              <div className="space-y-2">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Checkbox
+                                      checked={selectedCalculations.includes(calculation.id)}
+                                      onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                      className="mt-0.5"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <h3 className="font-medium text-xs truncate">{calculation.companyName}</h3>
+                                      <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex gap-1">
+                                    <Button size="sm" variant="ghost" onClick={() => handleViewCalculation(calculation.id)}>
+                                      <Eye className="h-3 w-3" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
+                                      title="Move to trash"
+                                    >
+                                      <Archive className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-1 text-xs">
+                                  <div>
+                                    <span className="text-muted-foreground">Date:</span>
+                                    <p className="font-medium">{format(new Date(calculation.createdAt), "MMM dd")}</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Result:</span>
+                                    <p className="font-semibold text-primary">{calculation.result}d</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Standard:</span>
+                                    <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
+                                  </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Risk:</span>
+                                    <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
+                                      {calculation.riskLevel}
+                                    </Badge>
+                                  </div>
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               )}
             </CardContent>
