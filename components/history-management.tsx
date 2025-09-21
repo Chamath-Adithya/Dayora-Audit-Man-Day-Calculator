@@ -414,7 +414,16 @@ export function HistoryManagement() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                       <YAxis />
-                      <Tooltip />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '6px',
+                          color: 'hsl(var(--card-foreground))',
+                          fontSize: '14px'
+                        }}
+                        labelStyle={{ color: 'hsl(var(--card-foreground))', fontWeight: 'bold' }}
+                      />
                       <Legend wrapperStyle={{ fontSize: '14px' }} />
                       <Bar dataKey="manDays" fill="#8884d8" />
                     </BarChart>
