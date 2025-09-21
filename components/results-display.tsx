@@ -161,12 +161,23 @@ export function ResultsDisplay() {
                 </div>
               )}
               {calculation.integratedStandards.length > 0 && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">
-                    Integrated Systems ({calculation.integratedStandards.length} standards, -
-                    {(result.details.integratedSystemReduction * 100).toFixed(0)}%)
-                  </span>
-                  <span className="font-medium text-lg text-red-600">{result.breakdown.integratedSystemAdjustment.toFixed(1)}</span>
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-sm text-muted-foreground mb-2">Integrated Standards:</div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {calculation.integratedStandards.map((standard, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {standard}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">
+                      Total Reduction: -{(result.details.integratedSystemReduction * 100).toFixed(0)}%
+                    </span>
+                    <span className="font-medium text-lg text-red-600">{result.breakdown.integratedSystemAdjustment.toFixed(1)}</span>
+                  </div>
                 </div>
               )}
               <Separator />
