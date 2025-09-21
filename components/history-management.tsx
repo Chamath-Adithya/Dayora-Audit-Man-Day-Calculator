@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Search, Trash2, Eye, Download, Calendar, RefreshCw, FileText, BarChart2, ToggleLeft, ToggleRight, AlertTriangle, Archive, ArchiveRestore, ArrowUpDown, ArrowUp, ArrowDown, Filter, Grid3X3, List, ChevronDown } from "lucide-react"
 import { format } from "date-fns"
 import { apiClient, type SavedCalculation } from "@/lib/api-client"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function HistoryManagement() {
@@ -30,6 +30,7 @@ export function HistoryManagement() {
   const [groupBy, setGroupBy] = useState<string>("none")
   const [showFilters, setShowFilters] = useState<boolean>(false)
   const [groupedData, setGroupedData] = useState<{[key: string]: SavedCalculation[]}>({})
+  const [visualizationTab, setVisualizationTab] = useState<string>("overview")
 
   const loadCalculations = async () => {
     try {
@@ -239,6 +240,36 @@ export function HistoryManagement() {
 
   const chartData = calculations.filter(c => !c.isDeleted).map(c => ({ name: c.companyName, manDays: c.result }));
 
+  // Data for pie chart - calculations by standard
+  const standardData = Object.entries(
+    calculations.filter(c => !c.isDeleted).reduce((acc, calc) => {
+      acc[calc.standard] = (acc[calc.standard] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>)
+  ).map(([standard, count]) => ({ name: standard, value: count }));
+
+  // Data for line chart - calculations over time
+  const timeData = Object.entries(
+    calculations.filter(c => !c.isDeleted).reduce((acc, calc) => {
+      const date = format(new Date(calc.createdAt), 'MMM yyyy');
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>)
+  )
+  .map(([date, count]) => ({ date, calculations: count }))
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // KPI data
+  const totalCalculations = calculations.length;
+  const activeCalculations = calculations.filter(c => !c.isDeleted).length;
+  const trashCalculations = calculations.filter(c => c.isDeleted).length;
+  const highRiskCount = calculations.filter(c => c.riskLevel === 'high').length;
+  const mediumRiskCount = calculations.filter(c => c.riskLevel === 'medium').length;
+  const lowRiskCount = calculations.filter(c => c.riskLevel === 'low').length;
+
+  // Colors for pie chart
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedCalculations(filteredCalculations.map(c => c.id))
@@ -285,22 +316,224 @@ export function HistoryManagement() {
         </Card>
       )}
 
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total</p>
+                <p className="text-2xl font-bold">{totalCalculations}</p>
+              </div>
+              <Calendar className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Active</p>
+                <p className="text-2xl font-bold text-green-600">{activeCalculations}</p>
+              </div>
+              <Eye className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Trash</p>
+                <p className="text-2xl font-bold text-red-600">{trashCalculations}</p>
+              </div>
+              <Trash2 className="h-8 w-8 text-red-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">High Risk</p>
+                <p className="text-2xl font-bold text-red-500">{highRiskCount}</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-red-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Medium Risk</p>
+                <p className="text-2xl font-bold text-yellow-500">{mediumRiskCount}</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-yellow-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Low Risk</p>
+                <p className="text-2xl font-bold text-green-500">{lowRiskCount}</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Visualization Tabs */}
       <Card>
         <CardHeader>
-            <CardTitle>History Overview</CardTitle>
-            <CardDescription>A visual summary of your active calculation history.</CardDescription>
+          <CardTitle>History Overview</CardTitle>
+          <CardDescription>A visual summary of your calculation history with multiple perspectives.</CardDescription>
         </CardHeader>
         <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend wrapperStyle={{ fontSize: '14px' }} />
-                    <Bar dataKey="manDays" fill="#8884d8" />
-                </BarChart>
-            </ResponsiveContainer>
+          <Tabs value={visualizationTab} onValueChange={setVisualizationTab}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="standards">By Standard</TabsTrigger>
+              <TabsTrigger value="timeline">Over Time</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Company vs. Man-Days</h4>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend wrapperStyle={{ fontSize: '14px' }} />
+                      <Bar dataKey="manDays" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Standards Distribution</h4>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={standardData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {standardData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="standards" className="mt-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Standards Distribution (Donut Chart)</h4>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <PieChart>
+                      <Pie
+                        data={standardData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={120}
+                        innerRadius={60}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {standardData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Standards Summary</h4>
+                  <div className="space-y-3">
+                    {standardData.map((standard, index) => (
+                      <div key={standard.name} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-4 h-4 rounded-full"
+                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                          />
+                          <span className="font-medium">{standard.name}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold">{standard.value}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {((standard.value / standardData.reduce((sum, s) => sum + s.value, 0)) * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="timeline" className="mt-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Calculations Over Time</h4>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={timeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Area type="monotone" dataKey="calculations" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Timeline Summary</h4>
+                  <div className="space-y-3 max-h-80 overflow-y-auto">
+                    {timeData.map((period, index) => (
+                      <div key={period.date} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-sm font-medium text-primary">{index + 1}</span>
+                          </div>
+                          <span className="font-medium">{period.date}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-primary">{period.calculations}</div>
+                          <div className="text-sm text-muted-foreground">calculations</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
