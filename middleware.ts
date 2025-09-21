@@ -8,7 +8,7 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         // Allow access to public routes
-        if (req.nextUrl.pathname === "/" || 
+        if (req.nextUrl.pathname === "/" ||
             req.nextUrl.pathname.startsWith("/auth/") ||
             req.nextUrl.pathname.startsWith("/api/auth/") ||
             req.nextUrl.pathname.startsWith("/api/config") ||
@@ -16,7 +16,12 @@ export default withAuth(
             req.nextUrl.pathname.startsWith("/api/stats")) {
           return true
         }
-        
+
+        // Check admin role for admin routes
+        if (req.nextUrl.pathname.startsWith("/admin")) {
+          return !!(token && token.role === "admin")
+        }
+
         // Require authentication for protected routes
         return !!token
       },
