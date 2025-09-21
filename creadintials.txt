@@ -21,3 +21,4 @@
 📝 **Navigation Access by Role:**
    * Admin users: See "Administration" section with Admin panel
    * Regular users: See standard navigation only
+   
