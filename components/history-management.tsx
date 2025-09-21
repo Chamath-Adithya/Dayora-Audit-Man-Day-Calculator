@@ -423,6 +423,7 @@ export function HistoryManagement() {
                           fontSize: '14px'
                         }}
                         labelStyle={{ color: 'hsl(var(--card-foreground))', fontWeight: 'bold' }}
+                        itemStyle={{ color: 'hsl(var(--card-foreground))' }}
                       />
                       <Legend wrapperStyle={{ fontSize: '14px' }} />
                       <Bar dataKey="manDays" fill="#8884d8" />
