@@ -1,7 +1,23 @@
-Admin: admin@dayora.com / admin123
-User: user@dayora.com / user123
-Demo: demo@dayora.com / demo123
+📋 **Dayora Audit Calculator - User Credentials**
 
-
+🔐 **Admin User** (Full Access)
    * Email: admin@dayora.com
    * Password: admin123
+   * Role: admin
+   * Access: All features + Admin panel
+
+👤 **Regular User** (Standard Access)
+   * Email: user@dayora.com
+   * Password: user123
+   * Role: user
+   * Access: Standard features only
+
+👥 **Demo User** (Standard Access)
+   * Email: demo@dayora.com
+   * Password: demo123
+   * Role: user
+   * Access: Standard features only
+
+📝 **Navigation Access by Role:**
+   * Admin users: See "Administration" section with Admin panel
+   * Regular users: See standard navigation only

@@ -13,14 +13,18 @@ const navigation = [
   { name: "New Calculation", href: "/calculate", icon: Calculator },
   { name: "Results", href: "/results", icon: FileText },
   { name: "History", href: "/history", icon: History },
+]
+
+const adminNavigation = [
   { name: "Admin", href: "/admin", icon: Settings },
 ]
 
 interface SidebarNavProps {
   onClose?: () => void
+  userRole?: string
 }
 
-export function SidebarNav({ onClose }: SidebarNavProps) {
+export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
   const pathname = usePathname()
 
   return (
@@ -63,6 +67,36 @@ export function SidebarNav({ onClose }: SidebarNavProps) {
             </Link>
           )
         })}
+
+        {/* Admin Navigation - Only show for admin users */}
+        {userRole === 'admin' && (
+          <>
+            <div className="border-t border-sidebar-border pt-4 mt-4">
+              <div className="text-xs font-medium text-muted-foreground px-3 mb-2 uppercase tracking-wider">
+                Administration
+              </div>
+              {adminNavigation.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={onClose}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                        : "text-sidebar-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
+                    )}
+                  >
+                    <item.icon className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{item.name}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </>
+        )}
       </nav>
     </div>
   )

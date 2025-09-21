@@ -20,18 +20,18 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="flex h-screen bg-background">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      
+
       {/* Sidebar */}
       <div className={cn(
         "fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <SidebarNav onClose={() => setSidebarOpen(false)} />
+        <SidebarNav onClose={() => setSidebarOpen(false)} userRole={session?.user?.role} />
       </div>
       
       {/* Main content */}

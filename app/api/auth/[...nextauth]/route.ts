@@ -7,7 +7,22 @@ const HARDCODED_USERS = [
     id: "clxvxkx4p0000u8z5d4f6e8k9",
     email: "admin@dayora.com",
     password: "admin123",
-    name: "Admin User"
+    name: "Admin User",
+    role: "admin"
+  },
+  {
+    id: "clxvxkx4p0001u8z5d4f6e8k0",
+    email: "user@dayora.com",
+    password: "user123",
+    name: "Regular User",
+    role: "user"
+  },
+  {
+    id: "clxvxkx4p0002u8z5d4f6e8k1",
+    email: "demo@dayora.com",
+    password: "demo123",
+    name: "Demo User",
+    role: "user"
   },
 ]
 
@@ -27,7 +42,7 @@ export const authOptions = {
         );
 
         if (user) {
-          return { id: user.id, name: user.name, email: user.email };
+          return { id: user.id, name: user.name, email: user.email, role: user.role };
         } else {
           return null;
         }
@@ -42,15 +57,19 @@ export const authOptions = {
     signIn: '/auth/signin',
   },
   callbacks: {
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (token.sub) {
         session.user.id = token.sub;
       }
+      if (token.role) {
+        session.user.role = token.role;
+      }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
         token.sub = user.id;
+        token.role = user.role;
       }
       return token;
     },
