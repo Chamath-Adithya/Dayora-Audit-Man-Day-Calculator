@@ -29,6 +29,7 @@ export function HistoryManagement() {
   const [viewMode, setViewMode] = useState<"table" | "grid">("table")
   const [groupBy, setGroupBy] = useState<string>("none")
   const [showFilters, setShowFilters] = useState<boolean>(false)
+  const [groupedData, setGroupedData] = useState<{[key: string]: SavedCalculation[]}>({})
 
   const loadCalculations = async () => {
     try {
@@ -89,6 +90,49 @@ export function HistoryManagement() {
 
     setFilteredCalculations(filtered)
   }, [calculations, searchTerm, standardFilter, auditTypeFilter, view, sortField, sortDirection])
+
+  // Group data based on groupBy selection
+  useEffect(() => {
+    if (groupBy === 'none') {
+      setGroupedData({})
+      return
+    }
+
+    const grouped: {[key: string]: SavedCalculation[]} = {}
+
+    filteredCalculations.forEach(calc => {
+      let groupKey = ''
+      switch (groupBy) {
+        case 'standard':
+          groupKey = calc.standard
+          break
+        case 'auditType':
+          groupKey = calc.auditType
+          break
+        case 'riskLevel':
+          groupKey = calc.riskLevel
+          break
+        case 'companyName':
+          groupKey = calc.companyName
+          break
+        default:
+          groupKey = 'Other'
+      }
+
+      if (!grouped[groupKey]) {
+        grouped[groupKey] = []
+      }
+      grouped[groupKey].push(calc)
+    })
+
+    // Sort groups alphabetically
+    const sortedGrouped: {[key: string]: SavedCalculation[]} = {}
+    Object.keys(grouped).sort().forEach(key => {
+      sortedGrouped[key] = grouped[key]
+    })
+
+    setGroupedData(sortedGrouped)
+  }, [filteredCalculations, groupBy])
 
   const handleToggleCalculation = async (id: string, isDeleted: boolean) => {
     try {
@@ -357,17 +401,41 @@ export function HistoryManagement() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Calculation History</CardTitle>
-              <CardDescription>
-                {filteredCalculations.length} of {calculations.filter(c => !c.isDeleted).length} calculations
-              </CardDescription>
-              <div className="lg:hidden flex items-center space-x-2 mt-2">
-                <Checkbox 
-                  id="selectAllMobile"
-                  checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
-                  onCheckedChange={handleSelectAll}
-                />
-                <label htmlFor="selectAllMobile" className="text-sm font-medium">Select All</label>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Calculation History</CardTitle>
+                  <CardDescription>
+                    {filteredCalculations.length} of {calculations.filter(c => !c.isDeleted).length} calculations
+                    {groupBy !== 'none' && (
+                      <span className="ml-2 text-primary font-medium">
+                        • Grouped by {groupBy === 'standard' ? 'Standard' :
+                                      groupBy === 'auditType' ? 'Audit Type' :
+                                      groupBy === 'riskLevel' ? 'Risk Level' :
+                                      groupBy === 'companyName' ? 'Company' : groupBy}
+                      </span>
+                    )}
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  {groupBy !== 'none' && (
+                    <Button
+                      onClick={() => setGroupBy('none')}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                    >
+                      No Grouping
+                    </Button>
+                  )}
+                  <div className="lg:hidden flex items-center space-x-2">
+                    <Checkbox
+                      id="selectAllMobile"
+                      checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
+                      onCheckedChange={handleSelectAll}
+                    />
+                    <label htmlFor="selectAllMobile" className="text-sm font-medium">Select All</label>
+                  </div>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -388,7 +456,8 @@ export function HistoryManagement() {
                     <p>No calculations match your current filters.</p>
                   )}
                 </div>
-              ) : (
+              ) : groupBy === 'none' ? (
+                // Flat view (no grouping)
                 <div className="overflow-x-auto">
                   <div className="hidden lg:block">
                     <Table>
@@ -486,7 +555,7 @@ export function HistoryManagement() {
                         {filteredCalculations.map((calculation) => (
                           <TableRow key={calculation.id}>
                             <TableCell>
-                              <Checkbox 
+                              <Checkbox
                                 checked={selectedCalculations.includes(calculation.id)}
                                 onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
                               />
@@ -511,9 +580,9 @@ export function HistoryManagement() {
                                 <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
                                   <Eye className="h-4 w-4" />
                                 </Button>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline" 
+                                <Button
+                                  size="sm"
+                                  variant="outline"
                                   onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
                                   title="Move to trash"
                                 >
@@ -533,7 +602,7 @@ export function HistoryManagement() {
                         <div className="space-y-3">
                           <div className="flex items-start justify-between">
                             <div className="flex items-center gap-4">
-                              <Checkbox 
+                              <Checkbox
                                 checked={selectedCalculations.includes(calculation.id)}
                                 onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
                               />
@@ -546,9 +615,9 @@ export function HistoryManagement() {
                               <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
                                 <Eye className="h-4 w-4" />
                               </Button>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
+                              <Button
+                                size="sm"
+                                variant="outline"
                                 onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
                                 title="Move to trash"
                               >
@@ -556,7 +625,7 @@ export function HistoryManagement() {
                               </Button>
                             </div>
                           </div>
-                          
+
                           <div className="grid grid-cols-2 gap-2 text-xs">
                             <div>
                               <span className="text-muted-foreground">Date:</span>
@@ -589,6 +658,237 @@ export function HistoryManagement() {
                       </Card>
                     ))}
                   </div>
+                </div>
+              ) : (
+                // Grouped view
+                <div className="space-y-6">
+                  {Object.entries(groupedData).map(([groupName, groupItems]) => (
+                    <Card key={groupName} className="overflow-hidden">
+                      <CardHeader className="bg-muted/50 pb-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="h-3 w-3 rounded-full bg-primary"></div>
+                            <div>
+                              <CardTitle className="text-lg">
+                                {groupName}
+                              </CardTitle>
+                              <CardDescription>
+                                {groupItems.length} calculation{groupItems.length !== 1 ? 's' : ''}
+                              </CardDescription>
+                            </div>
+                          </div>
+                          <Checkbox
+                            checked={groupItems.every(item => selectedCalculations.includes(item.id))}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedCalculations(prev => [...prev, ...groupItems.map(item => item.id)])
+                              } else {
+                                setSelectedCalculations(prev => prev.filter(id => !groupItems.some(item => item.id === id)))
+                              }
+                            }}
+                          />
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="overflow-x-auto">
+                          <div className="hidden lg:block">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="w-12"></TableHead>
+                                  <TableHead>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                                      onClick={() => handleSort('createdAt')}
+                                    >
+                                      Date
+                                      {getSortIcon('createdAt')}
+                                    </Button>
+                                  </TableHead>
+                                  <TableHead>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                                      onClick={() => handleSort('companyName')}
+                                    >
+                                      Company
+                                      {getSortIcon('companyName')}
+                                    </Button>
+                                  </TableHead>
+                                  <TableHead>Scope</TableHead>
+                                  <TableHead>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                                      onClick={() => handleSort('standard')}
+                                    >
+                                      Standard
+                                      {getSortIcon('standard')}
+                                    </Button>
+                                  </TableHead>
+                                  <TableHead>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                                      onClick={() => handleSort('auditType')}
+                                    >
+                                      Audit Type
+                                      {getSortIcon('auditType')}
+                                    </Button>
+                                  </TableHead>
+                                  <TableHead>Category</TableHead>
+                                  <TableHead>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                                      onClick={() => handleSort('employees')}
+                                    >
+                                      Employees
+                                      {getSortIcon('employees')}
+                                    </Button>
+                                  </TableHead>
+                                  <TableHead>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                                      onClick={() => handleSort('riskLevel')}
+                                    >
+                                      Risk
+                                      {getSortIcon('riskLevel')}
+                                    </Button>
+                                  </TableHead>
+                                  <TableHead>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                                      onClick={() => handleSort('result')}
+                                    >
+                                      Result
+                                      {getSortIcon('result')}
+                                    </Button>
+                                  </TableHead>
+                                  <TableHead>Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {groupItems.map((calculation) => (
+                                  <TableRow key={calculation.id}>
+                                    <TableCell>
+                                      <Checkbox
+                                        checked={selectedCalculations.includes(calculation.id)}
+                                        onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                      />
+                                    </TableCell>
+                                    <TableCell className="text-sm">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</TableCell>
+                                    <TableCell className="font-medium">{calculation.companyName}</TableCell>
+                                    <TableCell className="max-w-32 truncate" title={calculation.scope}>
+                                      {calculation.scope}
+                                    </TableCell>
+                                    <TableCell>
+                                      <Badge variant="outline">{calculation.standard}</Badge>
+                                    </TableCell>
+                                    <TableCell className="capitalize">{calculation.auditType}</TableCell>
+                                    <TableCell>{calculation.category}</TableCell>
+                                    <TableCell>{calculation.employees}</TableCell>
+                                    <TableCell>
+                                      <Badge variant={getRiskBadgeVariant(calculation.riskLevel)}>{calculation.riskLevel}</Badge>
+                                    </TableCell>
+                                    <TableCell className="font-semibold">{calculation.result} days</TableCell>
+                                    <TableCell>
+                                      <div className="flex gap-2">
+                                        <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
+                                          <Eye className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
+                                          title="Move to trash"
+                                        >
+                                          <Archive className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+
+                          <div className="lg:hidden space-y-3">
+                            {groupItems.map((calculation) => (
+                              <Card key={calculation.id} className="p-3 border-l-4 border-l-primary">
+                                <div className="space-y-3">
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-3">
+                                      <Checkbox
+                                        checked={selectedCalculations.includes(calculation.id)}
+                                        onCheckedChange={(checked) => handleSelect(calculation.id, checked as boolean)}
+                                      />
+                                      <div className="flex-1 min-w-0">
+                                        <h3 className="font-medium text-sm truncate">{calculation.companyName}</h3>
+                                        <p className="text-xs text-muted-foreground truncate">{calculation.scope}</p>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2 ml-2">
+                                      <Button size="sm" variant="outline" onClick={() => handleViewCalculation(calculation.id)}>
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleToggleCalculation(calculation.id, calculation.isDeleted)}
+                                        title="Move to trash"
+                                      >
+                                        <Archive className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                      <span className="text-muted-foreground">Date:</span>
+                                      <p className="font-medium">{format(new Date(calculation.createdAt), "MMM dd, yyyy")}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Result:</span>
+                                      <p className="font-semibold text-primary">{calculation.result} days</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Standard:</span>
+                                      <Badge variant="outline" className="text-xs">{calculation.standard}</Badge>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Risk:</span>
+                                      <Badge variant={getRiskBadgeVariant(calculation.riskLevel)} className="text-xs">
+                                        {calculation.riskLevel}
+                                      </Badge>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Type:</span>
+                                      <p className="capitalize">{calculation.auditType}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Category:</span>
+                                      <p>{calculation.category}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               )}
             </CardContent>
