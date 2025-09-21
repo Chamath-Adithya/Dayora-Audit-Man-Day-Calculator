@@ -20,6 +20,26 @@ export interface CalculationData {
   isDeleted?: boolean
 }
 
+export interface UpdateCalculationData {
+  companyName?: string
+  scope?: string
+  standard?: string
+  auditType?: string
+  category?: string
+  employees?: number
+  sites?: number
+  haccpStudies?: number
+  riskLevel?: string
+  integratedStandards?: string[]
+  result?: number
+  breakdown?: any
+  stage1ManDays?: number
+  stage2ManDays?: number
+  surveillanceManDays?: number
+  recertificationManDays?: number
+  isDeleted?: boolean
+}
+
 export interface SavedCalculation extends CalculationData {
   id: string
   createdAt: string
@@ -102,6 +122,13 @@ class ApiClient {
   async deleteCalculationPermanently(id: string): Promise<void> {
     await this.request(`/calculations/trash?id=${id}`, {
       method: 'DELETE',
+    })
+  }
+
+  async restoreCalculation(id: string): Promise<SavedCalculation> {
+    return this.request<SavedCalculation>(`/calculations/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isDeleted: false }),
     })
   }
 

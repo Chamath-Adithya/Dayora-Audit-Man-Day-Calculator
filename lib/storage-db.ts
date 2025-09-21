@@ -244,20 +244,21 @@ export const storage = {
     }
   },
 
-  async updateCalculation(id: string, updates: Partial<Omit<SavedCalculation, 'id' | 'createdAt' | 'updatedAt'>>): Promise<SavedCalculation> {
+  async updateCalculation(id: string, updates: Partial<Omit<SavedCalculation, 'id' | 'createdAt' | 'updatedAt' | 'isDeleted'>> & { isDeleted?: boolean }): Promise<SavedCalculation> {
     try {
       // Validate input
       const validatedData = UpdateCalculationSchema.parse(updates)
-      
+
       const updatedCalculation = await prisma.calculation.update({
         where: { id },
         data: {
           ...validatedData,
-          integratedStandards: validatedData.integratedStandards 
-            ? JSON.stringify(validatedData.integratedStandards) 
+          isDeleted: updates.isDeleted, // Explicitly handle isDeleted field
+          integratedStandards: validatedData.integratedStandards
+            ? JSON.stringify(validatedData.integratedStandards)
             : undefined,
-          breakdown: validatedData.breakdown 
-            ? JSON.stringify(validatedData.breakdown) 
+          breakdown: validatedData.breakdown
+            ? JSON.stringify(validatedData.breakdown)
             : undefined,
         },
       })
@@ -314,6 +315,23 @@ export const storage = {
       }
       console.error('Error trashing calculation:', error)
       throw new Error('Failed to trash calculation')
+    }
+  },
+
+  async restoreCalculation(id: string): Promise<void> {
+    try {
+      await prisma.calculation.update({
+        where: { id },
+        data: { isDeleted: false },
+      })
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        // Record not found, perhaps already restored or invalid ID
+        console.warn(`Attempted to restore non-existent calculation with ID: ${id}`)
+        return // Or throw a more specific error if needed
+      }
+      console.error('Error restoring calculation:', error)
+      throw new Error('Failed to restore calculation')
     }
   },
 
