@@ -115,6 +115,10 @@ export function HistoryManagement() {
         case 'companyName':
           groupKey = calc.companyName
           break
+        case 'createdAt':
+          // Group by date (YYYY-MM-DD format)
+          groupKey = format(new Date(calc.createdAt), 'MMM dd, yyyy')
+          break
         default:
           groupKey = 'Other'
       }
@@ -380,6 +384,7 @@ export function HistoryManagement() {
                         <SelectItem value="auditType">Audit Type</SelectItem>
                         <SelectItem value="riskLevel">Risk Level</SelectItem>
                         <SelectItem value="companyName">Company</SelectItem>
+                        <SelectItem value="createdAt">Date</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button onClick={() => handleExportHistoryPDF()} variant="outline" size="sm" className="flex-shrink-0">
