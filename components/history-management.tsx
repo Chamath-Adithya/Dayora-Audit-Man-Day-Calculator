@@ -300,6 +300,22 @@ export function HistoryManagement() {
     return sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
   }
 
+  function KPICardSkeleton() {
+    return (
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-16"></div>
+              <div className="h-8 bg-gray-200 rounded w-12"></div>
+            </div>
+            <div className="h-8 w-8 bg-gray-200 rounded"></div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {error && (
@@ -317,7 +333,17 @@ export function HistoryManagement() {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {loading ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -394,8 +420,17 @@ export function HistoryManagement() {
       {/* Visualization Tabs */}
       <Card>
         <CardHeader>
-          <CardTitle>History Overview</CardTitle>
-          <CardDescription>A visual summary of your calculation history with multiple perspectives.</CardDescription>
+          {loading ? (
+            <>
+              <div className="h-6 bg-gray-200 rounded w-48"></div>
+              <div className="h-4 bg-gray-200 rounded w-96"></div>
+            </>
+          ) : (
+            <>
+              <CardTitle>History Overview</CardTitle>
+              <CardDescription>A visual summary of your calculation history with multiple perspectives.</CardDescription>
+            </>
+          )}
         </CardHeader>
         <CardContent>
           <Tabs value={visualizationTab} onValueChange={setVisualizationTab}>
@@ -406,54 +441,67 @@ export function HistoryManagement() {
             </TabsList>
 
             <TabsContent value="overview" className="mt-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-lg font-semibold mb-4">Company vs. Man-Days</h4>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                      <YAxis />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(var(--card))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: '6px',
-                          color: 'hsl(var(--card-foreground))',
-                          fontSize: '14px'
-                        }}
-                        labelStyle={{ color: 'hsl(var(--card-foreground))', fontWeight: 'bold' }}
-                        itemStyle={{ color: 'hsl(var(--card-foreground))' }}
-                      />
-                      <Legend wrapperStyle={{ fontSize: '14px' }} />
-                      <Bar dataKey="manDays" fill="#8884d8" />
-                    </BarChart>
-                  </ResponsiveContainer>
+              {loading ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
+                    <div className="h-64 bg-gray-200 rounded"></div>
+                  </div>
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
+                    <div className="h-64 bg-gray-200 rounded"></div>
+                  </div>
                 </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-lg font-semibold mb-4">Company vs. Man-Days</h4>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                        <YAxis />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: 'hsl(var(--card))',
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: '6px',
+                            color: 'hsl(var(--card-foreground))',
+                            fontSize: '14px'
+                          }}
+                          labelStyle={{ color: 'hsl(var(--card-foreground))', fontWeight: 'bold' }}
+                          itemStyle={{ color: 'hsl(var(--card-foreground))' }}
+                        />
+                        <Legend wrapperStyle={{ fontSize: '14px' }} />
+                        <Bar dataKey="manDays" fill="#8884d8" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
 
-                <div>
-                  <h4 className="text-lg font-semibold mb-4">Standards Distribution</h4>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={standardData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {standardData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <div>
+                    <h4 className="text-lg font-semibold mb-4">Standards Distribution</h4>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={standardData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {standardData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
-              </div>
+              )}
             </TabsContent>
 
             <TabsContent value="standards" className="mt-6">
