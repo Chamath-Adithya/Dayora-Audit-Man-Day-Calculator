@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Search, Trash2, Eye, Download, Calendar, RefreshCw, FileText, BarChart2, ToggleLeft, ToggleRight, AlertTriangle, Archive, ArchiveRestore } from "lucide-react"
+import { Search, Trash2, Eye, Download, Calendar, RefreshCw, FileText, BarChart2, ToggleLeft, ToggleRight, AlertTriangle, Archive, ArchiveRestore, ArrowUpDown, ArrowUp, ArrowDown, Filter, Grid3X3, List, ChevronDown } from "lucide-react"
 import { format } from "date-fns"
 import { apiClient, type SavedCalculation } from "@/lib/api-client"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -24,6 +24,11 @@ export function HistoryManagement() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState("active")
+  const [sortField, setSortField] = useState<keyof SavedCalculation>("createdAt")
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table")
+  const [groupBy, setGroupBy] = useState<string>("none")
+  const [showFilters, setShowFilters] = useState<boolean>(false)
 
   const loadCalculations = async () => {
     try {
@@ -63,8 +68,27 @@ export function HistoryManagement() {
       filtered = filtered.filter((calc) => calc.auditType === auditTypeFilter)
     }
 
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let aValue = a[sortField]
+      let bValue = b[sortField]
+
+      // Handle different data types
+      if (sortField === 'createdAt') {
+        aValue = new Date(aValue as string).getTime()
+        bValue = new Date(bValue as string).getTime()
+      } else if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase()
+        bValue = (bValue as string).toLowerCase()
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+      return 0
+    })
+
     setFilteredCalculations(filtered)
-  }, [calculations, searchTerm, standardFilter, auditTypeFilter, view])
+  }, [calculations, searchTerm, standardFilter, auditTypeFilter, view, sortField, sortDirection])
 
   const handleToggleCalculation = async (id: string, isDeleted: boolean) => {
     try {
@@ -184,6 +208,20 @@ export function HistoryManagement() {
     }
   }
 
+  const handleSort = (field: keyof SavedCalculation) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const getSortIcon = (field: keyof SavedCalculation) => {
+    if (sortField !== field) return <ArrowUpDown className="h-4 w-4" />
+    return sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+  }
+
   return (
     <div className="space-y-6">
       {error && (
@@ -279,11 +317,34 @@ export function HistoryManagement() {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 justify-start sm:justify-start">
-                  <Button onClick={() => handleExportHistoryPDF()} variant="outline" size="sm" className="flex-shrink-0">
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">Export PDF</span>
-                    <span className="sm:hidden">PDF</span>
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')}
+                      variant="outline"
+                      size="sm"
+                      className="flex-shrink-0"
+                    >
+                      {viewMode === 'table' ? <Grid3X3 className="mr-2 h-4 w-4" /> : <List className="mr-2 h-4 w-4" />}
+                      {viewMode === 'table' ? 'Grid' : 'Table'}
+                    </Button>
+                    <Select value={groupBy} onValueChange={setGroupBy}>
+                      <SelectTrigger className="w-full md:w-auto">
+                        <SelectValue placeholder="Group by..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Grouping</SelectItem>
+                        <SelectItem value="standard">Standard</SelectItem>
+                        <SelectItem value="auditType">Audit Type</SelectItem>
+                        <SelectItem value="riskLevel">Risk Level</SelectItem>
+                        <SelectItem value="companyName">Company</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button onClick={() => handleExportHistoryPDF()} variant="outline" size="sm" className="flex-shrink-0">
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span className="hidden sm:inline">Export PDF</span>
+                      <span className="sm:hidden">PDF</span>
+                    </Button>
+                  </div>
                   {selectedCalculations.length > 0 && (
                     <Button onClick={() => handleBulkAction("archive")} variant="outline" size="sm" className="flex-shrink-0">
                       <Archive className="mr-2 h-4 w-4" />
@@ -335,20 +396,90 @@ export function HistoryManagement() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>
-                            <Checkbox 
+                            <Checkbox
                               checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
                               onCheckedChange={handleSelectAll}
                             />
                           </TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Company</TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('createdAt')}
+                            >
+                              Date
+                              {getSortIcon('createdAt')}
+                            </Button>
+                          </TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('companyName')}
+                            >
+                              Company
+                              {getSortIcon('companyName')}
+                            </Button>
+                          </TableHead>
                           <TableHead>Scope</TableHead>
-                          <TableHead>Standard</TableHead>
-                          <TableHead>Audit Type</TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('standard')}
+                            >
+                              Standard
+                              {getSortIcon('standard')}
+                            </Button>
+                          </TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('auditType')}
+                            >
+                              Audit Type
+                              {getSortIcon('auditType')}
+                            </Button>
+                          </TableHead>
                           <TableHead>Category</TableHead>
-                          <TableHead>Employees</TableHead>
-                          <TableHead>Risk</TableHead>
-                          <TableHead>Result</TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('employees')}
+                            >
+                              Employees
+                              {getSortIcon('employees')}
+                            </Button>
+                          </TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('riskLevel')}
+                            >
+                              Risk
+                              {getSortIcon('riskLevel')}
+                            </Button>
+                          </TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('result')}
+                            >
+                              Result
+                              {getSortIcon('result')}
+                            </Button>
+                          </TableHead>
                           <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -510,16 +641,56 @@ export function HistoryManagement() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>
-                            <Checkbox 
+                            <Checkbox
                               checked={selectedCalculations.length === filteredCalculations.length && filteredCalculations.length > 0}
                               onCheckedChange={handleSelectAll}
                             />
                           </TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Company</TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('createdAt')}
+                            >
+                              Date
+                              {getSortIcon('createdAt')}
+                            </Button>
+                          </TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('companyName')}
+                            >
+                              Company
+                              {getSortIcon('companyName')}
+                            </Button>
+                          </TableHead>
                           <TableHead>Scope</TableHead>
-                          <TableHead>Standard</TableHead>
-                          <TableHead>Result</TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('standard')}
+                            >
+                              Standard
+                              {getSortIcon('standard')}
+                            </Button>
+                          </TableHead>
+                          <TableHead>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 font-semibold hover:bg-transparent"
+                              onClick={() => handleSort('result')}
+                            >
+                              Result
+                              {getSortIcon('result')}
+                            </Button>
+                          </TableHead>
                           <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
