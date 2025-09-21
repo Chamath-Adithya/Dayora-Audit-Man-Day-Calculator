@@ -425,7 +425,7 @@ export function HistoryManagement() {
                         labelStyle={{ color: 'hsl(var(--card-foreground))', fontWeight: 'bold' }}
                       />
                       <Legend wrapperStyle={{ fontSize: '14px' }} />
-                      <Bar dataKey="manDays" fill="#3b82f6" />
+                      <Bar dataKey="manDays" fill="#8884d8" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
