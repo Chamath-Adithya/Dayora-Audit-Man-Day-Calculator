@@ -118,8 +118,11 @@ export function HistoryManagement() {
     if (confirm(`Are you sure you want to ${actionVerb} ${selectedCalculations.length} calculations?`)) {
       if (action === "archive") {
         if (confirm("Do you want to export a PDF of the selected calculations before archiving?")) {
-          const calculationsToExport = calculations.filter(calc => selectedCalculations.includes(calc.id))
-          await handleExportHistoryPDF(calculationsToExport)
+          // Set selected calculations for export
+          const tempSelected = [...selectedCalculations]
+          setSelectedCalculations(tempSelected)
+          await handleExportHistoryPDF()
+          // Note: The function will use the selectedCalculations state
         }
       }
       try {
@@ -144,9 +147,19 @@ export function HistoryManagement() {
     window.open(`/results?id=${id}`, "_blank")
   }
 
-  const handleExportHistoryPDF = async (calculationsToExport: SavedCalculation[] = filteredCalculations) => {
+  const handleExportHistoryPDF = async () => {
+    let calculationsToExport: SavedCalculation[] = []
+
+    if (selectedCalculations.length > 0) {
+      // Export only selected calculations
+      calculationsToExport = calculations.filter(calc => selectedCalculations.includes(calc.id))
+    } else {
+      // Export all filtered calculations
+      calculationsToExport = filteredCalculations
+    }
+
     if (calculationsToExport.length === 0) {
-      alert("No calculations to export.")
+      alert("Please select calculations before exporting.")
       return
     }
 
@@ -171,6 +184,7 @@ export function HistoryManagement() {
       document.body.appendChild(a);
       a.click();
       a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error generating PDF:', error)
       alert('Failed to generate PDF. Please try again.')
@@ -348,7 +362,7 @@ export function HistoryManagement() {
                   {selectedCalculations.length > 0 && (
                     <Button onClick={() => handleBulkAction("archive")} variant="outline" size="sm" className="flex-shrink-0">
                       <Archive className="mr-2 h-4 w-4" />
-                      Archive ({selectedCalculations.length})
+                      Move to Trash ({selectedCalculations.length})
                     </Button>
                   )}
                 </div>
