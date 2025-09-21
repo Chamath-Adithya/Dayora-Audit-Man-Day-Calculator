@@ -515,7 +515,16 @@ export function HistoryManagement() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                       <YAxis />
-                      <Tooltip />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '6px',
+                          color: 'hsl(var(--card-foreground))',
+                          fontSize: '14px'
+                        }}
+                        labelStyle={{ color: 'hsl(var(--card-foreground))', fontWeight: 'bold' }}
+                      />
                       <Area type="monotone" dataKey="calculations" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
                     </AreaChart>
                   </ResponsiveContainer>
