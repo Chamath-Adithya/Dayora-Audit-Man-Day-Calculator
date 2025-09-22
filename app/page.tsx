@@ -106,23 +106,23 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="relative text-center p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-1600 group overflow-hidden border-l-4 border-l-purple-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <CardHeader className="relative pb-4">
-              <div className="relative w-16 h-16 bg-purple-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-500/20 group-hover:scale-125 transition-all duration-500 group-hover:rotate-6">
-                <History className="h-8 w-8 text-purple-600 group-hover:rotate-12 transition-transform duration-500" />
-                <div className="absolute inset-0 rounded-xl bg-purple-400/20 animate-ping"></div>
+          <Card className="relative text-center p-8 card-hover animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-1600 group border-0 shadow-modern bg-gradient-to-br from-card to-card/50 border-gradient">
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
+            <CardHeader className="relative pb-6">
+              <div className="relative w-20 h-20 bg-gradient-to-br from-accent/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:from-accent/20 group-hover:to-secondary/20 interactive-scale shadow-modern">
+                <History className="h-10 w-10 text-accent group-hover:text-secondary transition-all duration-500 group-hover:rotate-12" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent/20 to-secondary/20 animate-ping opacity-75"></div>
               </div>
-              <CardTitle className="text-xl group-hover:text-purple-600 transition-colors duration-300">History Tracking</CardTitle>
+              <CardTitle className="text-2xl font-bold group-hover:text-accent transition-colors duration-300">History Tracking</CardTitle>
             </CardHeader>
             <CardContent className="relative">
-              <p className="text-sm text-muted-foreground group-hover:text-foreground/90 transition-colors duration-300">
-                Keep track of all calculations with searchable history, client management, and comparison tools.
+              <p className="text-base text-muted-foreground group-hover:text-foreground/90 transition-colors duration-300 leading-relaxed">
+                Keep track of all calculations with <span className="font-semibold text-accent">searchable history</span>, client management, and comparison tools.
               </p>
-              <div className="mt-4 flex justify-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse delay-200"></div>
-                <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse delay-400"></div>
+              <div className="mt-6 flex justify-center gap-3">
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-indigo-400 to-indigo-500 rounded-full animate-pulse delay-200 glow-accent"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-pink-400 to-pink-500 rounded-full animate-pulse delay-400"></div>
               </div>
             </CardContent>
           </Card>
