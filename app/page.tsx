@@ -34,12 +34,15 @@ export default function HomePage() {
             </h1>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-semibold text-muted-foreground animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-700 hover:text-foreground transition-colors duration-300">
-            Audit Man-Day Calculator
+          <h2 className="text-2xl sm:text-3xl font-semibold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-700 hover:from-primary hover:to-accent transition-all duration-500">
+            Professional Audit Calculator
           </h2>
 
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-900 hover:text-foreground/80 transition-colors duration-300">
-            Calculate audit man-days accurately in seconds based on international standards (IAF MD 5:2019 and ISO/TS 22003:2022).
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-900 hover:text-foreground/90 transition-colors duration-300">
+            Calculate audit man-days with <span className="font-semibold text-primary">precision and speed</span> using international standards 
+            <span className="inline-block mx-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">IAF MD 5:2019</span> 
+            and 
+            <span className="inline-block mx-2 px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">ISO/TS 22003:2022</span>
           </p>
 
           {/* Enhanced CTA with Advanced Animations */}
