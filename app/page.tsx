@@ -252,20 +252,20 @@ export default function HomePage() {
           </Link>
 
           <Link href="/admin">
-            <Card className="relative p-4 hover:bg-purple-500/5 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-2400 group overflow-hidden border-l-4 border-l-purple-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <Card className="relative p-6 card-hover cursor-pointer animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-2400 group border-0 shadow-modern bg-gradient-to-br from-accent/5 to-secondary/5 border-gradient">
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
               <CardContent className="relative p-0">
-                <div className="flex items-center gap-3 group-hover:scale-105 transition-transform duration-300">
-                  <div className="relative p-2 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-all duration-300">
-                    <Settings className="h-5 w-5 text-purple-600 group-hover:rotate-12 transition-transform duration-500" />
-                    <div className="absolute inset-0 rounded-lg bg-purple-400/20 animate-ping"></div>
+                <div className="flex items-center gap-4 group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative p-3 rounded-xl bg-gradient-to-br from-accent/10 to-secondary/10 group-hover:from-accent/20 group-hover:to-secondary/20 transition-all duration-300 shadow-modern">
+                    <Settings className="h-6 w-6 text-accent group-hover:text-secondary transition-all duration-500 group-hover:rotate-12" />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent/20 to-secondary/20 animate-ping opacity-75"></div>
                   </div>
-                  <span className="font-medium group-hover:text-purple-600 transition-colors duration-300">Admin Settings</span>
+                  <span className="font-semibold text-lg group-hover:text-accent transition-colors duration-300">Admin Settings</span>
                 </div>
-                <div className="mt-3 flex gap-1">
-                  <div className="w-1 h-1 bg-purple-500 rounded-full animate-pulse"></div>
-                  <div className="w-1 h-1 bg-purple-400 rounded-full animate-pulse delay-200"></div>
-                  <div className="w-1 h-1 bg-purple-300 rounded-full animate-pulse delay-400"></div>
+                <div className="mt-4 flex gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-accent to-secondary rounded-full animate-pulse glow-accent"></div>
+                  <div className="w-2 h-2 bg-gradient-to-r from-secondary to-primary rounded-full animate-pulse delay-200"></div>
+                  <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full animate-pulse delay-400"></div>
                 </div>
               </CardContent>
             </Card>
