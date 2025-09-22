@@ -73,18 +73,40 @@ html {
   transform: scale(1.02);
 }
 
-/* Button animations */
+/* Enhanced button animations with modern effects */
 .btn-animate {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-animate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
 }
 
 .btn-animate:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.2), 
+              0 4px 8px -2px rgba(0, 0, 0, 0.1);
+}
+
+.btn-animate:hover::before {
+  transform: translateX(100%);
 }
 
 .btn-animate:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(1.01);
+  transition: all 0.1s ease;
+}
+
+.dark .btn-animate:hover {
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.4), 
+              0 4px 8px -2px rgba(0, 0, 0, 0.3);
 }
 
 /* Fade in animations for content */
