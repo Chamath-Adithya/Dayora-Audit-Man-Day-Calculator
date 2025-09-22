@@ -28,11 +28,16 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-64 flex-col bg-sidebar border-r border-sidebar-border">
-      <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold text-sidebar-foreground">Dayora</h1>
-          <span className="text-xs text-muted-foreground">Audit Calculator</span>
+    <div className="flex h-full w-64 flex-col bg-gradient-to-b from-sidebar to-sidebar/90 border-r border-sidebar-border/50 shadow-modern-lg">
+      <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border/50 bg-gradient-to-r from-sidebar to-sidebar/95">
+        <div className="flex items-center gap-3">
+          <div className="relative p-2 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 shadow-modern">
+            <div className="w-2 h-2 bg-gradient-to-br from-primary to-accent rounded-full"></div>
+          </div>
+          <div>
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Dayora</h1>
+            <span className="text-xs text-muted-foreground font-medium">Audit Calculator</span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -40,7 +45,7 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="lg:hidden"
+            className="lg:hidden hover:bg-sidebar-accent transition-all duration-300"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Close sidebar</span>
