@@ -21,13 +21,14 @@ export default function HomePage() {
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-accent/5"></div>
           </div>
 
-          <div className="flex items-center justify-center gap-3 mb-4 animate-in fade-in-0 slide-in-from-top-4 duration-1000">
-            <div className="relative p-3 rounded-full bg-primary/10 animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-300 hover:bg-primary/20 transition-all duration-500 hover:scale-110 hover:rotate-12 group">
-              <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-primary group-hover:text-primary/80 transition-colors duration-300" />
-              <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping"></div>
+          <div className="flex items-center justify-center gap-4 mb-6 animate-in fade-in-0 slide-in-from-top-4 duration-1000">
+            <div className="relative p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-300 hover:from-primary/20 hover:to-accent/20 transition-all duration-500 hover:scale-110 hover:rotate-6 group shadow-modern">
+              <Shield className="h-10 w-10 sm:h-12 sm:w-12 text-primary group-hover:text-accent transition-all duration-500 group-hover:rotate-12" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 animate-ping opacity-75"></div>
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-500 hover:scale-105 transition-transform duration-500">
-              <span className="bg-gradient-to-r from-primary via-primary/90 to-accent bg-clip-text text-transparent animate-pulse">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-500 hover:scale-105 transition-transform duration-500">
+              <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent bg-300% animate-gradient">
                 Dayora
               </span>
             </h1>
