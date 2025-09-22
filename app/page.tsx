@@ -10,13 +10,15 @@ export default function HomePage() {
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Advanced Hero Section with Enhanced Animations */}
-        <div className="relative text-center space-y-6 overflow-hidden">
-          {/* Animated Background Elements */}
+        {/* Modern Hero Section with Enhanced Visual Effects */}
+        <div className="relative text-center space-y-8 overflow-hidden py-12">
+          {/* Enhanced Animated Background Elements */}
           <div className="absolute inset-0 -z-10">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/10 rounded-full blur-xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-accent/10 rounded-full blur-lg animate-pulse delay-1000"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-primary/5 rounded-full blur-2xl animate-pulse delay-500"></div>
+            <div className="absolute inset-0 pattern-dots opacity-30"></div>
+            <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/3 right-1/4 w-32 h-32 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-gradient-to-br from-accent/10 to-secondary/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-accent/5"></div>
           </div>
 
           <div className="flex items-center justify-center gap-3 mb-4 animate-in fade-in-0 slide-in-from-top-4 duration-1000">
