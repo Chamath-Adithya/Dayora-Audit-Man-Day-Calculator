@@ -28,11 +28,16 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-64 flex-col bg-sidebar border-r border-sidebar-border">
-      <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold text-sidebar-foreground">Dayora</h1>
-          <span className="text-xs text-muted-foreground">Audit Calculator</span>
+    <div className="flex h-full w-64 flex-col bg-gradient-to-b from-sidebar to-sidebar/90 border-r border-sidebar-border/50 shadow-modern-lg">
+      <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border/50 bg-gradient-to-r from-sidebar to-sidebar/95">
+        <div className="flex items-center gap-3">
+          <div className="relative p-2 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 shadow-modern">
+            <div className="w-2 h-2 bg-gradient-to-br from-primary to-accent rounded-full"></div>
+          </div>
+          <div>
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Dayora</h1>
+            <span className="text-xs text-muted-foreground font-medium">Audit Calculator</span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -40,14 +45,14 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="lg:hidden"
+            className="lg:hidden hover:bg-sidebar-accent transition-all duration-300"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Close sidebar</span>
           </Button>
         </div>
       </div>
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-2 p-6">
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -56,14 +61,20 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 group relative overflow-hidden",
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
+                  ? "bg-gradient-to-r from-primary to-accent text-white shadow-modern glow-primary"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-105 hover:shadow-modern",
               )}
             >
-              <item.icon className="h-4 w-4 flex-shrink-0" />
+              <item.icon className={cn(
+                "h-5 w-5 flex-shrink-0 transition-all duration-300",
+                isActive ? "text-white" : "text-primary group-hover:text-accent group-hover:rotate-12"
+              )} />
               <span className="truncate">{item.name}</span>
+              {isActive && (
+                <div className="absolute inset-0 bg-white/10 rounded-xl"></div>
+              )}
             </Link>
           )
         })}
@@ -71,8 +82,8 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
         {/* Admin Navigation - Only show for admin users */}
         {userRole === 'admin' && (
           <>
-            <div className="border-t border-sidebar-border pt-4 mt-4">
-              <div className="text-xs font-medium text-muted-foreground px-3 mb-2 uppercase tracking-wider">
+            <div className="border-t border-sidebar-border/50 pt-6 mt-6">
+              <div className="text-xs font-bold text-muted-foreground px-4 mb-4 uppercase tracking-wider bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Administration
               </div>
               {adminNavigation.map((item) => {
@@ -83,14 +94,20 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
                     href={item.href}
                     onClick={onClose}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      "flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 group relative overflow-hidden",
                       isActive
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                        : "text-sidebar-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
+                        ? "bg-gradient-to-r from-accent to-secondary text-white shadow-modern glow-accent"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-105 hover:shadow-modern",
                     )}
                   >
-                    <item.icon className="h-4 w-4 flex-shrink-0" />
+                    <item.icon className={cn(
+                      "h-5 w-5 flex-shrink-0 transition-all duration-300",
+                      isActive ? "text-white" : "text-accent group-hover:text-secondary group-hover:rotate-12"
+                    )} />
                     <span className="truncate">{item.name}</span>
+                    {isActive && (
+                      <div className="absolute inset-0 bg-white/10 rounded-xl"></div>
+                    )}
                   </Link>
                 )
               })}
