@@ -247,6 +247,50 @@ html {
               0 10px 15px -3px rgba(0, 0, 0, 0.3);
 }
 
+/* Animated gradient background */
+.bg-300\% {
+  background-size: 300% 300%;
+}
+
+.animate-gradient {
+  animation: gradient 6s ease infinite;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Enhanced interactive states */
+.interactive-scale {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interactive-scale:hover {
+  transform: scale(1.05);
+}
+
+.interactive-scale:active {
+  transform: scale(0.98);
+}
+
+/* Modern border gradients */
+.border-gradient {
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+              linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent))) border-box;
+  border: 2px solid transparent;
+}
+
+/* Subtle glow effects */
+.glow-primary {
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px hsl(var(--accent) / 0.3);
+}
+
 :root {
   /* Modern professional color system with better contrast and visual hierarchy */
   --background: oklch(0.99 0.01 240); /* Subtle warm white */
