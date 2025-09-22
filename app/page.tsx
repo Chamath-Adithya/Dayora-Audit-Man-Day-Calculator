@@ -9,9 +9,9 @@ import Link from "next/link"
 export default function HomePage() {
   return (
     <MainLayout>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-5xl mx-auto space-y-12 px-4">
         {/* Advanced Hero Section with Enhanced Animations */}
-        <div className="relative text-center space-y-6 overflow-hidden">
+        <div className="relative text-center space-y-8 overflow-hidden pt-8">
           {/* Animated Background Elements */}
           <div className="absolute inset-0 -z-10">
             <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/10 rounded-full blur-xl animate-pulse"></div>
@@ -36,7 +36,7 @@ export default function HomePage() {
           </h2>
 
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-900 hover:text-foreground/80 transition-colors duration-300">
-            Calculate audit man-days accurately in seconds based on international standards (IAF MD 5:2019 and ISO/TS 22003:2022).
+            Calculate audit man-days with precision in seconds, adhering to international standards (IAF MD 5:2019 and ISO/TS 22003:2022).
           </p>
 
           {/* Enhanced CTA with Advanced Animations */}
@@ -56,8 +56,8 @@ export default function HomePage() {
         </div>
 
         {/* Advanced Feature Cards with Enhanced Animations */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="relative text-center p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-1200 group overflow-hidden border-l-4 border-l-blue-500">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="relative text-center p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-1200 group overflow-hidden border-l-4 border-l-blue-500">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <CardHeader className="relative pb-4">
               <div className="relative w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/20 group-hover:scale-125 transition-all duration-500 group-hover:rotate-6">
@@ -78,7 +78,7 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="relative text-center p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1400 group overflow-hidden border-l-4 border-l-emerald-500">
+          <Card className="relative text-center p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1400 group overflow-hidden border-l-4 border-l-emerald-500">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <CardHeader className="relative pb-4">
               <div className="relative w-16 h-16 bg-emerald-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-500/20 group-hover:scale-125 transition-all duration-500 group-hover:rotate-6">
@@ -99,7 +99,7 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="relative text-center p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-1600 group overflow-hidden border-l-4 border-l-purple-500">
+          <Card className="relative text-center p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-right-4 duration-1000 delay-1600 group overflow-hidden border-l-4 border-l-purple-500">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <CardHeader className="relative pb-4">
               <div className="relative w-16 h-16 bg-purple-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-500/20 group-hover:scale-125 transition-all duration-500 group-hover:rotate-6">
@@ -122,7 +122,7 @@ export default function HomePage() {
         </div>
 
         {/* Advanced Standards Overview with Enhanced Animations */}
-        <Card className="relative animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1800 overflow-hidden group">
+        <Card className="relative animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1800 overflow-hidden group p-4">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <CardHeader className="relative">
             <CardTitle className="flex items-center gap-2 group-hover:scale-105 transition-transform duration-300">
@@ -200,7 +200,7 @@ export default function HomePage() {
         </Card>
 
         {/* Advanced Quick Access with Enhanced Animations */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link href="/calculate">
             <Card className="relative p-4 hover:bg-blue-500/5 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-2200 group overflow-hidden border-l-4 border-l-blue-500">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
