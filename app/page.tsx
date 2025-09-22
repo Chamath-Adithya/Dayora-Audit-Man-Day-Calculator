@@ -62,25 +62,25 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Advanced Feature Cards with Enhanced Animations */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="relative text-center p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-1200 group overflow-hidden border-l-4 border-l-blue-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <CardHeader className="relative pb-4">
-              <div className="relative w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/20 group-hover:scale-125 transition-all duration-500 group-hover:rotate-6">
-                <Calculator className="h-8 w-8 text-blue-600 group-hover:rotate-12 transition-transform duration-500" />
-                <div className="absolute inset-0 rounded-xl bg-blue-400/20 animate-ping"></div>
+        {/* Modern Feature Cards with Enhanced Visual Effects */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="relative text-center p-8 card-hover animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-1200 group border-0 shadow-modern bg-gradient-to-br from-card to-card/50 border-gradient">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
+            <CardHeader className="relative pb-6">
+              <div className="relative w-20 h-20 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:from-primary/20 group-hover:to-accent/20 interactive-scale shadow-modern">
+                <Calculator className="h-10 w-10 text-primary group-hover:text-accent transition-all duration-500 group-hover:rotate-12" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 animate-ping opacity-75"></div>
               </div>
-              <CardTitle className="text-xl group-hover:text-blue-600 transition-colors duration-300">Smart Calculations</CardTitle>
+              <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors duration-300">Smart Calculations</CardTitle>
             </CardHeader>
             <CardContent className="relative">
-              <p className="text-sm text-muted-foreground group-hover:text-foreground/90 transition-colors duration-300">
-                Automated calculations based on IAF MD 5:2019 and ISO/TS 22003:2022 standards with real-time results.
+              <p className="text-base text-muted-foreground group-hover:text-foreground/90 transition-colors duration-300 leading-relaxed">
+                Automated calculations based on <span className="font-semibold text-primary">IAF MD 5:2019</span> and <span className="font-semibold text-accent">ISO/TS 22003:2022</span> standards with real-time results.
               </p>
-              <div className="mt-4 flex justify-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-200"></div>
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-400"></div>
+              <div className="mt-6 flex justify-center gap-3">
+                <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-green-500 rounded-full animate-pulse glow-primary"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full animate-pulse delay-200"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse delay-400"></div>
               </div>
             </CardContent>
           </Card>
