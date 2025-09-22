@@ -5,7 +5,7 @@
 
 /* Global animations for all pages */
 * {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Prevent flash of unstyled content */
@@ -27,16 +27,16 @@ html {
 
 /* Card hover animations */
 .card-hover {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.1), 0 6px 8px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .dark .card-hover:hover {
-  box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.3), 0 6px 8px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
 }
 
 /* Form field animations */
@@ -45,7 +45,7 @@ html {
 }
 
 .form-field:focus-within {
-  transform: scale(1.01);
+  transform: scale(1.02);
 }
 
 /* Button animations */
@@ -54,8 +54,8 @@ html {
 }
 
 .btn-animate:hover {
-  transform: translateY(-0.5px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-animate:active {
@@ -122,68 +122,6 @@ html {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Loading animations */
-.loading-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: .5;
-  }
-}
-
-/* Skeleton loading */
-.skeleton {
-  animation: skeleton-loading 1s linear infinite alternate;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-color: hsl(var(--muted));
-  }
-  100% {
-    background-color: hsl(var(--muted) / 0.5);
-  }
-}
-
-/* Improved focus states */
-.focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-}
-
-/* Smooth page transitions */
-.page-transition {
-  animation: pageEnter 0.3s ease-out;
-}
-
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Interactive elements */
-.interactive {
-  @apply transition-all duration-200 ease-in-out;
-}
-
-.interactive:hover {
-  @apply scale-105;
-}
-
-.interactive:active {
-  @apply scale-95;
 }
 
 :root {
