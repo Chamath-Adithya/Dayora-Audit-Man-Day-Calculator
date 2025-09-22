@@ -52,7 +52,7 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
           </Button>
         </div>
       </div>
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-2 p-6">
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -61,14 +61,20 @@ export function SidebarNav({ onClose, userRole }: SidebarNavProps) {
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 group relative overflow-hidden",
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
+                  ? "bg-gradient-to-r from-primary to-accent text-white shadow-modern glow-primary"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-105 hover:shadow-modern",
               )}
             >
-              <item.icon className="h-4 w-4 flex-shrink-0" />
+              <item.icon className={cn(
+                "h-5 w-5 flex-shrink-0 transition-all duration-300",
+                isActive ? "text-white" : "text-primary group-hover:text-accent group-hover:rotate-12"
+              )} />
               <span className="truncate">{item.name}</span>
+              {isActive && (
+                <div className="absolute inset-0 bg-white/10 rounded-xl"></div>
+              )}
             </Link>
           )
         })}
