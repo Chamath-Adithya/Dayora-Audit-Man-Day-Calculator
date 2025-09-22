@@ -232,20 +232,20 @@ export default function HomePage() {
           </Link>
 
           <Link href="/history">
-            <Card className="relative p-4 hover:bg-emerald-500/5 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-2300 group overflow-hidden border-l-4 border-l-emerald-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <Card className="relative p-6 card-hover cursor-pointer animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-2300 group border-0 shadow-modern bg-gradient-to-br from-secondary/5 to-primary/5 border-gradient">
+              <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
               <CardContent className="relative p-0">
-                <div className="flex items-center gap-3 group-hover:scale-105 transition-transform duration-300">
-                  <div className="relative p-2 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-all duration-300">
-                    <History className="h-5 w-5 text-emerald-600 group-hover:rotate-12 transition-transform duration-500" />
-                    <div className="absolute inset-0 rounded-lg bg-emerald-400/20 animate-ping"></div>
+                <div className="flex items-center gap-4 group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative p-3 rounded-xl bg-gradient-to-br from-secondary/10 to-primary/10 group-hover:from-secondary/20 group-hover:to-primary/20 transition-all duration-300 shadow-modern">
+                    <History className="h-6 w-6 text-secondary group-hover:text-primary transition-all duration-500 group-hover:rotate-12" />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-secondary/20 to-primary/20 animate-ping opacity-75"></div>
                   </div>
-                  <span className="font-medium group-hover:text-emerald-600 transition-colors duration-300">View History</span>
+                  <span className="font-semibold text-lg group-hover:text-secondary transition-colors duration-300">View History</span>
                 </div>
-                <div className="mt-3 flex gap-1">
-                  <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <div className="w-1 h-1 bg-emerald-400 rounded-full animate-pulse delay-200"></div>
-                  <div className="w-1 h-1 bg-emerald-300 rounded-full animate-pulse delay-400"></div>
+                <div className="mt-4 flex gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-secondary to-primary rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full animate-pulse delay-200 glow-accent"></div>
+                  <div className="w-2 h-2 bg-gradient-to-r from-accent to-secondary rounded-full animate-pulse delay-400"></div>
                 </div>
               </CardContent>
             </Card>
