@@ -128,16 +128,19 @@ export default function HomePage() {
           </Card>
         </div>
 
-        {/* Advanced Standards Overview with Enhanced Animations */}
-        <Card className="relative animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1800 overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <CardHeader className="relative">
-            <CardTitle className="flex items-center gap-2 group-hover:scale-105 transition-transform duration-300">
-              <div className="relative p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-all duration-300">
-                <Shield className="h-5 w-5 text-primary group-hover:rotate-12 transition-transform duration-300" />
-                <div className="absolute inset-0 rounded-lg bg-primary/20 animate-ping"></div>
+        {/* Modern Standards Overview with Enhanced Visual Design */}
+        <Card className="relative animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1800 group border-0 shadow-modern-lg bg-gradient-to-br from-card to-card/80 border-gradient">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
+          <div className="absolute inset-0 pattern-dots opacity-20"></div>
+          <CardHeader className="relative pb-8">
+            <CardTitle className="flex items-center gap-4 group-hover:scale-105 transition-transform duration-300 text-2xl">
+              <div className="relative p-3 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300 shadow-modern">
+                <Shield className="h-7 w-7 text-primary group-hover:text-accent transition-all duration-500 group-hover:rotate-12" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 animate-ping opacity-75"></div>
               </div>
-              <span className="group-hover:text-primary transition-colors duration-300">Supported Standards & Audit Types</span>
+              <span className="bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent group-hover:from-primary group-hover:to-accent transition-all duration-500">
+                Supported Standards & Audit Types
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent className="relative">
