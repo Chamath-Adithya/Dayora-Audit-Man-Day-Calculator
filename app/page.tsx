@@ -209,23 +209,23 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        {/* Advanced Quick Access with Enhanced Animations */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Modern Quick Access Cards with Enhanced Design */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link href="/calculate">
-            <Card className="relative p-4 hover:bg-blue-500/5 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-2200 group overflow-hidden border-l-4 border-l-blue-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <Card className="relative p-6 card-hover cursor-pointer animate-in fade-in-0 slide-in-from-left-4 duration-1000 delay-2200 group border-0 shadow-modern bg-gradient-to-br from-primary/5 to-accent/5 border-gradient">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
               <CardContent className="relative p-0">
-                <div className="flex items-center gap-3 group-hover:scale-105 transition-transform duration-300">
-                  <div className="relative p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-all duration-300">
-                    <Calculator className="h-5 w-5 text-blue-600 group-hover:rotate-12 transition-transform duration-500" />
-                    <div className="absolute inset-0 rounded-lg bg-blue-400/20 animate-ping"></div>
+                <div className="flex items-center gap-4 group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative p-3 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300 shadow-modern">
+                    <Calculator className="h-6 w-6 text-primary group-hover:text-accent transition-all duration-500 group-hover:rotate-12" />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 animate-ping opacity-75"></div>
                   </div>
-                  <span className="font-medium group-hover:text-blue-600 transition-colors duration-300">New Calculation</span>
+                  <span className="font-semibold text-lg group-hover:text-primary transition-colors duration-300">New Calculation</span>
                 </div>
-                <div className="mt-3 flex gap-1">
-                  <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse"></div>
-                  <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse delay-200"></div>
-                  <div className="w-1 h-1 bg-blue-300 rounded-full animate-pulse delay-400"></div>
+                <div className="mt-4 flex gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full animate-pulse glow-primary"></div>
+                  <div className="w-2 h-2 bg-gradient-to-r from-accent to-secondary rounded-full animate-pulse delay-200"></div>
+                  <div className="w-2 h-2 bg-gradient-to-r from-secondary to-primary rounded-full animate-pulse delay-400"></div>
                 </div>
               </CardContent>
             </Card>
