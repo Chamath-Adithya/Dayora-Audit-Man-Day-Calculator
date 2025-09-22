@@ -125,40 +125,40 @@ html {
 }
 
 :root {
-  /* Updated color tokens to match professional audit calculator design */
-  --background: oklch(1 0 0); /* #ffffff */
-  --foreground: oklch(0.205 0 0); /* #1f2937 */
-  --card: oklch(0.97 0.005 240); /* #f1f5f9 */
-  --card-foreground: oklch(0.205 0 0); /* #1f2937 */
-  --popover: oklch(1 0 0); /* #ffffff */
-  --popover-foreground: oklch(0.205 0 0); /* #1f2937 */
-  --primary: oklch(0.205 0 0); /* #1f2937 */
-  --primary-foreground: oklch(1 0 0); /* #ffffff */
-  --secondary: oklch(0.646 0.222 264.376); /* #8b5cf6 */
-  --secondary-foreground: oklch(1 0 0); /* #ffffff */
-  --muted: oklch(0.97 0.005 240); /* #f1f5f9 */
-  --muted-foreground: oklch(0.556 0.016 252.89); /* #6b7280 */
-  --accent: oklch(0.646 0.222 264.376); /* #8b5cf6 */
-  --accent-foreground: oklch(1 0 0); /* #ffffff */
-  --destructive: oklch(0.577 0.245 27.325); /* #dc2626 */
-  --destructive-foreground: oklch(1 0 0); /* #ffffff */
-  --border: oklch(0.556 0.016 252.89); /* #6b7280 */
-  --input: oklch(0.97 0.005 240); /* #f1f5f9 */
-  --ring: oklch(0.646 0.222 264.376 / 0.5); /* rgba(139, 92, 246, 0.5) */
-  --chart-1: oklch(0.646 0.222 264.376); /* #6366f1 */
-  --chart-2: oklch(0.646 0.222 264.376); /* #8b5cf6 */
-  --chart-3: oklch(0.577 0.245 27.325); /* #dc2626 */
-  --chart-4: oklch(0.769 0.188 70.08); /* #f59e0b */
-  --chart-5: oklch(0.769 0.188 162.48); /* #34d399 */
-  --radius: 0.5rem;
-  --sidebar: oklch(0.97 0.005 240); /* #f1f5f9 */
-  --sidebar-foreground: oklch(0.205 0 0); /* #1f2937 */
-  --sidebar-primary: oklch(1 0 0); /* #ffffff */
-  --sidebar-primary-foreground: oklch(0.205 0 0); /* #1f2937 */
-  --sidebar-accent: oklch(0.646 0.222 264.376); /* #8b5cf6 */
-  --sidebar-accent-foreground: oklch(1 0 0); /* #ffffff */
-  --sidebar-border: oklch(0.556 0.016 252.89); /* #6b7280 */
-  --sidebar-ring: oklch(0.646 0.222 264.376 / 0.5); /* rgba(139, 92, 246, 0.5) */
+  /* Modern professional color system with better contrast and visual hierarchy */
+  --background: oklch(0.99 0.01 240); /* Subtle warm white */
+  --foreground: oklch(0.15 0.02 270); /* Rich dark blue-gray */
+  --card: oklch(1 0 0); /* Pure white cards for contrast */
+  --card-foreground: oklch(0.15 0.02 270); /* Rich text */
+  --popover: oklch(1 0 0); /* Pure white */
+  --popover-foreground: oklch(0.15 0.02 270); /* Rich text */
+  --primary: oklch(0.55 0.15 240); /* Professional blue */
+  --primary-foreground: oklch(0.98 0 0); /* High contrast white */
+  --secondary: oklch(0.45 0.12 280); /* Deep professional purple */
+  --secondary-foreground: oklch(0.98 0 0); /* High contrast white */
+  --muted: oklch(0.96 0.01 240); /* Subtle background */
+  --muted-foreground: oklch(0.45 0.02 270); /* Better contrast for muted text */
+  --accent: oklch(0.65 0.18 200); /* Professional teal accent */
+  --accent-foreground: oklch(0.98 0 0); /* High contrast white */
+  --destructive: oklch(0.55 0.22 25); /* Professional red */
+  --destructive-foreground: oklch(0.98 0 0); /* High contrast white */
+  --border: oklch(0.88 0.01 240); /* Subtle borders */
+  --input: oklch(0.98 0.005 240); /* Clean input background */
+  --ring: oklch(0.55 0.15 240 / 0.3); /* Professional focus ring */
+  --chart-1: oklch(0.55 0.15 240); /* Professional blue */
+  --chart-2: oklch(0.65 0.18 200); /* Professional teal */
+  --chart-3: oklch(0.60 0.20 160); /* Professional green */
+  --chart-4: oklch(0.65 0.18 60); /* Professional amber */
+  --chart-5: oklch(0.55 0.22 25); /* Professional red */
+  --radius: 0.75rem; /* Slightly larger radius for modern look */
+  --sidebar: oklch(0.97 0.01 240); /* Clean sidebar */
+  --sidebar-foreground: oklch(0.15 0.02 270); /* Rich text */
+  --sidebar-primary: oklch(0.55 0.15 240); /* Professional blue */
+  --sidebar-primary-foreground: oklch(0.98 0 0); /* High contrast white */
+  --sidebar-accent: oklch(0.92 0.01 240); /* Subtle accent */
+  --sidebar-accent-foreground: oklch(0.15 0.02 270); /* Rich text */
+  --sidebar-border: oklch(0.88 0.01 240); /* Subtle borders */
+  --sidebar-ring: oklch(0.55 0.15 240 / 0.3); /* Professional focus ring */
 }
 
 .dark {
