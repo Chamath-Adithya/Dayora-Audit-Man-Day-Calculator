@@ -45,17 +45,18 @@ export default function HomePage() {
             <span className="inline-block mx-2 px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">ISO/TS 22003:2022</span>
           </p>
 
-          {/* Enhanced CTA with Advanced Animations */}
-          <div className="pt-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1100">
+          {/* Modern CTA with Enhanced Visual Effects */}
+          <div className="pt-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-1100">
             <Link href="/calculate">
-              <Button size="lg" className="relative text-lg px-8 py-4 bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-500 group overflow-hidden">
-                <span className="relative z-10 flex items-center gap-2">
-                  <Calculator className="h-5 w-5 group-hover:rotate-12 transition-transform duration-500" />
+              <Button size="lg" className="relative text-lg px-10 py-5 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 btn-animate group overflow-hidden shadow-modern-lg border-0">
+                <span className="relative z-10 flex items-center gap-3 font-semibold">
+                  <Calculator className="h-6 w-6 group-hover:rotate-12 transition-transform duration-500" />
                   Start New Calculation
-                  <Zap className="h-4 w-4 group-hover:animate-pulse" />
+                  <Zap className="h-5 w-5 group-hover:animate-pulse text-yellow-300" />
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-accent/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary/50 to-accent/50 blur-xl -z-10 opacity-75 group-hover:opacity-100 transition-opacity duration-500"></div>
               </Button>
             </Link>
           </div>
