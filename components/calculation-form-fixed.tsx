@@ -65,10 +65,8 @@ export default function CalculationFormFixed() {
       await getConfig();
       const standards = await getAvailableStandards();
       const integratedStandards = await getAvailableIntegratedStandards();
-      const config = await getConfig();
       setAvailableStandards(standards.map(s => ({ value: s, label: s })));
       setAvailableIntegratedStandards(integratedStandards);
-      setPresets(config.presets || []);
       setIsLoading(false);
     }
     loadConfig();
@@ -123,7 +121,7 @@ export default function CalculationFormFixed() {
     }))
   }
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setErrors([])
@@ -165,7 +163,7 @@ export default function CalculationFormFixed() {
     } finally {
       setIsSubmitting(false)
     }
-  }, [session, formData, router]);
+  }
 
   const auditTypes = getAvailableAuditTypes()
   const riskLevels = getAvailableRiskLevels()
@@ -311,16 +309,16 @@ export default function CalculationFormFixed() {
                   </SelectContent>
                 </Select>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {availableStandards.slice(0, 3).map(s => (
+                  {['QMS','EMS','FSMS'].map(s => (
                     <Button 
-                      key={s.value} 
+                      key={s} 
                       type="button" 
                       variant="secondary" 
                       size="sm" 
-                      onClick={() => handleInputChange('standard', s.value)}
+                      onClick={() => handleInputChange('standard', s)}
                       className="btn-animate"
                     >
-                      {s.label}
+                      {s}
                     </Button>
                   ))}
                 </div>
@@ -471,18 +469,33 @@ export default function CalculationFormFixed() {
             {/* Submit & Presets */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-3">
               <div className="flex flex-wrap gap-2">
-                {presets.map((preset) => (
-                  <Button 
-                    key={preset.name} 
-                    type="button" 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setFormData((p) => ({ ...p, employees: preset.employees, sites: preset.sites }))}
-                    className="btn-animate"
-                  >
-                    {preset.name} ({preset.employees}, {preset.sites} site{preset.sites > 1 ? 's' : ''})
-                  </Button>
-                ))}
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setFormData((p) => ({ ...p, employees: 20, sites: 1 }))}
+                  className="btn-animate"
+                >
+                  Small (20, 1 site)
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setFormData((p) => ({ ...p, employees: 120, sites: 1 }))}
+                  className="btn-animate"
+                >
+                  Medium (120, 1 site)
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setFormData((p) => ({ ...p, employees: 400, sites: 3 }))}
+                  className="btn-animate"
+                >
+                  Large (400, 3 sites)
+                </Button>
               </div>
               <div className="flex items-center gap-3">
                 <Button

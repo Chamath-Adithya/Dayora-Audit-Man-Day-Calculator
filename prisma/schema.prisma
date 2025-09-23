@@ -123,7 +123,6 @@ model AdminConfig {
   
   // Dynamic lists
   categories          String   @default("[]") // Store as JSON string
-  presets             String   @default("[]") // Store as JSON string
   
   // Metadata
   isActive            Boolean  @default(true)

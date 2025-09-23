@@ -90,7 +90,24 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE - This method is not allowed for this route
+// DELETE - Delete all calculations for the logged-in user
 export async function DELETE() {
-  return NextResponse.json({ success: false, error: "Method Not Allowed" }, { status: 405 })
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+    }
+
+    await storage.clearCalculations(session.user.id)
+    return NextResponse.json({ 
+      success: true, 
+      message: 'All calculations deleted successfully' 
+    })
+  } catch (error) {
+    console.error('Error deleting calculations:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete calculations' },
+      { status: 500 }
+    )
+  }
 }
