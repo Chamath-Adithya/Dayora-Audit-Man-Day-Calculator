@@ -97,6 +97,9 @@ export function AdminConfiguration() {
         if (response.ok) {
           const data = await response.json()
           setConfig(data)
+          if (data.baseManDays) {
+            setStandards(Object.keys(data.baseManDays))
+          }
         } else {
           throw new Error("Failed to fetch config")
         }
@@ -146,6 +149,20 @@ export function AdminConfiguration() {
     if (!config) return
     const newRanges = [...config.employeeRanges]
     newRanges[index] = { ...newRanges[index], [field]: value }
+    setConfig({ ...config, employeeRanges: newRanges })
+    setHasChanges(true)
+  }
+
+  const addEmployeeRange = () => {
+    if (!config) return
+    const newRanges = [...config.employeeRanges, { min: 0, max: 0, adjustment: 0, description: "New Range" }]
+    setConfig({ ...config, employeeRanges: newRanges })
+    setHasChanges(true)
+  }
+
+  const removeEmployeeRange = (index: number) => {
+    if (!config) return
+    const newRanges = config.employeeRanges.filter((_, i) => i !== index)
     setConfig({ ...config, employeeRanges: newRanges })
     setHasChanges(true)
   }
@@ -204,7 +221,34 @@ export function AdminConfiguration() {
   }
 
   const categories = ["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
-  const standards = ["QMS", "EMS", "EnMS", "FSMS", "Cosmetics"]
+  const [standards, setStandards] = useState(["QMS", "EMS", "EnMS", "FSMS", "Cosmetics"])
+  const [newStandardName, setNewStandardName] = useState("")
+
+  const addStandard = () => {
+    if (newStandardName && !standards.includes(newStandardName) && config) {
+      const newStandards = [...standards, newStandardName]
+      setStandards(newStandards)
+
+      const newBaseManDays = { ...config.baseManDays, [newStandardName]: {} }
+      setConfig({ ...config, baseManDays: newBaseManDays })
+      setHasChanges(true)
+      setNewStandardName("")
+    }
+  }
+
+  const removeStandard = (standardToRemove: string) => {
+    if (confirm(`Are you sure you want to remove the "${standardToRemove}" standard? All its data will be lost.`)) {
+      const newStandards = standards.filter(s => s !== standardToRemove)
+      setStandards(newStandards)
+
+      if (config) {
+        const newBaseManDays = { ...config.baseManDays }
+        delete newBaseManDays[standardToRemove]
+        setConfig({ ...config, baseManDays: newBaseManDays })
+        setHasChanges(true)
+      }
+    }
+  }
 
   if (isLoading) {
     return (
@@ -299,6 +343,7 @@ export function AdminConfiguration() {
                       <TableHead>Max Employees</TableHead>
                       <TableHead>Additional Man-Days</TableHead>
                       <TableHead>Description</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -345,10 +390,18 @@ export function AdminConfiguration() {
                             className="w-40"
                           />
                         </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="destructive" size="sm" onClick={() => removeEmployeeRange(index)}>
+                            Remove
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
+                <Button onClick={addEmployeeRange} className="mt-4">
+                  Add Employee Range
+                </Button>
               </div>
               <div className="md:hidden space-y-4">
                 {config.employeeRanges.map((range, index) => (
@@ -399,9 +452,22 @@ export function AdminConfiguration() {
                           className="w-40"
                         />
                       </div>
+                      <div className="pt-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => removeEmployeeRange(index)}
+                        >
+                          Remove Range
+                        </Button>
+                      </div>
                     </div>
                   </Card>
                 ))}
+                <Button onClick={addEmployeeRange} className="mt-4 w-full">
+                  Add Employee Range
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -417,13 +483,31 @@ export function AdminConfiguration() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="mb-4 flex gap-2">
+                <Input
+                  placeholder="New Standard Name"
+                  value={newStandardName}
+                  onChange={(e) => setNewStandardName(e.target.value.toUpperCase())}
+                />
+                <Button onClick={addStandard}>Add Standard</Button>
+              </div>
               <div className="hidden md:block">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Category</TableHead>
                       {standards.map((standard) => (
-                        <TableHead key={standard}>{standard}</TableHead>
+                        <TableHead key={standard} className="relative group">
+                          {standard}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100"
+                            onClick={() => removeStandard(standard)}
+                          >
+                            &times;
+                          </Button>
+                        </TableHead>
                       ))}
                     </TableRow>
                   </TableHeader>
