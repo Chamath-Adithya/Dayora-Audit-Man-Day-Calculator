@@ -118,6 +118,9 @@ model AdminConfig {
   multiSiteMultiplier Float    @default(0.5)
   integratedSystemReduction Float @default(0.1)
   
+  // Integrated standards
+  integratedStandards String   @default("[]") // Store as JSON string
+  
   // Metadata
   isActive            Boolean  @default(true)
   description         String?
