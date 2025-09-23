@@ -56,6 +56,11 @@ export const defaultConfig = {
     { id: "ISO_22000", name: "ISO 22000", reduction: 0.15 },
   ]),
   categories: JSON.stringify(["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"]),
+  presets: JSON.stringify([
+    { name: "Small", employees: 20, sites: 1 },
+    { name: "Medium", employees: 120, sites: 1 },
+    { name: "Large", employees: 400, sites: 3 },
+  ]),
   isActive: true,
   description: 'Default IAF MD 5:2019 compliant configuration'
 };

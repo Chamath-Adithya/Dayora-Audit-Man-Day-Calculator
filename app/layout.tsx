@@ -25,7 +25,7 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={null}>{children}</Suspense>
         </Providers>
-        <Analytics />
+        
       </body>
     </html>
   )

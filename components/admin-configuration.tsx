@@ -38,6 +38,12 @@ interface RiskMultiplier {
   multiplier: number
 }
 
+interface Preset {
+  name: string;
+  employees: number;
+  sites: number;
+}
+
 interface AdminConfig {
   employeeRanges: EmployeeRange[]
   baseManDays: BaseManDays
@@ -47,6 +53,7 @@ interface AdminConfig {
   integratedSystemReduction: number
   integratedStandards: IntegratedStandard[]
   categories: string[]
+  presets: Preset[];
 }
 
 
@@ -74,7 +81,10 @@ export function AdminConfiguration() {
         }
         if (validatedData.categories && validatedData.categories.length > 0) {
           setCategories(validatedData.categories)
-        }
+          }
+          if (validatedData.presets && Array.isArray(validatedData.presets)) {
+            setConfig(prev => ({ ...prev, presets: validatedData.presets }))
+          }
       } else {
         throw new Error("Failed to fetch config")
       }
@@ -769,6 +779,60 @@ export function AdminConfiguration() {
               </Card>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="presets">
+          <Card>
+            <CardHeader>
+              <CardTitle>Calculation Presets</CardTitle>
+              <CardDescription>
+                Configure preset buttons for common calculation scenarios.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {config.presets.map((preset, index) => (
+                  <div key={index} className="flex items-center gap-4 p-2 border rounded-md">
+                    <div className="flex-1 grid grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor={`preset-name-${index}`}>Preset Name</Label>
+                        <Input
+                          id={`preset-name-${index}`}
+                          value={preset.name}
+                          onChange={(e) => updatePreset(index, "name", e.target.value)}
+                          placeholder="e.g., Small"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`preset-employees-${index}`}>Employees</Label>
+                        <Input
+                          id={`preset-employees-${index}`}
+                          type="number"
+                          value={preset.employees}
+                          onChange={(e) => updatePreset(index, "employees", Number.parseInt(e.target.value))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`preset-sites-${index}`}>Sites</Label>
+                        <Input
+                          id={`preset-sites-${index}`}
+                          type="number"
+                          value={preset.sites}
+                          onChange={(e) => updatePreset(index, "sites", Number.parseInt(e.target.value))}
+                        />
+                      </div>
+                    </div>
+                    <Button variant="destructive" size="sm" onClick={() => removePreset(index)}>
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <Button onClick={addPreset} className="mt-4">
+                Add Preset
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
