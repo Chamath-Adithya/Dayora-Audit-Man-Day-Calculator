@@ -36,6 +36,7 @@ export async function GET() {
       employeeRanges: parseJSON(dbConfig.employeeRanges, []),
       riskMultipliers: parseJSON(dbConfig.riskMultipliers, {}),
       integratedStandards: parseJSON(dbConfig.integratedStandards, []),
+      categories: parseJSON(dbConfig.categories, []),
     };
     
     return NextResponse.json(responseConfig);
@@ -57,6 +58,7 @@ export async function POST(req: Request) {
       multiSiteMultiplier: newConfig.multiSiteMultiplier,
       integratedSystemReduction: newConfig.integratedSystemReduction,
       integratedStandards: JSON.stringify(newConfig.integratedStandards || []),
+      categories: JSON.stringify(newConfig.categories || []),
       isActive: true,
     };
 

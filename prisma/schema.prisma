@@ -121,6 +121,9 @@ model AdminConfig {
   // Integrated standards
   integratedStandards String   @default("[]") // Store as JSON string
   
+  // Dynamic lists
+  categories          String   @default("[]") // Store as JSON string
+  
   // Metadata
   isActive            Boolean  @default(true)
   description         String?

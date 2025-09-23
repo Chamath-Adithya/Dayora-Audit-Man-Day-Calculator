@@ -32,20 +32,21 @@ interface BaseManDays {
   }
 }
 
-interface RiskMultipliers {
-  low: number
-  medium: number
-  high: number
+interface RiskMultiplier {
+  id: string
+  name: string
+  multiplier: number
 }
 
 interface AdminConfig {
   employeeRanges: EmployeeRange[]
   baseManDays: BaseManDays
-  riskMultipliers: RiskMultipliers
+  riskMultipliers: RiskMultiplier[]
   haccpMultiplier: number
   multiSiteMultiplier: number
   integratedSystemReduction: number
   integratedStandards: IntegratedStandard[]
+  categories: string[]
 }
 
 const DEFAULT_CONFIG: AdminConfig = {
@@ -71,7 +72,11 @@ const DEFAULT_CONFIG: AdminConfig = {
     FSMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
     Cosmetics: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
   },
-  riskMultipliers: { low: 0.8, medium: 1.0, high: 1.2 },
+  riskMultipliers: [
+    { id: "low", name: "Low", multiplier: 0.8 },
+    { id: "medium", name: "Medium", multiplier: 1.0 },
+    { id: "high", name: "High", multiplier: 1.2 },
+  ],
   haccpMultiplier: 0.5,
   multiSiteMultiplier: 0.5,
   integratedSystemReduction: 0.1,
@@ -80,6 +85,7 @@ const DEFAULT_CONFIG: AdminConfig = {
     { id: "ISO_45001", name: "ISO 45001", reduction: 0.1 },
     { id: "ISO_22000", name: "ISO 22000", reduction: 0.15 },
   ],
+  categories: ["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
 }
 
 export function AdminConfiguration() {
@@ -99,6 +105,9 @@ export function AdminConfiguration() {
           setConfig(data)
           if (data.baseManDays) {
             setStandards(Object.keys(data.baseManDays))
+          }
+          if (data.categories && data.categories.length > 0) {
+            setCategories(data.categories)
           }
         } else {
           throw new Error("Failed to fetch config")
@@ -180,15 +189,25 @@ export function AdminConfiguration() {
     setHasChanges(true)
   }
 
-  const updateRiskMultiplier = (risk: keyof RiskMultipliers, value: number) => {
+  const updateRiskMultiplier = (index: number, field: keyof RiskMultiplier, value: string | number) => {
     if (!config) return
-    setConfig({
-      ...config,
-      riskMultipliers: {
-        ...config.riskMultipliers,
-        [risk]: value,
-      },
-    })
+    const newMultipliers = [...config.riskMultipliers]
+    newMultipliers[index] = { ...newMultipliers[index], [field]: value }
+    setConfig({ ...config, riskMultipliers: newMultipliers })
+    setHasChanges(true)
+  }
+
+  const addRiskMultiplier = () => {
+    if (!config) return
+    const newMultipliers = [...config.riskMultipliers, { id: `NEW_${Date.now()}`, name: "New Risk", multiplier: 1.0 }]
+    setConfig({ ...config, riskMultipliers: newMultipliers })
+    setHasChanges(true)
+  }
+
+  const removeRiskMultiplier = (index: number) => {
+    if (!config) return
+    const newMultipliers = config.riskMultipliers.filter((_, i) => i !== index)
+    setConfig({ ...config, riskMultipliers: newMultipliers })
     setHasChanges(true)
   }
 
@@ -220,7 +239,8 @@ export function AdminConfiguration() {
     setHasChanges(true)
   }
 
-  const categories = ["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+  const [categories, setCategories] = useState(["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"])
+  const [newCategoryName, setNewCategoryName] = useState("")
   const [standards, setStandards] = useState(["QMS", "EMS", "EnMS", "FSMS", "Cosmetics"])
   const [newStandardName, setNewStandardName] = useState("")
 
@@ -245,6 +265,27 @@ export function AdminConfiguration() {
         const newBaseManDays = { ...config.baseManDays }
         delete newBaseManDays[standardToRemove]
         setConfig({ ...config, baseManDays: newBaseManDays })
+        setHasChanges(true)
+      }
+    }
+  }
+
+  const addCategory = () => {
+    if (newCategoryName && !categories.includes(newCategoryName) && config) {
+      const newCategories = [...categories, newCategoryName]
+      setCategories(newCategories)
+      setConfig({ ...config, categories: newCategories })
+      setHasChanges(true)
+      setNewCategoryName("")
+    }
+  }
+
+  const removeCategory = (categoryToRemove: string) => {
+    if (confirm(`Are you sure you want to remove the "${categoryToRemove}" category?`)) {
+      const newCategories = categories.filter(c => c !== categoryToRemove)
+      setCategories(newCategories)
+      if (config) {
+        setConfig({ ...config, categories: newCategories })
         setHasChanges(true)
       }
     }
@@ -512,10 +553,18 @@ export function AdminConfiguration() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {categories.map((category) => (
+                    {categories.map((category, index) => (
                       <TableRow key={category}>
-                        <TableCell className="font-medium">
+                        <TableCell className="font-medium relative group">
                           <Badge variant="outline">{category}</Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100"
+                            onClick={() => removeCategory(category)}
+                          >
+                            &times;
+                          </Button>
                         </TableCell>
                         {standards.map((standard) => (
                           <TableCell key={`${standard}-${category}`}>
@@ -533,6 +582,14 @@ export function AdminConfiguration() {
                     ))}
                   </TableBody>
                 </Table>
+                <div className="mt-4 flex gap-2">
+                  <Input
+                    placeholder="New Category Name"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value.toUpperCase())}
+                  />
+                  <Button onClick={addCategory}>Add Category</Button>
+                </div>
               </div>
               <div className="md:hidden space-y-4">
                 {standards.map((standard) => (
@@ -568,37 +625,42 @@ export function AdminConfiguration() {
                 <CardTitle>Risk Level Multipliers</CardTitle>
                 <CardDescription>Adjust the multipliers applied based on risk/complexity assessment</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="low-risk">Low Risk Multiplier</Label>
-                  <Input
-                    id="low-risk"
-                    type="number"
-                    step="0.1"
-                    value={config.riskMultipliers.low}
-                    onChange={(e) => updateRiskMultiplier("low", Number.parseFloat(e.target.value))}
-                  />
+              <CardContent>
+                <div className="space-y-4">
+                  {config.riskMultipliers.map((risk, index) => (
+                    <div key={risk.id} className="flex items-center gap-4 p-2 border rounded-md">
+                      <div className="flex-1 grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor={`risk-name-${index}`}>Risk Name</Label>
+                          <Input
+                            id={`risk-name-${index}`}
+                            value={risk.name}
+                            onChange={(e) => updateRiskMultiplier(index, "name", e.target.value)}
+                            placeholder="e.g., Low"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`risk-multiplier-${index}`}>Multiplier</Label>
+                          <Input
+                            id={`risk-multiplier-${index}`}
+                            type="number"
+                            step="0.01"
+                            value={risk.multiplier}
+                            onChange={(e) =>
+                              updateRiskMultiplier(index, "multiplier", Number.parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      </div>
+                      <Button variant="destructive" size="sm" onClick={() => removeRiskMultiplier(index)}>
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="medium-risk">Medium Risk Multiplier</Label>
-                  <Input
-                    id="medium-risk"
-                    type="number"
-                    step="0.1"
-                    value={config.riskMultipliers.medium}
-                    onChange={(e) => updateRiskMultiplier("medium", Number.parseFloat(e.target.value))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="high-risk">High Risk Multiplier</Label>
-                  <Input
-                    id="high-risk"
-                    type="number"
-                    step="0.1"
-                    value={config.riskMultipliers.high}
-                    onChange={(e) => updateRiskMultiplier("high", Number.parseFloat(e.target.value))}
-                  />
-                </div>
+                <Button onClick={addRiskMultiplier} className="mt-4">
+                  Add Risk Level
+                </Button>
               </CardContent>
             </Card>
 
