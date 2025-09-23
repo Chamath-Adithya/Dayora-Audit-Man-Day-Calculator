@@ -6,21 +6,12 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Seeding database...')
 
-  const existingConfig = await prisma.adminConfig.findUnique({
-    where: { name: 'default' }
-  })
-
-  if (!existingConfig) {
-    // Create default admin configuration
-    import { defaultConfig } from '../lib/default-config';
-
-    await prisma.adminConfig.create({
-      data: defaultConfig,
-    })
-    console.log('✅ Default configuration created.')
-  } else {
-    console.log('✅ Default configuration already exists.')
-  }
+  await prisma.adminConfig.upsert({
+    where: { name: 'default' },
+    update: defaultConfig,
+    create: defaultConfig,
+  });
+  console.log('✅ Default configuration created/updated.');
 
   // Check if admin user already exists
   const existingAdminUser = await prisma.user.findUnique({
