@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client'
 import { hashSync } from 'bcryptjs'
-import { defaultConfig } from '../lib/default-config';
 
 const prisma = new PrismaClient()
 
