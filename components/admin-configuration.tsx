@@ -58,37 +58,38 @@ export function AdminConfiguration() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedTab, setSelectedTab] = useState("employee-ranges")
 
-  useEffect(() => {   
-    const fetchConfig = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch("/api/config")
-        if (response.ok) {
-          const data = await response.json()
-          const validatedData = {
-            ...data,
-            riskMultipliers: Array.isArray(data.riskMultipliers) ? data.riskMultipliers : [],
-          }
-          setConfig(validatedData)
-          if (validatedData.baseManDays) {
-            setStandards(Object.keys(validatedData.baseManDays))
-          }
-          if (validatedData.categories && validatedData.categories.length > 0) {
-            setCategories(validatedData.categories)
-          }
-        } else {
-          throw new Error("Failed to fetch config")
+  const fetchConfig = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch("/api/config")
+      if (response.ok) {
+        const data = await response.json()
+        const validatedData = {
+          ...data,
+          riskMultipliers: Array.isArray(data.riskMultipliers) ? data.riskMultipliers : [],
         }
-      } catch (error) {
-        console.error("Error loading admin config:", error)
-        toast.error("Failed to load configuration. Using default values.")
-        setConfig(DEFAULT_CONFIG)
-      } finally {
-        setIsLoading(false)
+        setConfig(validatedData)
+        if (validatedData.baseManDays) {
+          setStandards(Object.keys(validatedData.baseManDays))
+        }
+        if (validatedData.categories && validatedData.categories.length > 0) {
+          setCategories(validatedData.categories)
+        }
+      } else {
+        throw new Error("Failed to fetch config")
       }
+    } catch (error) {
+      console.error("Error loading admin config:", error)
+      toast.error("Failed to load configuration. Please try again later.")
+      setConfig(null)
+    } finally {
+      setIsLoading(false)
     }
-    fetchConfig()
   }, [])
+
+  useEffect(() => {
+    fetchConfig()
+  }, [fetchConfig])
 
   const handleSaveConfig = async () => {
     if (!config) return
