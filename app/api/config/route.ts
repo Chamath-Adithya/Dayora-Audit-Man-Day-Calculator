@@ -34,7 +34,7 @@ export async function GET() {
       ...dbConfig,
       baseManDays: parseJSON(dbConfig.baseManDays, {}),
       employeeRanges: parseJSON(dbConfig.employeeRanges, []),
-      riskMultipliers: parseJSON(dbConfig.riskMultipliers, {}),
+      riskMultipliers: parseJSON(dbConfig.riskMultipliers, []),
       integratedStandards: parseJSON(dbConfig.integratedStandards, []),
       categories: parseJSON(dbConfig.categories, []),
     };
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     const dataToSave = {
       baseManDays: JSON.stringify(newConfig.baseManDays || {}),
       employeeRanges: JSON.stringify(newConfig.employeeRanges || []),
-      riskMultipliers: JSON.stringify(newConfig.riskMultipliers || {}),
+      riskMultipliers: JSON.stringify(newConfig.riskMultipliers || []),
       haccpMultiplier: newConfig.haccpMultiplier,
       multiSiteMultiplier: newConfig.multiSiteMultiplier,
       integratedSystemReduction: newConfig.integratedSystemReduction,

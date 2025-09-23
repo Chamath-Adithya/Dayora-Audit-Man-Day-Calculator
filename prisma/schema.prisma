@@ -111,7 +111,7 @@ model AdminConfig {
   employeeRanges      String   // Store as JSON string for SQLite
   
   // Risk multipliers
-  riskMultipliers     String   // Store as JSON string for SQLite
+  riskMultipliers     String   @default("[]") // Store as JSON string for SQLite
   
   // Other multipliers
   haccpMultiplier     Float    @default(0.5)
