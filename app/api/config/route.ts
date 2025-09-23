@@ -69,24 +69,48 @@ export async function POST(req: Request) {
         where: { name: 'default' },
       });
 
-      // 2. If it exists, update it to become a backup
       if (currentDefaultConfig) {
+        // 2. Create a backup from the current default config
+        const { id, createdAt, updatedAt, ...backupData } = currentDefaultConfig;
+        await tx.adminConfig.create({
+            data: {
+                ...backupData,
+                name: `backup-${new Date().toISOString()}`,
+                isActive: false,
+            },
+        });
+
+        // 3. Update the 'default' config with the new data
         await tx.adminConfig.update({
-          where: { name: 'default' },
-          data: {
-            isActive: false,
-            name: `backup-${new Date().toISOString()}`, // Rename to free up the 'default' name
-          },
+            where: { name: 'default' },
+            data: {
+                ...dataToSave,
+                updatedAt: new Date(),
+            },
+        });
+
+        // 4. Clean up old backups
+        const backups = await tx.adminConfig.findMany({
+            where: { name: { startsWith: 'backup-' } },
+            orderBy: { createdAt: 'asc' },
+            select: { id: true },
+        });
+
+        if (backups.length > 5) {
+            const idsToDelete = backups.slice(0, backups.length - 5).map(b => b.id);
+            await tx.adminConfig.deleteMany({
+                where: { id: { in: idsToDelete } },
+            });
+        }
+      } else {
+        // If no default config exists, just create one
+        await tx.adminConfig.create({
+            data: {
+                ...dataToSave,
+                name: 'default',
+            },
         });
       }
-
-      // 3. Create the new 'default' active config with the new data
-      await tx.adminConfig.create({
-        data: {
-          ...dataToSave,
-          name: 'default',
-        },
-      });
     });
 
     return NextResponse.json({ message: 'Configuration saved successfully. A backup of the previous version was created.' });
