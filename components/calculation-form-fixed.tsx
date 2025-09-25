@@ -111,7 +111,19 @@ export default function CalculationFormFixed() {
   // Handle empty configuration gracefully
   const hasStandards = availableStandards.length > 0;
 
-  // Show warning if no configuration is loaded
+  // Show loading if config is still loading or no standards available yet
+  if (isLoading || !hasStandards) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="ml-4 text-muted-foreground">
+          {isLoading ? "Loading calculation form..." : "Loading configuration..."}
+        </p>
+      </div>
+    );
+  }
+
+  // Show warning if no configuration is loaded after loading is complete
   if (!hasStandards) {
     return (
       <div className="max-w-6xl mx-auto p-6 space-y-6 fade-in">
