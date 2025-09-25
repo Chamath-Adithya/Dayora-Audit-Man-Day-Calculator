@@ -311,16 +311,16 @@ export default function CalculationFormFixed() {
                   </SelectContent>
                 </Select>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {['QMS','EMS','FSMS'].map(s => (
-                    <Button 
-                      key={s} 
-                      type="button" 
-                      variant="secondary" 
-                      size="sm" 
-                      onClick={() => handleInputChange('standard', s)}
+                  {availableStandards.slice(0, 3).map((standard) => (
+                    <Button
+                      key={standard.value}
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleInputChange('standard', standard.value)}
                       className="btn-animate"
                     >
-                      {s}
+                      {standard.label}
                     </Button>
                   ))}
                 </div>
