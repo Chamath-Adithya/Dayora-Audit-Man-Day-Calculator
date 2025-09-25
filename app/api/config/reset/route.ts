@@ -12,7 +12,10 @@ export async function POST() {
       create: defaultConfig,
     });
 
-    return NextResponse.json({ message: 'Configuration reset successfully.' });
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Configuration reset successfully.' 
+    });
   } catch (error) {
     console.error('Error resetting config in DB:', error);
     return NextResponse.json({ message: 'Error resetting config in database' }, { status: 500 });
