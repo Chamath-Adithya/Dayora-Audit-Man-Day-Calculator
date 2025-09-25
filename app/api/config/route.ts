@@ -28,14 +28,21 @@ export async function GET() {
     // If no configuration exists in database, return empty config
     if (!dbConfig) {
       return NextResponse.json({
-        employeeRanges: [],
-        baseManDays: {},
-        riskMultipliers: { low: 1.0, medium: 1.0, high: 1.0 },
-        haccpMultiplier: 0,
-        multiSiteMultiplier: 0,
-        integratedSystemReduction: 0,
-        integratedStandards: [],
-        categories: [],
+        success: true,
+        data: {
+          employeeRanges: [],
+          baseManDays: {},
+          riskLevels: [
+            { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk' },
+            { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk' },
+            { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk' }
+          ],
+          haccpMultiplier: 0,
+          multiSiteMultiplier: 0,
+          integratedSystemReduction: 0,
+          integratedStandards: [],
+          categories: [],
+        }
       });
     }
 
@@ -53,10 +60,17 @@ export async function GET() {
       categories: parseJSON((dbConfig as any).categories || '[]', []),
     };
 
-    return NextResponse.json(responseConfig);
+    return NextResponse.json({
+      success: true,
+      data: responseConfig
+    });
   } catch (error) {
     console.error('Error fetching config from DB:', error);
-    return NextResponse.json({ message: 'Error reading config from database' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Error reading config from database',
+      message: 'Error reading config from database' 
+    }, { status: 500 });
   }
 }
 
