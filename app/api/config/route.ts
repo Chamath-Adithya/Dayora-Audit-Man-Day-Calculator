@@ -25,8 +25,18 @@ export async function GET() {
       });
     }
 
+    // If no configuration exists in database, return empty config
     if (!dbConfig) {
-      return NextResponse.json({ message: 'Configuration not found' }, { status: 404 });
+      return NextResponse.json({
+        employeeRanges: [],
+        baseManDays: {},
+        riskMultipliers: { low: 1.0, medium: 1.0, high: 1.0 },
+        haccpMultiplier: 0,
+        multiSiteMultiplier: 0,
+        integratedSystemReduction: 0,
+        integratedStandards: [],
+        categories: [],
+      });
     }
 
     // The database stores some fields as JSON strings, so we need to parse them
@@ -34,11 +44,11 @@ export async function GET() {
       ...dbConfig,
       baseManDays: parseJSON(dbConfig.baseManDays, {}),
       employeeRanges: parseJSON(dbConfig.employeeRanges, []),
-      riskMultipliers: parseJSON(dbConfig.riskMultipliers, []),
-      integratedStandards: parseJSON(dbConfig.integratedStandards, []),
-      categories: parseJSON(dbConfig.categories, []),
+      riskMultipliers: parseJSON(dbConfig.riskMultipliers, { low: 1.0, medium: 1.0, high: 1.0 }),
+      integratedStandards: parseJSON((dbConfig as any).integratedStandards || '[]', []),
+      categories: parseJSON((dbConfig as any).categories || '[]', []),
     };
-    
+
     return NextResponse.json(responseConfig);
   } catch (error) {
     console.error('Error fetching config from DB:', error);
