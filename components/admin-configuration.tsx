@@ -171,27 +171,7 @@ export function AdminConfiguration() {
     setHasChanges(true)
   }
 
-  const updateRiskMultiplier = (index: number, field: keyof RiskMultiplier, value: string | number) => {
-    if (!config) return
-    const newMultipliers = [...config.riskMultipliers]
-    newMultipliers[index] = { ...newMultipliers[index], [field]: value }
-    setConfig({ ...config, riskMultipliers: newMultipliers })
-    setHasChanges(true)
-  }
 
-  const addRiskMultiplier = () => {
-    if (!config) return
-    const newMultipliers = [...config.riskMultipliers, { id: `NEW_${Date.now()}`, name: "New Risk", multiplier: 1.0 }]
-    setConfig({ ...config, riskMultipliers: newMultipliers })
-    setHasChanges(true)
-  }
-
-  const removeRiskMultiplier = (index: number) => {
-    if (!config) return
-    const newMultipliers = config.riskMultipliers.filter((_, i) => i !== index)
-    setConfig({ ...config, riskMultipliers: newMultipliers })
-    setHasChanges(true)
-  }
 
   const updateGeneralSetting = (field: keyof AdminConfig, value: number) => {
     if (!config) return
@@ -267,6 +247,7 @@ export function AdminConfiguration() {
       { "id": "BRC", "name": "BRC Global Standard", "reduction": 0.10 },
       { "id": "FSSC_22000", "name": "FSSC 22000", "reduction": 0.12 }
     ],
+    categories: ["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
   }
 
   const addStandard = () => {
