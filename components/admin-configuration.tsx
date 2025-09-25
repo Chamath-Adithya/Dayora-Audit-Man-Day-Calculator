@@ -71,12 +71,16 @@ export function AdminConfiguration() {
       const response = await fetch("/api/config")
       if (response.ok) {
         const data = await response.json()
-        setConfig(data)
-        if (data.baseManDays) {
-          setStandards(Object.keys(data.baseManDays))
+        const validatedData = {
+          ...data,
+          riskMultipliers: data.riskMultipliers || { low: 1.0, medium: 1.0, high: 1.0 },
         }
-        if (data.categories && data.categories.length > 0) {
-          setCategories(data.categories)
+        setConfig(validatedData)
+        if (validatedData.baseManDays) {
+          setStandards(Object.keys(validatedData.baseManDays))
+        }
+        if (validatedData.categories && validatedData.categories.length > 0) {
+          setCategories(validatedData.categories)
         }
       } else {
         throw new Error("Failed to fetch config")

@@ -42,10 +42,10 @@ export const defaultConfig = {
     { min: 876, max: 1175, adjustment: 8, description: "876-1175 employees" },
     { min: 1176, max: 999999, adjustment: 10, description: "1176+ employees" }
   ]),
-  riskLevels: JSON.stringify([
-    { id: "low", name: "Low Risk", multiplier: 0.8, description: "Low complexity and risk" },
-    { id: "medium", name: "Medium Risk", multiplier: 1.0, description: "Standard complexity and risk" },
-    { id: "high", name: "High Risk", multiplier: 1.2, description: "High complexity and risk" },
+  riskMultipliers: JSON.stringify([
+    { id: "low", name: "Low", multiplier: 0.8 },
+    { id: "medium", name: "Medium", multiplier: 1.0 },
+    { id: "high", name: "High", multiplier: 1.2 },
   ]),
   haccpMultiplier: 0.5,
   multiSiteMultiplier: 0.5,

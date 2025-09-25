@@ -30,11 +30,7 @@ export async function GET() {
       return NextResponse.json({
         employeeRanges: [],
         baseManDays: {},
-        riskLevels: [
-          { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk' },
-          { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk' },
-          { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk' }
-        ],
+        riskMultipliers: { low: 1.0, medium: 1.0, high: 1.0 },
         haccpMultiplier: 0,
         multiSiteMultiplier: 0,
         integratedSystemReduction: 0,
