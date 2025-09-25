@@ -27,6 +27,7 @@ export interface AdminConfig {
   integratedSystemReduction: number
   integratedStandards: { id: string; name: string; reduction: number }[]
   categories: string[]
+  standards: string[]
 }
 
 let configCache: AdminConfig | null = null;
@@ -62,6 +63,7 @@ export async function getConfig(): Promise<AdminConfig> {
       integratedSystemReduction: 0,
       integratedStandards: [],
       categories: [],
+      standards: [],
     };
   }
 }
