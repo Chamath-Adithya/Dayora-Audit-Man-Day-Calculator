@@ -27,7 +27,6 @@ export interface AdminConfig {
   integratedSystemReduction: number
   integratedStandards: { id: string; name: string; reduction: number }[]
   categories: string[]
-  standards: string[]
 }
 
 let configCache: AdminConfig | null = null;
@@ -43,7 +42,11 @@ export async function getConfig(): Promise<AdminConfig> {
     if (!response.ok) {
       throw new Error('Failed to fetch config');
     }
-    const config = await response.json();
+    const result = await response.json();
+    
+    // The API returns { success: true, data: config }, so we need to extract the data
+    const config = result.success ? result.data : result;
+    
     configCache = config;
     return config;
   } catch (error) {
@@ -63,7 +66,6 @@ export async function getConfig(): Promise<AdminConfig> {
       integratedSystemReduction: 0,
       integratedStandards: [],
       categories: [],
-      standards: [],
     };
   }
 }

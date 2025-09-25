@@ -142,15 +142,27 @@ export async function calculateAuditManDays(data: CalculationData): Promise<Calc
 
 // Helper function to get available standards and categories
 export async function getAvailableStandards() {
-    const config = await getConfig();
-  // Return predefined standards from config instead of deriving from baseManDays
-  return config.standards || []
+  const config = await getConfig();
+  // Derive standards from the keys of baseManDays
+  return Object.keys(config.baseManDays || {});
 }
 
 export async function getAvailableCategories(standard: string) {
-    const config = await getConfig();
-  // Return predefined categories from config instead of deriving from baseManDays
-  return config.categories || []
+  const config = await getConfig();
+  
+  // If no standard is provided, return empty array
+  if (!standard) {
+    return [];
+  }
+  
+  // Get categories available for the specific standard from baseManDays
+  const standardConfig = config.baseManDays[standard];
+  if (!standardConfig) {
+    return [];
+  }
+  
+  // Return the categories (keys) available for this standard
+  return Object.keys(standardConfig);
 }
 
 export function getAvailableAuditTypes() {
