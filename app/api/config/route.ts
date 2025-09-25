@@ -44,7 +44,11 @@ export async function GET() {
       ...dbConfig,
       baseManDays: parseJSON(dbConfig.baseManDays, {}),
       employeeRanges: parseJSON(dbConfig.employeeRanges, []),
-      riskMultipliers: parseJSON(dbConfig.riskMultipliers, { low: 1.0, medium: 1.0, high: 1.0 }),
+      riskLevels: parseJSON((dbConfig as any).riskLevels || '[]', [
+        { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk' },
+        { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk' },
+        { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk' }
+      ]),
       integratedStandards: parseJSON((dbConfig as any).integratedStandards || '[]', []),
       categories: parseJSON((dbConfig as any).categories || '[]', []),
     };
@@ -63,7 +67,7 @@ export async function POST(req: Request) {
     const dataToSave = {
       baseManDays: JSON.stringify(newConfig.baseManDays || {}),
       employeeRanges: JSON.stringify(newConfig.employeeRanges || []),
-      riskMultipliers: JSON.stringify(newConfig.riskMultipliers || []),
+      riskLevels: JSON.stringify(newConfig.riskLevels || []),
       haccpMultiplier: newConfig.haccpMultiplier,
       multiSiteMultiplier: newConfig.multiSiteMultiplier,
       integratedSystemReduction: newConfig.integratedSystemReduction,

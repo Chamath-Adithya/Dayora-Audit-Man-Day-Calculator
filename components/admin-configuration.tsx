@@ -41,12 +41,19 @@ interface RiskMultiplier {
 interface AdminConfig {
   employeeRanges: EmployeeRange[]
   baseManDays: BaseManDays
-  riskMultipliers: { low: number; medium: number; high: number }
+  riskLevels: RiskLevel[]
   haccpMultiplier: number
   multiSiteMultiplier: number
   integratedSystemReduction: number
   integratedStandards: IntegratedStandard[]
   categories: string[]
+}
+
+interface RiskLevel {
+  id: string
+  name: string
+  multiplier: number
+  description?: string
 }
 
 
@@ -198,6 +205,28 @@ export function AdminConfiguration() {
     if (!config) return
     const newStandards = config.integratedStandards.filter((_, i) => i !== index)
     setConfig({ ...config, integratedStandards: newStandards })
+    setHasChanges(true)
+  }
+
+  const updateRiskLevel = (index: number, field: keyof RiskLevel, value: string | number) => {
+    if (!config) return
+    const newRiskLevels = [...config.riskLevels]
+    newRiskLevels[index] = { ...newRiskLevels[index], [field]: value }
+    setConfig({ ...config, riskLevels: newRiskLevels })
+    setHasChanges(true)
+  }
+
+  const addRiskLevel = () => {
+    if (!config) return
+    const newRiskLevels = [...config.riskLevels, { id: `NEW_${Date.now()}`, name: "New Risk Level", multiplier: 1.0 }]
+    setConfig({ ...config, riskLevels: newRiskLevels })
+    setHasChanges(true)
+  }
+
+  const removeRiskLevel = (index: number) => {
+    if (!config) return
+    const newRiskLevels = config.riskLevels.filter((_, i) => i !== index)
+    setConfig({ ...config, riskLevels: newRiskLevels })
     setHasChanges(true)
   }
 
@@ -584,51 +613,132 @@ export function AdminConfiguration() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Risk Level Multipliers</CardTitle>
-                <CardDescription>Adjust the multipliers applied based on risk/complexity assessment</CardDescription>
+                <CardTitle>Risk Level Management</CardTitle>
+                <CardDescription>Add, remove, and configure risk levels and their multipliers</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="risk-low">Low Risk Multiplier</Label>
-                      <Input
-                        id="risk-low"
-                        type="number"
-                        step="0.01"
-                        value={config.riskMultipliers.low}
-                        onChange={(e) => setConfig({
-                          ...config,
-                          riskMultipliers: { ...config.riskMultipliers, low: Number.parseFloat(e.target.value) }
-                        })}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="risk-medium">Medium Risk Multiplier</Label>
-                      <Input
-                        id="risk-medium"
-                        type="number"
-                        step="0.01"
-                        value={config.riskMultipliers.medium}
-                        onChange={(e) => setConfig({
-                          ...config,
-                          riskMultipliers: { ...config.riskMultipliers, medium: Number.parseFloat(e.target.value) }
-                        })}
-                      />
-                    </div>
+                  <div className="hidden md:block">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Risk Level ID</TableHead>
+                          <TableHead>Risk Level Name</TableHead>
+                          <TableHead>Multiplier</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {config.riskLevels.map((risk, index) => (
+                          <TableRow key={risk.id}>
+                            <TableCell>
+                              <Input
+                                value={risk.id}
+                                onChange={(e) => updateRiskLevel(index, "id", e.target.value)}
+                                placeholder="e.g., low"
+                                className="w-20"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={risk.name}
+                                onChange={(e) => updateRiskLevel(index, "name", e.target.value)}
+                                placeholder="e.g., Low Risk"
+                                className="w-32"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={risk.multiplier}
+                                onChange={(e) =>
+                                  updateRiskLevel(index, "multiplier", Number.parseFloat(e.target.value))
+                                }
+                                className="w-20"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={risk.description || ""}
+                                onChange={(e) => updateRiskLevel(index, "description", e.target.value)}
+                                placeholder="Optional description"
+                                className="w-40"
+                              />
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="destructive" size="sm" onClick={() => removeRiskLevel(index)}>
+                                Remove
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <Button onClick={addRiskLevel} className="mt-4">
+                      Add Risk Level
+                    </Button>
                   </div>
-                  <div>
-                    <Label htmlFor="risk-high">High Risk Multiplier</Label>
-                    <Input
-                      id="risk-high"
-                      type="number"
-                      step="0.01"
-                      value={config.riskMultipliers.high}
-                      onChange={(e) => setConfig({
-                        ...config,
-                        riskMultipliers: { ...config.riskMultipliers, high: Number.parseFloat(e.target.value) }
-                      })}
-                    />
+                  <div className="md:hidden space-y-4">
+                    {config.riskLevels.map((risk, index) => (
+                      <Card key={risk.id} className="p-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Label>Risk Level ID</Label>
+                            <Input
+                              value={risk.id}
+                              onChange={(e) => updateRiskLevel(index, "id", e.target.value)}
+                              placeholder="e.g., low"
+                              className="w-24"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <Label>Risk Level Name</Label>
+                            <Input
+                              value={risk.name}
+                              onChange={(e) => updateRiskLevel(index, "name", e.target.value)}
+                              placeholder="e.g., Low Risk"
+                              className="w-32"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <Label>Multiplier</Label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={risk.multiplier}
+                              onChange={(e) =>
+                                updateRiskLevel(index, "multiplier", Number.parseFloat(e.target.value))
+                              }
+                              className="w-24"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <Label>Description</Label>
+                            <Input
+                              value={risk.description || ""}
+                              onChange={(e) => updateRiskLevel(index, "description", e.target.value)}
+                              placeholder="Optional description"
+                              className="w-40"
+                            />
+                          </div>
+                          <div className="pt-2">
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="w-full"
+                              onClick={() => removeRiskLevel(index)}
+                            >
+                              Remove Risk Level
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                    <Button onClick={addRiskLevel} className="mt-4 w-full">
+                      Add Risk Level
+                    </Button>
                   </div>
                 </div>
               </CardContent>

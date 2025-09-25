@@ -21,11 +21,12 @@ interface RiskMultipliers {
 export interface AdminConfig {
   employeeRanges: { min: number; max: number; adjustment: number, description: string }[]
   baseManDays: { [standard: string]: { [category: string]: number } }
-  riskMultipliers: { low: number; medium: number; high: number }
+  riskLevels: { id: string; name: string; multiplier: number; description?: string }[]
   haccpMultiplier: number
   multiSiteMultiplier: number
   integratedSystemReduction: number
   integratedStandards: { id: string; name: string; reduction: number }[]
+  categories: string[]
 }
 
 let configCache: AdminConfig | null = null;
@@ -51,11 +52,16 @@ export async function getConfig(): Promise<AdminConfig> {
     return {
       employeeRanges: [],
       baseManDays: {},
-      riskMultipliers: { low: 1.0, medium: 1.0, high: 1.0 },
+      riskLevels: [
+        { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk' },
+        { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk' },
+        { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk' }
+      ],
       haccpMultiplier: 0,
       multiSiteMultiplier: 0,
       integratedSystemReduction: 0,
       integratedStandards: [],
+      categories: [],
     };
   }
 }

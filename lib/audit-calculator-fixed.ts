@@ -59,7 +59,8 @@ export async function calculateAuditManDays(data: CalculationData): Promise<Calc
   const haccpAdjustment = data.standard === "FSMS" ? (data.haccpStudies - 1) * config.haccpMultiplier : 0
 
   // Calculate risk adjustment with enhanced logic
-  const riskMultiplier = config.riskMultipliers[data.riskLevel as keyof typeof config.riskMultipliers] || 1.0
+  const riskLevel = config.riskLevels.find(risk => risk.id === data.riskLevel)
+  const riskMultiplier = riskLevel?.multiplier || 1.0
   const riskAdjustment = baseManDays * (riskMultiplier - 1)
 
   // Enhanced multi-site adjustment
@@ -158,12 +159,12 @@ export function getAvailableAuditTypes() {
   ]
 }
 
-export function getAvailableRiskLevels() {
-  return [
-    { value: "low", label: "Low Risk" },
-    { value: "medium", label: "Medium Risk" },
-    { value: "high", label: "High Risk" },
-  ]
+export async function getAvailableRiskLevels() {
+  const config = await getConfig();
+  return config.riskLevels.map(risk => ({
+    value: risk.id,
+    label: risk.name
+  }));
 }
 
 export async function getAvailableIntegratedStandards() {

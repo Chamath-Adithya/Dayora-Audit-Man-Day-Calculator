@@ -100,34 +100,34 @@ model AdminConfig {
   id                   String   @id @default(cuid())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  
+
   // Configuration name
   name                String   @unique
-  
+
   // Base man-days configuration
   baseManDays         String   // Store as JSON string for SQLite
-  
+
   // Employee ranges configuration
   employeeRanges      String   // Store as JSON string for SQLite
-  
-  // Risk multipliers
-  riskMultipliers     String   @default("[]") // Store as JSON string for SQLite
-  
+
+  // Risk levels (replaces riskMultipliers)
+  riskLevels          String   @default("[]") // Store as JSON string for SQLite
+
   // Other multipliers
   haccpMultiplier     Float    @default(0.5)
   multiSiteMultiplier Float    @default(0.5)
   integratedSystemReduction Float @default(0.1)
-  
+
   // Integrated standards
   integratedStandards String   @default("[]") // Store as JSON string
-  
+
   // Dynamic lists
   categories          String   @default("[]") // Store as JSON string
-  
+
   // Metadata
   isActive            Boolean  @default(true)
   description         String?
-  
+
   @@map("admin_configs")
 }
 

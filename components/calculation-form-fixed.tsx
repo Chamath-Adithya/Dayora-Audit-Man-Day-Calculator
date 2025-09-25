@@ -55,6 +55,7 @@ export default function CalculationFormFixed() {
   const [availableStandards, setAvailableStandards] = useState<{ value: string; label: string }[]>([]);
   const [availableCategories, setAvailableCategories] = useState<{ value: string; label: string }[]>([])
   const [availableIntegratedStandards, setAvailableIntegratedStandards] = useState<string[]>([]);
+  const [availableRiskLevels, setAvailableRiskLevels] = useState<{ value: string; label: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([])
@@ -65,8 +66,10 @@ export default function CalculationFormFixed() {
       await getConfig();
       const standards = await getAvailableStandards();
       const integratedStandards = await getAvailableIntegratedStandards();
+      const riskLevels = await getAvailableRiskLevels();
       setAvailableStandards(standards.map(s => ({ value: s, label: s })));
       setAvailableIntegratedStandards(integratedStandards);
+      setAvailableRiskLevels(riskLevels);
       setIsLoading(false);
     }
     loadConfig();
@@ -205,7 +208,6 @@ export default function CalculationFormFixed() {
   }
 
   const auditTypes = getAvailableAuditTypes()
-  const riskLevels = getAvailableRiskLevels()
 
   if (isLoading) {
     return (
@@ -422,7 +424,7 @@ export default function CalculationFormFixed() {
                     <SelectValue placeholder="Select risk level" />
                   </SelectTrigger>
                   <SelectContent>
-                    {riskLevels.map((level) => (
+                    {availableRiskLevels.map((level) => (
                       <SelectItem key={level.value} value={level.value}>
                         {level.label}
                       </SelectItem>
