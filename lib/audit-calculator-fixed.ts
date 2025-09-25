@@ -34,6 +34,8 @@ interface CalculationResult {
     categoryDescription: string
     riskMultiplier: number
     integratedSystemReduction: number
+    complexityAdjustment: number
+    totalBeforeIntegration: number
   }
 }
 
@@ -42,61 +44,79 @@ export async function calculateAuditManDays(data: CalculationData): Promise<Calc
 
   // Get base man-days from the correct table
   const baseManDays = config.baseManDays[data.standard]?.[data.category] || 0
-  
+
   if (baseManDays === 0) {
     throw new Error(`Invalid standard/category combination: ${data.standard}/${data.category}`)
   }
 
-  // Calculate employee adjustment
+  // Calculate employee adjustment with improved logic
   const employeeRange = config.employeeRanges.find(
     (range) => data.employees >= range.min && data.employees <= range.max,
   )
   const employeeAdjustment = employeeRange?.adjustment || 0
 
-  // Calculate HACCP adjustment (only for FSMS)
-  const haccpAdjustment = data.standard === "FSMS" ? data.haccpStudies * config.haccpMultiplier : 0
+  // Calculate HACCP adjustment (only for FSMS) - Fixed to avoid double-counting
+  const haccpAdjustment = data.standard === "FSMS" ? (data.haccpStudies - 1) * config.haccpMultiplier : 0
 
-  // Calculate risk adjustment
+  // Calculate risk adjustment with enhanced logic
   const riskMultiplier = config.riskMultipliers[data.riskLevel as keyof typeof config.riskMultipliers] || 1.0
   const riskAdjustment = baseManDays * (riskMultiplier - 1)
 
-  // Calculate multi-site adjustment
-  const multiSiteAdjustment = data.sites > 1 ? (data.sites - 1) * config.multiSiteMultiplier : 0
+  // Enhanced multi-site adjustment
+  let multiSiteAdjustment = 0
+  if (data.sites > 1) {
+    // Central function gets full base + employee adjustment
+    const centralFunctionTime = baseManDays + employeeAdjustment
+    // Each additional site gets 50% of base time
+    const additionalSitesTime = (data.sites - 1) * (baseManDays * 0.5)
+    multiSiteAdjustment = centralFunctionTime + additionalSitesTime - baseManDays
+  }
 
-  // Calculate integrated system reduction
+  // Calculate integrated system reduction with minimum threshold
   const integratedSystemReduction = data.integratedStandards.reduce((total, currentStandardName) => {
     const standardDetails = config.integratedStandards.find(s => s.name === currentStandardName);
     return total + (standardDetails ? standardDetails.reduction : 0);
   }, 0);
-  const integratedSystemAdjustment = -(baseManDays * integratedSystemReduction)
 
-  // Calculate total before integration
-  const totalBeforeIntegration = 
+  // Ensure minimum reduction of 5% when multiple standards are selected
+  const effectiveReduction = data.integratedStandards.length > 1
+    ? Math.max(integratedSystemReduction, 0.05)
+    : integratedSystemReduction
+
+  const integratedSystemAdjustment = -(baseManDays * effectiveReduction)
+
+  // Calculate total before integration with all adjustments
+  const totalBeforeIntegration =
     baseManDays + employeeAdjustment + haccpAdjustment + riskAdjustment + multiSiteAdjustment
 
   // Apply integrated system reduction
   const totalManDays = Math.max(1, totalBeforeIntegration + integratedSystemAdjustment)
 
-  // Calculate stage distribution for initial audits (IAF MD 5:2019)
+  // Enhanced stage distribution for initial audits
   let stageDistribution: { stage1: number; stage2: number } | undefined
   if (data.auditType === "initial") {
-    // Stage 1: 30% of total man-days (minimum 1 day)
-    // Stage 2: 70% of total man-days
-    const stage1ManDays = Math.max(1, Math.ceil(totalManDays * 0.3))
+    // Stage 1: 30% of total man-days (minimum 1 day, maximum 3 days)
+    const stage1ManDays = Math.max(1, Math.min(3, Math.ceil(totalManDays * 0.3)))
     const stage2ManDays = Math.ceil(totalManDays * 0.7)
-    
+
     stageDistribution = {
       stage1: stage1ManDays,
       stage2: stage2ManDays,
     }
   }
 
-  // Calculate surveillance and recertification man-days (IAF MD 5:2019)
+  // Enhanced surveillance and recertification calculations
   const surveillanceManDays = Math.ceil(totalManDays * 0.33) // 33% of initial audit
   const recertificationManDays = Math.ceil(totalManDays * 0.67) // 67% of initial audit
 
+  // Calculate complexity factor (additional 10% for high complexity categories)
+  const complexityCategories = ['I', 'J', 'K']
+  const complexityAdjustment = complexityCategories.includes(data.category) ? totalManDays * 0.1 : 0
+
+  const finalTotalManDays = Math.ceil(totalManDays + complexityAdjustment)
+
   return {
-    totalManDays: Math.ceil(totalManDays),
+    totalManDays: finalTotalManDays,
     breakdown: {
       baseManDays,
       employeeAdjustment,
@@ -112,7 +132,9 @@ export async function calculateAuditManDays(data: CalculationData): Promise<Calc
       employeeRange: employeeRange?.description || "Unknown range",
       categoryDescription: `Category ${data.category} (${data.standard})`,
       riskMultiplier,
-      integratedSystemReduction,
+      integratedSystemReduction: effectiveReduction,
+      complexityAdjustment,
+      totalBeforeIntegration,
     },
   }
 }

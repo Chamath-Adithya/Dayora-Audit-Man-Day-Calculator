@@ -223,7 +223,7 @@ export function AdminConfiguration() {
 
   const [categories, setCategories] = useState(["AI", "AII", "BI", "BII", "BIII", "C", "D", "E", "F", "G", "H", "I", "J", "K"])
   const [newCategoryName, setNewCategoryName] = useState("")
-  const [standards, setStandards] = useState(["QMS", "EMS", "EnMS", "FSMS", "Cosmetics"])
+  const [standards, setStandards] = useState(["QMS", "EMS", "EnMS", "FSMS", "Cosmetics", "OHMS", "ISMS"])
   const [newStandardName, setNewStandardName] = useState("")
 
   const addStandard = () => {

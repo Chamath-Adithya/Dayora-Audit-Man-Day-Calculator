@@ -64,20 +64,28 @@ export async function getConfig(): Promise<AdminConfig> {
         { min: 1176, max: 999999, adjustment: 10, description: "1176+ employees" },
       ],
       baseManDays: {
-        QMS: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
-        EMS: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
-        EnMS: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
-        FSMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
-        Cosmetics: { AI: 2, AII: 3, BI: 4, BII: 5, BIII: 6, C: 7, D: 8, E: 10, F: 12, G: 15, H: 18, I: 22, J: 27, K: 32 },
+        QMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
+        EMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
+        EnMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
+        FSMS: { AI: 4, AII: 5, BI: 6, BII: 7, BIII: 8, C: 10, D: 12, E: 15, F: 18, G: 22, H: 27, I: 32, J: 38, K: 45 },
+        Cosmetics: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
+        OHMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
+        ISMS: { AI: 3, AII: 4, BI: 5, BII: 6, BIII: 7, C: 8, D: 10, E: 12, F: 15, G: 18, H: 22, I: 27, J: 32, K: 38 },
       },
       riskMultipliers: { low: 0.8, medium: 1.0, high: 1.2 },
       haccpMultiplier: 0.5,
       multiSiteMultiplier: 0.5,
       integratedSystemReduction: 0.1,
       integratedStandards: [
-        { "id": "ISO_14001", "name": "ISO 14001", "reduction": 0.1 },
-        { "id": "ISO_45001", "name": "ISO 45001", "reduction": 0.1 },
-        { "id": "ISO_22000", "name": "ISO 22000", "reduction": 0.15 }
+        { "id": "ISO_14001", "name": "ISO 14001 (EMS)", "reduction": 0.12 },
+        { "id": "ISO_45001", "name": "ISO 45001 (OH&S)", "reduction": 0.12 },
+        { "id": "ISO_22000", "name": "ISO 22000 (FSMS)", "reduction": 0.15 },
+        { "id": "ISO_27001", "name": "ISO 27001 (ISMS)", "reduction": 0.10 },
+        { "id": "ISO_50001", "name": "ISO 50001 (EnMS)", "reduction": 0.08 },
+        { "id": "ISO_9001", "name": "ISO 9001 (QMS)", "reduction": 0.05 },
+        { "id": "HACCP", "name": "HACCP/GMP", "reduction": 0.08 },
+        { "id": "BRC", "name": "BRC Global Standard", "reduction": 0.10 },
+        { "id": "FSSC_22000", "name": "FSSC 22000", "reduction": 0.12 }
       ],
     };
   }

@@ -146,7 +146,6 @@ export default function CalculationFormFixed() {
       // Submit to API
       const savedCalculation = await apiClient.saveCalculation({
         ...formData,
-        userId: session.user.id,
         result: calculationResult.totalManDays,
         breakdown: calculationResult.breakdown,
         stage1ManDays: calculationResult.stageDistribution?.stage1,
@@ -227,6 +226,9 @@ export default function CalculationFormFixed() {
                         <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Risk</span><span>{preview.breakdown.riskAdjustment}</span></div>
                         <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Sites</span><span>{preview.breakdown.multiSiteAdjustment}</span></div>
                         <div className="flex justify-between transition-colors duration-200 hover:text-primary"><span>Integrated</span><span>{preview.breakdown.integratedSystemAdjustment}</span></div>
+                        {preview.details?.complexityAdjustment > 0 && (
+                          <div className="flex justify-between transition-colors duration-200 hover:text-primary text-orange-600"><span>Complexity</span><span>+{preview.details.complexityAdjustment}</span></div>
+                        )}
                       </div>
                     </div>
                   </div>
