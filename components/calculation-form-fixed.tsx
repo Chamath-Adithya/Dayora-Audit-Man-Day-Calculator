@@ -95,9 +95,9 @@ export default function CalculationFormFixed() {
       if (formData.standard) {
         const categories = await getAvailableCategories(formData.standard);
         setAvailableCategories(categories.map(cat => ({ value: cat, label: cat })));
-        
+
         // Reset category if it's not available for the new standard
-        if (formData.category && !categories.find(cat => cat === formData.category)) {
+        if (formData.category && !categories.includes(formData.category)) {
           setFormData(prev => ({ ...prev, category: "" }))
         }
       } else {
@@ -106,7 +106,7 @@ export default function CalculationFormFixed() {
       }
     }
     updateCategories();
-  }, [formData.standard, formData.category])
+  }, [formData.standard])
 
   // Handle empty configuration gracefully
   const hasStandards = availableStandards.length > 0;
