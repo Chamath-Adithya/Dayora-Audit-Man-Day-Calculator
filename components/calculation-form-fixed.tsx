@@ -72,6 +72,46 @@ export default function CalculationFormFixed() {
     loadConfig();
   }, []);
 
+  // Handle empty configuration gracefully
+  const hasStandards = availableStandards.length > 0;
+  const hasCategories = availableCategories.length > 0;
+
+  // Show warning if no configuration is loaded
+  if (!hasStandards) {
+    return (
+      <div className="max-w-6xl mx-auto p-6 space-y-6 fade-in">
+        <Card className="border-orange-200 bg-orange-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-orange-800">
+              <AlertCircle className="h-5 w-5" />
+              Configuration Required
+            </CardTitle>
+            <CardDescription className="text-orange-700">
+              No audit standards are configured. Please contact your administrator to set up the system.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-orange-700 mb-4">
+              The audit man-day calculator requires configuration data to function properly. An administrator needs to:
+            </p>
+            <ul className="text-sm text-orange-700 space-y-1 mb-4">
+              <li>• Configure available management system standards (QMS, EMS, FSMS, etc.)</li>
+              <li>• Set up employee range adjustments</li>
+              <li>• Define base man-days for each standard and category</li>
+              <li>• Configure risk level multipliers</li>
+            </ul>
+            <Button
+              onClick={() => window.open('/admin', '_blank')}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              Open Admin Configuration
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   useEffect(() => {
     async function updatePreview() {
       try {
