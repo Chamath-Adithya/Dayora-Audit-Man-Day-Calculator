@@ -73,9 +73,43 @@ export default function CalculationFormFixed() {
     }
   }, [config]);
 
+  useEffect(() => {
+    async function updatePreview() {
+      try {
+        if (!formData.standard || !formData.category || !formData.auditType || !formData.riskLevel) {
+          setPreview(null);
+          return;
+        }
+        const result = await calculateAuditManDays(formData);
+        setPreview(result);
+      } catch {
+        setPreview(null);
+      }
+    }
+    updatePreview();
+  }, [formData]);
+
+  // Update available categories when standard changes
+  useEffect(() => {
+    async function updateCategories() {
+      if (formData.standard) {
+        const categories = await getAvailableCategories(formData.standard);
+        setAvailableCategories(categories.map(cat => ({ value: cat, label: cat })));
+        
+        // Reset category if it's not available for the new standard
+        if (formData.category && !categories.find(cat => cat === formData.category)) {
+          setFormData(prev => ({ ...prev, category: "" }))
+        }
+      } else {
+        setAvailableCategories([])
+        setFormData(prev => ({ ...prev, category: "" }))
+      }
+    }
+    updateCategories();
+  }, [formData.standard, formData.category])
+
   // Handle empty configuration gracefully
   const hasStandards = availableStandards.length > 0;
-  const hasCategories = availableCategories.length > 0;
 
   // Show warning if no configuration is loaded
   if (!hasStandards) {
@@ -112,41 +146,6 @@ export default function CalculationFormFixed() {
       </div>
     );
   }
-
-  useEffect(() => {
-    async function updatePreview() {
-      try {
-        if (!formData.standard || !formData.category || !formData.auditType || !formData.riskLevel) {
-          setPreview(null);
-          return;
-        }
-        const result = await calculateAuditManDays(formData);
-        setPreview(result);
-      } catch {
-        setPreview(null);
-      }
-    }
-    updatePreview();
-  }, [formData]);
-
-  // Update available categories when standard changes
-  useEffect(() => {
-    async function updateCategories() {
-      if (formData.standard) {
-        const categories = await getAvailableCategories(formData.standard);
-        setAvailableCategories(categories.map(cat => ({ value: cat, label: cat })));
-        
-        // Reset category if it's not available for the new standard
-        if (formData.category && !categories.find(cat => cat === formData.category)) {
-          setFormData(prev => ({ ...prev, category: "" }))
-        }
-      } else {
-        setAvailableCategories([])
-        setFormData(prev => ({ ...prev, category: "" }))
-      }
-    }
-    updateCategories();
-  }, [formData.standard, formData.category])
 
   const handleInputChange = (field: keyof CalculationData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
