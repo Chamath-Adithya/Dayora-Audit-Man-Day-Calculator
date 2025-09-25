@@ -18,6 +18,10 @@ export async function POST() {
     });
   } catch (error) {
     console.error('Error resetting config in DB:', error);
-    return NextResponse.json({ message: 'Error resetting config in database' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Error resetting config in database',
+      message: 'Error resetting config in database' 
+    }, { status: 500 });
   }
 }
