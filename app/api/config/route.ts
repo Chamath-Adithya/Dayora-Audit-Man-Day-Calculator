@@ -141,7 +141,10 @@ export async function POST(req: Request) {
       }
     });
 
-    return NextResponse.json({ message: 'Configuration saved successfully. A backup of the previous version was created.' });
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Configuration saved successfully. A backup of the previous version was created.' 
+    });
   } catch (error) {
     console.error('Error saving config to DB:', error);
     return NextResponse.json({ message: 'Error writing config to database' }, { status: 500 });
