@@ -147,6 +147,10 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error('Error saving config to DB:', error);
-    return NextResponse.json({ message: 'Error writing config to database' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Error writing config to database',
+      message: 'Error writing config to database' 
+    }, { status: 500 });
   }
 }
