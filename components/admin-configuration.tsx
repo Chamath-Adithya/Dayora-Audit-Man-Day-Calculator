@@ -61,14 +61,14 @@ interface RiskLevel {
 
 export function AdminConfiguration() {
   const { config: initialConfig, isLoading, refetchConfig } = useConfig()
-  const [config, setConfig] = useState<AdminConfig | null>(initialConfig)
+  const [config, setConfig] = useState<AdminConfig | null>(null)
   const [hasChanges, setHasChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [selectedTab, setSelectedTab] = useState("employee-ranges")
 
   useEffect(() => {
-    setConfig(initialConfig)
     if (initialConfig) {
+      setConfig(initialConfig)
       setStandards(Object.keys(initialConfig.baseManDays))
       setCategories(initialConfig.categories)
     }
