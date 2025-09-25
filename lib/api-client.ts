@@ -138,6 +138,11 @@ class ApiClient {
     })
   }
 
+  // Config API
+  async getConfig(): Promise<any> {
+    return this.request<any>('/config');
+  }
+
   // Statistics API
   async getStatistics(): Promise<{
     totalCalculations: number

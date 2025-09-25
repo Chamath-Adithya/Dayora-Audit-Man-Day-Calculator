@@ -20,8 +20,8 @@ import {
   validateCalculationInput, 
   calculateAuditManDays
 } from "@/lib/audit-calculator-fixed"
-import { getConfig } from "@/lib/config";
 import { apiClient } from "@/lib/api-client"
+import { useConfig } from "../components/config-provider"
 
 interface CalculationData {
   companyName: string
@@ -57,23 +57,21 @@ export default function CalculationFormFixed() {
   const [availableIntegratedStandards, setAvailableIntegratedStandards] = useState<string[]>([]);
   const [availableRiskLevels, setAvailableRiskLevels] = useState<{ value: string; label: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([])
   const [preview, setPreview] = useState<any>(null);
 
+  const { config, isLoading } = useConfig();
+
   useEffect(() => {
-    async function loadConfig() {
-      await getConfig();
-      const standards = await getAvailableStandards();
-      const integratedStandards = await getAvailableIntegratedStandards();
-      const riskLevels = await getAvailableRiskLevels();
+    if (config) {
+      const standards = Object.keys(config.baseManDays);
+      const integratedStandards = config.integratedStandards.map(s => s.name);
+      const riskLevels = config.riskLevels.map(rl => ({ value: rl.id, label: rl.name }));
       setAvailableStandards(standards.map(s => ({ value: s, label: s })));
       setAvailableIntegratedStandards(integratedStandards);
       setAvailableRiskLevels(riskLevels);
-      setIsLoading(false);
     }
-    loadConfig();
-  }, []);
+  }, [config]);
 
   // Handle empty configuration gracefully
   const hasStandards = availableStandards.length > 0;

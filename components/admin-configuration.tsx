@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useConfig } from "./config-provider"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -59,44 +60,19 @@ interface RiskLevel {
 
 
 export function AdminConfiguration() {
-  const [config, setConfig] = useState<AdminConfig | null>(null)
+  const { config: initialConfig, isLoading, refetchConfig } = useConfig()
+  const [config, setConfig] = useState<AdminConfig | null>(initialConfig)
   const [hasChanges, setHasChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   const [selectedTab, setSelectedTab] = useState("employee-ranges")
 
-  const fetchConfig = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const response = await fetch("/api/config")
-      if (response.ok) {
-        const data = await response.json()
-        const validatedData = {
-          ...data,
-          riskMultipliers: data.riskMultipliers || { low: 1.0, medium: 1.0, high: 1.0 },
-        }
-        setConfig(validatedData)
-        if (validatedData.baseManDays) {
-          setStandards(Object.keys(validatedData.baseManDays))
-        }
-        if (validatedData.categories && validatedData.categories.length > 0) {
-          setCategories(validatedData.categories)
-        }
-      } else {
-        throw new Error("Failed to fetch config")
-      }
-    } catch (error) {
-      console.error("Error loading admin config:", error)
-      toast.error("Failed to load configuration. Please try again later.")
-      setConfig(null)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
-    fetchConfig()
-  }, [fetchConfig])
+    setConfig(initialConfig)
+    if (initialConfig) {
+      setStandards(Object.keys(initialConfig.baseManDays))
+      setCategories(initialConfig.categories)
+    }
+  }, [initialConfig])
 
   const handleSaveConfig = async () => {
     if (!config) return
@@ -135,7 +111,7 @@ export function AdminConfiguration() {
         toast.promise(promise, {
             loading: "Resetting configuration to defaults...",
             success: () => {
-                fetchConfig(); // Refetch the configuration
+                refetchConfig();
                 return "Configuration has been reset successfully.";
             },
             error: "Error resetting configuration.",
