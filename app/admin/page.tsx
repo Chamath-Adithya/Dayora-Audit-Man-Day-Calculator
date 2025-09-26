@@ -70,16 +70,13 @@ export default function AdminPage() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <Shield className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Admin Configuration</h1>
-            <p className="text-muted-foreground">Configure base values and parameters for audit calculations.</p>
-          </div>
+        <div className="slide-in-left">
+          <h1 className="text-3xl font-bold text-foreground">Admin Configuration</h1>
+          <p className="text-muted-foreground">Configure base values and parameters for audit calculations.</p>
         </div>
-        <AdminConfiguration />
+        <div className="slide-in-up">
+          <AdminConfiguration />
+        </div>
       </div>
     </MainLayout>
   )
