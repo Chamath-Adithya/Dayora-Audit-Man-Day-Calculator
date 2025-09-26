@@ -13,6 +13,7 @@ import { format } from "date-fns"
 import { apiClient, type SavedCalculation } from "@/lib/api-client"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { KPICardsSkeleton, ChartSkeleton, TableSkeleton, TabsSkeleton, SearchFiltersSkeleton } from "@/components/ui/skeleton"
 
 export function HistoryManagement() {
   const [calculations, setCalculations] = useState<SavedCalculation[]>([])
@@ -698,9 +699,21 @@ export function HistoryManagement() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <RefreshCw className="mx-auto h-12 w-12 mb-4 animate-spin text-muted-foreground" />
-                  <p>Loading calculations...</p>
+                <div className="space-y-6">
+                  {/* KPI Cards Skeleton */}
+                  <KPICardsSkeleton count={6} />
+
+                  {/* Charts Skeleton */}
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <ChartSkeleton />
+                    <ChartSkeleton />
+                  </div>
+
+                  {/* Search and Filters Skeleton */}
+                  <SearchFiltersSkeleton />
+
+                  {/* Table Skeleton */}
+                  <TableSkeleton rows={8} columns={10} />
                 </div>
               ) : filteredCalculations.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">

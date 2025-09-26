@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, Calculator, Clock, Building } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
+import { CardSkeleton } from "@/components/ui/skeleton"
 
 export function StatsCards() {
   const [stats, setStats] = useState<any>(null)
@@ -73,18 +74,5 @@ export function StatsCards() {
         </CardContent>
       </Card>
     </div>
-  )
-}
-
-function CardSkeleton() {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-      </CardContent>
-    </Card>
   )
 }

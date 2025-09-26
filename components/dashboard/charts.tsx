@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { apiClient } from "@/lib/api-client"
+import { ChartSkeleton } from "@/components/ui/skeleton"
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF1919'];
 
@@ -28,8 +29,8 @@ export function Charts() {
   if (loading) {
     return (
       <div className="grid gap-4 md:grid-cols-2">
-        <CardSkeleton />
-        <CardSkeleton />
+        <ChartSkeleton />
+        <ChartSkeleton />
       </div>
     )
   }
@@ -83,18 +84,5 @@ export function Charts() {
         </CardContent>
       </Card>
     </div>
-  )
-}
-
-function CardSkeleton() {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-64 bg-gray-200 rounded"></div>
-      </CardContent>
-    </Card>
   )
 }
