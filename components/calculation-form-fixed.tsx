@@ -56,6 +56,7 @@ export default function CalculationFormFixed() {
   const [availableCategories, setAvailableCategories] = useState<{ value: string; label: string }[]>([])
   const [availableIntegratedStandards, setAvailableIntegratedStandards] = useState<string[]>([]);
   const [availableRiskLevels, setAvailableRiskLevels] = useState<{ value: string; label: string }[]>([]);
+  const [employeeRanges, setEmployeeRanges] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
   const [preview, setPreview] = useState<any>(null);
@@ -71,9 +72,13 @@ export default function CalculationFormFixed() {
       const riskLevels = config.riskLevels
         .sort((a, b) => a.order - b.order)
         .map(rl => ({ value: rl.id, label: rl.name }));
+      const employeeRanges = config.employeeRanges
+        .sort((a, b) => a.order - b.order);
+
       setAvailableStandards(standards.map(s => ({ value: s, label: s })));
       setAvailableIntegratedStandards(integratedStandards);
       setAvailableRiskLevels(riskLevels);
+      setEmployeeRanges(employeeRanges);
     }
   }, [config]);
 
@@ -400,7 +405,12 @@ export default function CalculationFormFixed() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">Categories reflect complexity/sector per IAF MD 5.</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-muted-foreground">Categories reflect complexity/sector per IAF MD 5.</p>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">
+                    Database Ordered
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -447,6 +457,40 @@ export default function CalculationFormFixed() {
                 <p className="text-xs text-muted-foreground">Risk affects time by ±20%.</p>
               </div>
             </div>
+
+            {/* Employee Range Reference */}
+            {employeeRanges.length > 0 && (
+              <Card className="bg-blue-50 border-blue-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm text-blue-800">Employee Range Reference</CardTitle>
+                  <CardDescription className="text-blue-600">
+                    Understanding how employee count affects audit duration
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+                    {employeeRanges.slice(0, 6).map((range, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-white rounded border">
+                        <span className="font-medium">
+                          {range.min === 1 ? '1' : range.min.toLocaleString()} - {range.max === 999999 ? '∞' : range.max.toLocaleString()}
+                        </span>
+                        <span className="text-blue-600 font-medium">
+                          +{range.adjustment}
+                        </span>
+                      </div>
+                    ))}
+                    {employeeRanges.length > 6 && (
+                      <div className="flex justify-center items-center p-2 bg-white rounded border text-blue-600 font-medium">
+                        +{employeeRanges.length - 6} more ranges...
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-blue-600 mt-2">
+                    💡 Higher employee counts result in additional audit time. The system automatically applies the correct adjustment based on your employee count.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Numerical Inputs */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
