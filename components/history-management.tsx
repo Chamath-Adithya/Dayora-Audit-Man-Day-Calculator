@@ -13,6 +13,7 @@ import { format } from "date-fns"
 import { apiClient, type SavedCalculation } from "@/lib/api-client"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { KPICardsSkeleton, ChartSkeleton, TableSkeleton, TabsSkeleton, SearchFiltersSkeleton } from "@/components/ui/skeleton"
 
 export function HistoryManagement() {
   const [calculations, setCalculations] = useState<SavedCalculation[]>([])
@@ -298,6 +299,73 @@ export function HistoryManagement() {
   const getSortIcon = (field: keyof SavedCalculation) => {
     if (sortField !== field) return <ArrowUpDown className="h-4 w-4" />
     return sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        {error ? (
+          <Card className="border-destructive">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-destructive">{error}</div>
+                <Button onClick={loadCalculations} variant="outline" size="sm">
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Retry
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            {/* KPI Cards Skeleton */}
+            <KPICardsSkeleton count={6} />
+
+            {/* Visualization Tabs Skeleton */}
+            <Card>
+              <CardHeader>
+                <div className="h-6 bg-gray-200 rounded w-48"></div>
+                <div className="h-4 bg-gray-200 rounded w-96"></div>
+              </CardHeader>
+              <CardContent>
+                <TabsSkeleton />
+              </CardContent>
+            </Card>
+
+            {/* Search and Filters Skeleton */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-32"></div>
+                    <div className="h-4 bg-gray-200 rounded w-48 mt-2"></div>
+                  </div>
+                  <div className="h-10 bg-gray-200 rounded w-24"></div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <SearchFiltersSkeleton />
+              </CardContent>
+            </Card>
+
+            {/* Table Skeleton */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-40"></div>
+                    <div className="h-4 bg-gray-200 rounded w-64 mt-2"></div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <TableSkeleton rows={8} columns={10} />
+              </CardContent>
+            </Card>
+          </>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -697,12 +765,7 @@ export function HistoryManagement() {
               </div>
             </CardHeader>
             <CardContent>
-              {loading ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <RefreshCw className="mx-auto h-12 w-12 mb-4 animate-spin text-muted-foreground" />
-                  <p>Loading calculations...</p>
-                </div>
-              ) : filteredCalculations.length === 0 ? (
+              {filteredCalculations.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   {calculations.filter(c => !c.isDeleted).length === 0 ? (
                     <div>
