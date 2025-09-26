@@ -50,14 +50,14 @@ export async function GET() {
     const responseConfig = {
       ...dbConfig,
       baseManDays: parseJSON(dbConfig.baseManDays, {}),
-      employeeRanges: parseJSON(dbConfig.employeeRanges, []),
+      employeeRanges: parseJSON(dbConfig.employeeRanges, []).sort((a: any, b: any) => a.order - b.order),
       riskLevels: parseJSON((dbConfig as any).riskLevels || '[]', [
-        { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk' },
-        { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk' },
-        { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk' }
-      ]),
-      integratedStandards: parseJSON((dbConfig as any).integratedStandards || '[]', []),
-      categories: parseJSON((dbConfig as any).categories || '[]', []),
+        { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk', order: 1 },
+        { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk', order: 2 },
+        { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk', order: 3 }
+      ]).sort((a: any, b: any) => a.order - b.order),
+      integratedStandards: parseJSON((dbConfig as any).integratedStandards || '[]', []).sort((a: any, b: any) => a.order - b.order),
+      categories: parseJSON((dbConfig as any).categories || '[]', []).sort((a: any, b: any) => a.order - b.order),
     };
 
     return NextResponse.json({

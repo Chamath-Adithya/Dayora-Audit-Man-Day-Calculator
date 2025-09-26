@@ -65,8 +65,12 @@ export default function CalculationFormFixed() {
   useEffect(() => {
     if (config) {
       const standards = Object.keys(config.baseManDays);
-      const integratedStandards = config.integratedStandards.map(s => s.name);
-      const riskLevels = config.riskLevels.map(rl => ({ value: rl.id, label: rl.name }));
+      const integratedStandards = config.integratedStandards
+        .sort((a, b) => a.order - b.order)
+        .map(s => s.name);
+      const riskLevels = config.riskLevels
+        .sort((a, b) => a.order - b.order)
+        .map(rl => ({ value: rl.id, label: rl.name }));
       setAvailableStandards(standards.map(s => ({ value: s, label: s })));
       setAvailableIntegratedStandards(integratedStandards);
       setAvailableRiskLevels(riskLevels);
