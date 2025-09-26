@@ -4,6 +4,7 @@ interface EmployeeRange {
   max: number;
   adjustment: number;
   description: string;
+  order: number; // Controls display order in admin tables
 }
 
 interface BaseManDays {
@@ -19,14 +20,14 @@ interface RiskMultipliers {
 }
 
 export interface AdminConfig {
-  employeeRanges: { min: number; max: number; adjustment: number, description: string }[]
+  employeeRanges: { min: number; max: number; adjustment: number, description: string; order: number }[]
   baseManDays: { [standard: string]: { [category: string]: number } }
-  riskLevels: { id: string; name: string; multiplier: number; description?: string }[]
+  riskLevels: { id: string; name: string; multiplier: number; description?: string; order: number }[]
   haccpMultiplier: number
   multiSiteMultiplier: number
   integratedSystemReduction: number
-  integratedStandards: { id: string; name: string; reduction: number }[]
-  categories: string[]
+  integratedStandards: { id: string; name: string; reduction: number; order: number }[]
+  categories: { name: string; order: number }[]
 }
 
 let configCache: AdminConfig | null = null;
@@ -57,9 +58,9 @@ export async function getConfig(): Promise<AdminConfig> {
       employeeRanges: [],
       baseManDays: {},
       riskLevels: [
-        { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk' },
-        { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk' },
-        { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk' }
+        { id: 'low', name: 'Low Risk', multiplier: 0.8, description: 'Low complexity and risk', order: 1 },
+        { id: 'medium', name: 'Medium Risk', multiplier: 1.0, description: 'Standard complexity and risk', order: 2 },
+        { id: 'high', name: 'High Risk', multiplier: 1.2, description: 'High complexity and risk', order: 3 }
       ],
       haccpMultiplier: 0,
       multiSiteMultiplier: 0,

@@ -107,10 +107,10 @@ model AdminConfig {
   // Base man-days configuration
   baseManDays         String   // Store as JSON string for SQLite
 
-  // Employee ranges configuration
+  // Employee ranges configuration with ordering
   employeeRanges      String   // Store as JSON string for SQLite
 
-  // Risk levels (replaces riskMultipliers)
+  // Risk levels (replaces riskMultipliers) with ordering
   riskLevels          String   @default("[]") // Store as JSON string for SQLite
 
   // Other multipliers
@@ -118,10 +118,10 @@ model AdminConfig {
   multiSiteMultiplier Float    @default(0.5)
   integratedSystemReduction Float @default(0.1)
 
-  // Integrated standards
+  // Integrated standards with ordering
   integratedStandards String   @default("[]") // Store as JSON string
 
-  // Dynamic lists
+  // Dynamic lists with ordering
   categories          String   @default("[]") // Store as JSON string
 
   // Metadata

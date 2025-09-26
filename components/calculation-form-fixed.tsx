@@ -53,23 +53,33 @@ export default function CalculationFormFixed() {
   })
 
   const [availableStandards, setAvailableStandards] = useState<{ value: string; label: string }[]>([]);
-  const [availableCategories, setAvailableCategories] = useState<{ value: string; label: string }[]>([])
+  const [availableCategories, setAvailableCategories] = useState<{ value: string; label: string; order: number }[]>([])
   const [availableIntegratedStandards, setAvailableIntegratedStandards] = useState<string[]>([]);
   const [availableRiskLevels, setAvailableRiskLevels] = useState<{ value: string; label: string }[]>([]);
+  const [employeeRanges, setEmployeeRanges] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
   const [preview, setPreview] = useState<any>(null);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
 
   const { config, isLoading } = useConfig();
 
   useEffect(() => {
     if (config) {
       const standards = Object.keys(config.baseManDays);
-      const integratedStandards = config.integratedStandards.map(s => s.name);
-      const riskLevels = config.riskLevels.map(rl => ({ value: rl.id, label: rl.name }));
+      const integratedStandards = config.integratedStandards
+        .sort((a, b) => a.order - b.order)
+        .map(s => s.name);
+      const riskLevels = config.riskLevels
+        .sort((a, b) => a.order - b.order)
+        .map(rl => ({ value: rl.id, label: rl.name }));
+      const employeeRanges = config.employeeRanges
+        .sort((a, b) => a.order - b.order);
+
       setAvailableStandards(standards.map(s => ({ value: s, label: s })));
       setAvailableIntegratedStandards(integratedStandards);
       setAvailableRiskLevels(riskLevels);
+      setEmployeeRanges(employeeRanges);
     }
   }, [config]);
 
@@ -93,12 +103,31 @@ export default function CalculationFormFixed() {
   useEffect(() => {
     async function updateCategories() {
       if (formData.standard) {
-        const categories = await getAvailableCategories(formData.standard);
-        setAvailableCategories(categories.map(cat => ({ value: cat, label: cat })));
+        try {
+          const categories = await getAvailableCategories(formData.standard);
 
-        // Reset category if it's not available for the new standard
-        if (formData.category && !categories.includes(formData.category)) {
-          setFormData(prev => ({ ...prev, category: "" }))
+          // Sort categories by the order from the database configuration
+          const sortedCategories = categories
+            .map(cat => {
+              // Find the category in the config to get its order
+              const categoryConfig = config?.categories?.find(c => c.name === cat);
+              return {
+                value: cat,
+                label: cat,
+                order: categoryConfig?.order || 999 // Default to high order if not found
+              };
+            })
+            .sort((a, b) => a.order - b.order);
+
+          setAvailableCategories(sortedCategories);
+
+          // Reset category if it's not available for the new standard
+          if (formData.category && !categories.includes(formData.category)) {
+            setFormData(prev => ({ ...prev, category: "" }))
+          }
+        } catch (error) {
+          console.error('Error loading categories:', error);
+          setAvailableCategories([]);
         }
       } else {
         setAvailableCategories([])
@@ -106,7 +135,7 @@ export default function CalculationFormFixed() {
       }
     }
     updateCategories();
-  }, [formData.standard])
+  }, [formData.standard, config])
 
   // Handle empty configuration gracefully
   const hasStandards = availableStandards.length > 0;
@@ -443,6 +472,8 @@ export default function CalculationFormFixed() {
                 <p className="text-xs text-muted-foreground">Risk affects time by ±20%.</p>
               </div>
             </div>
+
+
 
             {/* Numerical Inputs */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
