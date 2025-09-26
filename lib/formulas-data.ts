@@ -33,7 +33,7 @@ export const formulasData: FormulaSection[] = [
   {
     id: 'overview',
     title: 'Overview & Main Formula',
-    icon: '📋',
+    icon: 'formula',
     description: 'Complete audit man-days calculation overview with main formula',
     content: [
       {
@@ -91,7 +91,7 @@ export const formulasData: FormulaSection[] = [
   {
     id: 'base-mandays',
     title: 'Base Man-Days by Standard',
-    icon: '🏢',
+    icon: 'building',
     description: 'Base audit man-days for each management system standard and category',
     content: [
       {
@@ -134,7 +134,7 @@ export const formulasData: FormulaSection[] = [
   {
     id: 'employee-ranges',
     title: 'Employee Range Adjustments',
-    icon: '👥',
+    icon: 'users',
     description: 'Employee count adjustments based on organization size ranges',
     content: [
       {
@@ -184,7 +184,7 @@ export const formulasData: FormulaSection[] = [
   {
     id: 'risk-multipliers',
     title: 'Risk Level Multipliers',
-    icon: '⚠️',
+    icon: 'alert-triangle',
     description: 'Risk level adjustments that modify base man-days by ±20%',
     content: [
       {
@@ -229,7 +229,7 @@ export const formulasData: FormulaSection[] = [
   {
     id: 'multi-site',
     title: 'Multi-Site Calculations',
-    icon: '🏭',
+    icon: 'building-2',
     description: 'Complex calculations for organizations with multiple sites',
     content: [
       {
@@ -263,7 +263,7 @@ export const formulasData: FormulaSection[] = [
   {
     id: 'integrated-standards',
     title: 'Integrated Standards',
-    icon: '🔗',
+    icon: 'link',
     description: 'Reductions for integrated management system audits',
     content: [
       {
@@ -307,7 +307,7 @@ Integrated_Adjustment = -(Base_Man_Days × Integrated_Reduction)`,
   {
     id: 'stage-distribution',
     title: 'Stage Distribution',
-    icon: '📈',
+    icon: 'trending-up',
     description: 'How initial audits are split between Stage 1 and Stage 2',
     content: [
       {
@@ -355,7 +355,7 @@ Integrated_Adjustment = -(Base_Man_Days × Integrated_Reduction)`,
   {
     id: 'surveillance-recertification',
     title: 'Surveillance & Recertification',
-    icon: '🔄',
+    icon: 'refresh-ccw',
     description: 'Formulas for ongoing surveillance and recertification audits',
     content: [
       {
@@ -401,7 +401,7 @@ Integrated_Adjustment = -(Base_Man_Days × Integrated_Reduction)`,
   {
     id: 'haccp-studies',
     title: 'HACCP Studies',
-    icon: '🍽️',
+    icon: 'chef-hat',
     description: 'Additional time calculations for HACCP studies in FSMS audits',
     content: [
       {
@@ -441,7 +441,7 @@ Integrated_Adjustment = -(Base_Man_Days × Integrated_Reduction)`,
   {
     id: 'complexity-adjustment',
     title: 'Complexity Adjustment',
-    icon: '🧩',
+    icon: 'puzzle',
     description: 'Additional time for high complexity categories (I, J, K)',
     content: [
       {
@@ -481,7 +481,7 @@ if (category IN Complexity_Categories) {
   {
     id: 'validation-rules',
     title: 'Validation Rules',
-    icon: '✅',
+    icon: 'check-circle',
     description: 'Input validation requirements and business rules',
     content: [
       {
