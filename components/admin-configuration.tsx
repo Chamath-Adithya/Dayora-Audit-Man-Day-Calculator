@@ -478,15 +478,30 @@ export function AdminConfiguration() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {config.employeeRanges.map((range, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={range.min}
-                            onChange={(e) => updateEmployeeRange(index, "min", Number.parseInt(e.target.value))}
-                            className="w-20"
-                          />
+                    {config.employeeRanges
+                      .sort((a, b) => a.order - b.order)
+                      .map((range, index) => (
+                      <TableRow
+                        key={index}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, index, 'employeeRanges')}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, index, 'employeeRanges')}
+                        onDragEnd={handleDragEnd}
+                        className={draggedIndex === index ? 'opacity-50' : ''}
+                      >
+                        <TableCell className="font-medium relative group">
+                          <div className="flex items-center gap-2">
+                            <div className="cursor-move text-gray-400 hover:text-gray-600">
+                              ⋮⋮
+                            </div>
+                            <Input
+                              type="number"
+                              value={range.min}
+                              onChange={(e) => updateEmployeeRange(index, "min", Number.parseInt(e.target.value))}
+                              className="w-20"
+                            />
+                          </div>
                         </TableCell>
                         <TableCell>
                           <Input
@@ -736,12 +751,12 @@ export function AdminConfiguration() {
                     System Ordered
                   </span>
                 </CardTitle>
-                <CardDescription>
-                  Add, remove, and configure risk levels and their multipliers.
-                  <span className="block text-blue-600 mt-1 font-medium">
-                    💡 Rows are automatically ordered by the system and cannot be manually reordered.
-                  </span>
-                </CardDescription>
+              <CardDescription>
+                Add, remove, and configure risk levels and their multipliers.
+                <span className="block text-green-600 mt-1 font-medium">
+                  ✅ Drag and drop rows to reorder risk levels. Order is saved to database.
+                </span>
+              </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -757,15 +772,30 @@ export function AdminConfiguration() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {config.riskLevels.map((risk, index) => (
-                          <TableRow key={risk.id}>
-                            <TableCell>
-                              <Input
-                                value={risk.id}
-                                onChange={(e) => updateRiskLevel(index, "id", e.target.value)}
-                                placeholder="e.g., low"
-                                className="w-20"
-                              />
+                        {config.riskLevels
+                          .sort((a, b) => a.order - b.order)
+                          .map((risk, index) => (
+                          <TableRow
+                            key={risk.id}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index, 'riskLevels')}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, index, 'riskLevels')}
+                            onDragEnd={handleDragEnd}
+                            className={draggedIndex === index ? 'opacity-50' : ''}
+                          >
+                            <TableCell className="font-medium relative group">
+                              <div className="flex items-center gap-2">
+                                <div className="cursor-move text-gray-400 hover:text-gray-600">
+                                  ⋮⋮
+                                </div>
+                                <Input
+                                  value={risk.id}
+                                  onChange={(e) => updateRiskLevel(index, "id", e.target.value)}
+                                  placeholder="e.g., low"
+                                  className="w-20"
+                                />
+                              </div>
                             </TableCell>
                             <TableCell>
                               <Input
@@ -903,58 +933,133 @@ export function AdminConfiguration() {
                     System Ordered
                   </span>
                 </CardTitle>
-                <CardDescription>
-                  Manage the list of standards that can be integrated and their man-day reduction percentages.
-                  <span className="block text-blue-600 mt-1 font-medium">
-                    💡 Rows are automatically ordered by the system and cannot be manually reordered.
-                  </span>
+              <CardDescription>
+                Manage the list of standards that can be integrated and their man-day reduction percentages.
+                <span className="block text-green-600 mt-1 font-medium">
+                  ✅ Drag and drop rows to reorder integrated standards. Order is saved to database.
+                </span>
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="hidden md:block">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Standard ID</TableHead>
+                        <TableHead>Standard Name</TableHead>
+                        <TableHead>Reduction (0.1 = 10%)</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {config.integratedStandards
+                        .sort((a, b) => a.order - b.order)
+                        .map((standard, index) => (
+                        <TableRow
+                          key={standard.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, index, 'integratedStandards')}
+                          onDragOver={handleDragOver}
+                          onDrop={(e) => handleDrop(e, index, 'integratedStandards')}
+                          onDragEnd={handleDragEnd}
+                          className={draggedIndex === index ? 'opacity-50' : ''}
+                        >
+                          <TableCell className="font-medium relative group">
+                            <div className="flex items-center gap-2">
+                              <div className="cursor-move text-gray-400 hover:text-gray-600">
+                                ⋮⋮
+                              </div>
+                              <Input
+                                value={standard.id}
+                                onChange={(e) => updateIntegratedStandard(index, "id", e.target.value)}
+                                placeholder="e.g., ISO_14001"
+                                className="w-32"
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              value={standard.name}
+                              onChange={(e) => updateIntegratedStandard(index, "name", e.target.value)}
+                              placeholder="e.g., ISO 14001"
+                              className="w-40"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={standard.reduction}
+                              onChange={(e) =>
+                                updateIntegratedStandard(index, "reduction", Number.parseFloat(e.target.value))
+                              }
+                              className="w-24"
+                            />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="destructive" size="sm" onClick={() => removeIntegratedStandard(index)}>
+                              Remove
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  <Button onClick={addIntegratedStandard} className="mt-4">
+                    Add Standard
+                  </Button>
+                </div>
+                <div className="md:hidden space-y-4">
                   {config.integratedStandards.map((standard, index) => (
-                    <div key={standard.id} className="flex items-center gap-4 p-2 border rounded-md">
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <Label htmlFor={`standard-id-${index}`}>Standard ID</Label>
+                    <Card key={standard.id} className="p-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label>Standard ID</Label>
                           <Input
-                            id={`standard-id-${index}`}
                             value={standard.id}
                             onChange={(e) => updateIntegratedStandard(index, "id", e.target.value)}
                             placeholder="e.g., ISO_14001"
+                            className="w-32"
                           />
                         </div>
-                        <div>
-                          <Label htmlFor={`standard-name-${index}`}>Standard Name</Label>
+                        <div className="flex items-center justify-between">
+                          <Label>Standard Name</Label>
                           <Input
-                            id={`standard-name-${index}`}
                             value={standard.name}
                             onChange={(e) => updateIntegratedStandard(index, "name", e.target.value)}
                             placeholder="e.g., ISO 14001"
+                            className="w-40"
                           />
                         </div>
-                        <div>
-                          <Label htmlFor={`standard-reduction-${index}`}>Reduction (0.1 = 10%)</Label>
+                        <div className="flex items-center justify-between">
+                          <Label>Reduction (0.1 = 10%)</Label>
                           <Input
-                            id={`standard-reduction-${index}`}
                             type="number"
                             step="0.01"
                             value={standard.reduction}
                             onChange={(e) =>
                               updateIntegratedStandard(index, "reduction", Number.parseFloat(e.target.value))
                             }
+                            className="w-24"
                           />
                         </div>
+                        <div className="pt-2">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => removeIntegratedStandard(index)}
+                          >
+                            Remove Standard
+                          </Button>
+                        </div>
                       </div>
-                      <Button variant="destructive" size="sm" onClick={() => removeIntegratedStandard(index)}>
-                        Remove
-                      </Button>
-                    </div>
+                    </Card>
                   ))}
+                  <Button onClick={addIntegratedStandard} className="mt-4 w-full">
+                    Add Standard
+                  </Button>
                 </div>
-                <Button onClick={addIntegratedStandard} className="mt-4">
-                  Add Standard
-                </Button>
               </CardContent>
             </Card>
 
