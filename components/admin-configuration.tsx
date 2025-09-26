@@ -10,9 +10,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Save, RotateCcw, AlertTriangle, Loader2 } from "lucide-react"
+import { Save, RotateCcw, AlertTriangle, Loader2, FileText } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { toast } from "sonner"
+
 
 interface EmployeeRange {
   min: number
@@ -1108,6 +1109,8 @@ export function AdminConfiguration() {
             </div>
           </div>
         </TabsContent>
+
+
       </Tabs>
     </div>
   )
