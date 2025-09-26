@@ -301,6 +301,73 @@ export function HistoryManagement() {
     return sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
   }
 
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        {error ? (
+          <Card className="border-destructive">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-destructive">{error}</div>
+                <Button onClick={loadCalculations} variant="outline" size="sm">
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Retry
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            {/* KPI Cards Skeleton */}
+            <KPICardsSkeleton count={6} />
+
+            {/* Visualization Tabs Skeleton */}
+            <Card>
+              <CardHeader>
+                <div className="h-6 bg-gray-200 rounded w-48"></div>
+                <div className="h-4 bg-gray-200 rounded w-96"></div>
+              </CardHeader>
+              <CardContent>
+                <TabsSkeleton />
+              </CardContent>
+            </Card>
+
+            {/* Search and Filters Skeleton */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-32"></div>
+                    <div className="h-4 bg-gray-200 rounded w-48 mt-2"></div>
+                  </div>
+                  <div className="h-10 bg-gray-200 rounded w-24"></div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <SearchFiltersSkeleton />
+              </CardContent>
+            </Card>
+
+            {/* Table Skeleton */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-40"></div>
+                    <div className="h-4 bg-gray-200 rounded w-64 mt-2"></div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <TableSkeleton rows={8} columns={10} />
+              </CardContent>
+            </Card>
+          </>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {error && (
@@ -698,24 +765,7 @@ export function HistoryManagement() {
               </div>
             </CardHeader>
             <CardContent>
-              {loading ? (
-                <div className="space-y-6">
-                  {/* KPI Cards Skeleton */}
-                  <KPICardsSkeleton count={6} />
-
-                  {/* Charts Skeleton */}
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <ChartSkeleton />
-                    <ChartSkeleton />
-                  </div>
-
-                  {/* Search and Filters Skeleton */}
-                  <SearchFiltersSkeleton />
-
-                  {/* Table Skeleton */}
-                  <TableSkeleton rows={8} columns={10} />
-                </div>
-              ) : filteredCalculations.length === 0 ? (
+              {filteredCalculations.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   {calculations.filter(c => !c.isDeleted).length === 0 ? (
                     <div>
