@@ -1,0 +1,39 @@
+cff-version: "1.2.0"
+message: "If you use this software in a publication, please cite it using the metadata below."
+title: "Dayora – Audit Man-Day Calculator"
+version: "v1.0.0"
+doi: "10.5281/zenodo.17609320"
+url: "https://github.com/Chamath-Adithya/Dayora-Audit-Man-Day-Calculator"
+date-released: "2025-11-14"
+
+authors:
+  - given-names: "Senanayaka Appuhamilage Chamath Adithya Senanayaka"
+    family-names: "S.A.C.A.Senanayaka"
+    email: "achamath1@gmail.com"
+    affiliation: "Independent Researcher"
+
+abstract: >
+  Dayora – Audit Man-Day Calculator is a web application that helps audit managers, certification bodies, 
+  and consultants estimate audit man-days efficiently. It provides accurate calculations to support 
+  planning, resource allocation, and scheduling for audit engagements.
+
+keywords:
+  - "audit man-day"
+  - "audit duration calculator"
+  - "man-day calculation"
+  - "auditing tool"
+  - "TypeScript"
+  - "web application"
+
+license: "MIT"
+
+bibtex:
+  entry:
+    - "@software{senanayaka2025dayora_audit_manday_calculator,
+         title = {Dayora – Audit Man-Day Calculator},
+         author = {S.A.C.A.Senanayaka},
+         year = {2025},
+         version = {v1.0.0},
+         doi = {10.5281/zenodo.17609320},
+         url = {https://github.com/Chamath-Adithya/Dayora-Audit-Man-Day-Calculator}
+       }"
