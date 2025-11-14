@@ -9,6 +9,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql)
 ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+[![DOI](https://zenodo.org/badge/1055508554.svg)](https://doi.org/10.5281/zenodo.17609320)
 
 A modern, professional web application designed for certification professionals to streamline audit planning and resource allocation. Calculate audit man-days with precision using internationally recognized standards with proper database backend and accurate calculation methodology.
 
